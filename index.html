@@ -555,3 +555,75 @@ function goOrder(){
 
 </body>
 </html>
+
+/* HIỆU ỨNG SẤM SÉT */
+.service-art.lightning {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #101b55, #332080, #101b55);
+}
+
+.service-art.lightning::before {
+  content: "⚡";
+  position: relative;
+  z-index: 2;
+  font-size: 65px;
+  color: #fff;
+  text-shadow:
+    0 0 8px #fff,
+    0 0 18px #00d9ff,
+    0 0 35px #4c5cff,
+    0 0 55px #a64dff;
+  animation: thunderFlash 1.2s infinite;
+}
+
+.service-art.lightning::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(
+    115deg,
+    transparent 42%,
+    #ffffff 48%,
+    #00eaff 50%,
+    transparent 55%
+  );
+  opacity: 0;
+  animation: lightningArc 2s infinite;
+}
+
+@keyframes thunderFlash {
+  0%, 15%, 25%, 60%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  18%, 22%, 65% {
+    opacity: .25;
+    transform: scale(.9);
+  }
+  20%, 70% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes lightningArc {
+  0%, 65%, 100% {
+    opacity: 0;
+    transform: translateX(-40%) rotate(0deg);
+  }
+  68% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+    transform: translateX(40%) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-art.lightning::before,
+  .service-art.lightning::after {
+    animation: none;
+  }
+}
