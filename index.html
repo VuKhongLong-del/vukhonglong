@@ -401,9 +401,7 @@ body.dark .nav button.active {
 
 <body>
 
-<header class="header"> <button id="musicToggle" onclick="toggleMusic()">
- 🎵 Bật nhạc
-</button>
+<header class="header">
  <div class="logo">
   <svg class="logo-bolt" viewBox="0 0 75 42">
     <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
@@ -594,28 +592,8 @@ body.dark .nav button.active {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@5/dist/email.min.js"></script> 
-<script src="https://w.soundcloud.com/player/api.js"></script>
 
 <script>
-const musicPlayer = SC.Widget(
- document.getElementById("soundcloudPlayer")
-);
-
-let musicPlaying = false;
-
-function toggleMusic(){
- const btn = document.getElementById("musicToggle");
-
- if(!musicPlaying){
-  musicPlayer.play();
-  musicPlaying = true;
-  btn.textContent = "🔊 Tắt nhạc";
- }else{
-  musicPlayer.pause();
-  musicPlaying = false;
-  btn.textContent = "🎵 Bật nhạc";
- }
-}
 function applyTheme(theme){
  document.body.classList.toggle("dark", theme === "dark");
 
@@ -993,14 +971,6 @@ function goOrder(){
  });
 }
 </script>
-<iframe
- id="soundcloudPlayer"
- width="100%"
- height="166"
- scrolling="no"
- frameborder="no"
- allow="autoplay"
- src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fqu-ph-m-573788822%2Fjack-j97-anh-y-u-em-album-tam&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=false">
-</iframe>
+
 </body>
 </html>
