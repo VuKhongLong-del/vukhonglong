@@ -213,7 +213,7 @@ input:focus,textarea:focus{border-color:#7052ed}
   <div class="section-head">
    <h2>✦ Tạo đơn sự kiện</h2>
   </div>
-  <p class="muted">Chọn gói phía trên rồi nhập mã sự kiện. Mỗi dòng được tính thành 2 lượt.</p>
+  <p class="muted">Chọn gói phía trên rồi nhập mã sự kiện.</p>
 
   <div id="selectedText" style="font-weight:850;color:#6445e9">
    Chưa chọn dịch vụ
@@ -223,7 +223,7 @@ input:focus,textarea:focus{border-color:#7052ed}
   <textarea id="codes" placeholder="Nhập mã 1&#10;Nhập mã 2&#10;Nhập mã 3"></textarea>
 
   <div class="muted" style="margin-top:8px">
-   Mỗi mã một dòng. Dòng trống không được tính.
+   Mỗi mã một dòng. Dòng trống không tính.
   </div>
 
   <div class="summary">
@@ -338,7 +338,7 @@ function getCodes(){
 
 function update(){
  const count=getCodes().length;
- const turns=count*2;
+ const turns=count*1;
  const price=selected ? PRICES[selected] : 0;
  const total=count*price;
 
