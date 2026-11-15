@@ -647,25 +647,3 @@ function goOrder(){
 
 </body>
 </html>
-
-
-/* ICON DỊCH VỤ NHẤP NHÁY PHÁT SÁNG */
-.service-art {
-  animation: serviceGlow 1.5s ease-in-out infinite;
-}
-
-@keyframes serviceGlow {
-  0%, 100% {
-    filter: brightness(1);
-    text-shadow: 0 0 5px #ffffff;
-    transform: scale(1);
-  }
-  50% {
-    filter: brightness(1.8);
-    text-shadow:
-      0 0 10px #ffffff,
-      0 0 20px #5c8dff,
-      0 0 35px #874cff;
-    transform: scale(1.12);
-  }
-}
