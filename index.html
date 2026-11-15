@@ -340,6 +340,45 @@ body.dark .payment-box button {
     background: #46516b !important;
     color: #ffffff !important;
 }
+/* LOGO VUKHONGLONG GAMING NEON */
+.logo-text {
+    font-weight: 1000;
+    font-size: 25px;
+    letter-spacing: 1.5px;
+    background: linear-gradient(
+        90deg,
+        #00eaff,
+        #5271ff,
+        #bd55ff,
+        #00eaff
+    );
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: logoShine 4s linear infinite,
+               logoGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes logoShine {
+    to {
+        background-position: 300% center;
+    }
+}
+
+@keyframes logoGlow {
+    from {
+        filter: drop-shadow(0 0 3px #00d9ff);
+    }
+    to {
+        filter: drop-shadow(0 0 10px #8b5cff);
+    }
+}
+
+/* LOGO KHI BẬT NỀN ĐEN */
+body.dark .logo-text {
+    filter: drop-shadow(0 0 7px #00d9ff);
+}
 </style>
 </head>
 
@@ -350,11 +389,13 @@ body.dark .payment-box button {
   <svg class="logo-bolt" viewBox="0 0 75 42">
     <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
   </svg>
-  VUKHONGLONG
+
+  <span class="logo-text">VUKHONGLONG</span>
+
   <svg class="logo-bolt" viewBox="0 0 75 42">
     <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
   </svg>
-</div>
+ </div>
 <button
  class="theme-toggle"
  id="themeToggle"
