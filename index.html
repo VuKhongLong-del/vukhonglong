@@ -203,29 +203,38 @@ textarea:focus{border-color:#7052ed}
   font-weight: 950;
 }
 
-.logo-lightning {
-  display: inline-block;
-  color: #ff2525;
-  font-size: 29px;
-  text-shadow:
-    0 0 5px #ff0000,
-    0 0 12px #ff3333,
-    0 0 20px #ff0000;
-  animation: logoThunder 3s ease-in-out infinite;
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 19px;
+  font-weight: 950;
+  color: #3158d9;
+  white-space: nowrap;
 }
 
-@keyframes logoThunder {
-  0%, 100% {
-    opacity: .75;
-    transform: scale(1);
+.logo-bolt {
+  width: 35px;
+  height: 25px;
+  overflow: visible;
+  fill: none;
+  stroke: #ff2525;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px #ff3030);
+  animation: boltFlash 2.5s ease-in-out infinite;
+}
+
+@keyframes boltFlash {
+  0%, 85%, 100% {
+    opacity: .65;
+    filter: drop-shadow(0 0 3px #ff3030);
   }
-  50% {
+  90%, 94% {
     opacity: 1;
-    transform: scale(1.2);
-    text-shadow:
-      0 0 8px #fff,
-      0 0 16px #ff2020,
-      0 0 28px #ff0000;
+    filter: drop-shadow(0 0 8px #ff0000);
   }
 }
 
@@ -236,9 +245,13 @@ textarea:focus{border-color:#7052ed}
 
 <header class="header">
  <div class="logo">
-  <span class="logo-lightning">ϟ</span>
+  <svg class="logo-bolt" viewBox="0 0 75 42">
+    <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
+  </svg>
   VUKHONGLONG
-  <span class="logo-lightning">ϟ</span>
+  <svg class="logo-bolt" viewBox="0 0 75 42">
+    <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
+  </svg>
 </div>
 </header>
 
