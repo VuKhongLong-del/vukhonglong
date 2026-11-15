@@ -1,52 +1,446 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090711">
-<title>VUKHONGLONG — Gaming Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f7ff">
+<title>VUKHONGLONG - Chung Sức Liên Quân</title>
+
 <style>
-:root{--bg:#090711;--panel:#121020;--panel2:#19152b;--line:#2b2542;--purple:#8b5cf6;--violet:#a78bfa;--pink:#d946ef;--text:#f5f2ff;--muted:#aaa3c0;--green:#4ade80;--red:#fb7185}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#29164d 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}button,input,select{font:inherit}button{cursor:pointer}.wrap{max-width:1180px;margin:auto;padding:0 22px}.top{position:sticky;top:0;z-index:20;background:#0b0914eF;backdrop-filter:blur(18px);border-bottom:1px solid #ffffff12}.nav{height:74px;display:flex;align-items:center;gap:24px}.brand{font-weight:950;letter-spacing:1.6px;font-size:20px;white-space:nowrap}.brand span{color:var(--violet)}.links{display:flex;gap:22px;margin:auto}.links a,.nav a{color:var(--muted);text-decoration:none}.links a:hover,.links a.active{color:#fff}.actions{display:flex;gap:10px;align-items:center}.btn{border:1px solid var(--line);background:#171329;color:#fff;padding:10px 15px;border-radius:12px;font-weight:700}.btn:hover{border-color:var(--violet);transform:translateY(-1px)}.primary{border:0;background:linear-gradient(110deg,#7042df,#a855f7);box-shadow:0 8px 28px #8b5cf633}.small{padding:8px 12px;font-size:13px}.mobile{display:none}.hero{padding:76px 0 58px;display:grid;grid-template-columns:1.1fr .9fr;gap:35px;align-items:center}.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid #8056d866;background:#8b5cf61a;color:#c4b5fd;padding:7px 12px;border-radius:99px;font-size:12px;font-weight:800;letter-spacing:1px}.dot{width:7px;height:7px;border-radius:50%;background:#a78bfa;box-shadow:0 0 14px #a78bfa}.hero h1{font-size:clamp(40px,6vw,68px);line-height:1.02;margin:20px 0 18px;letter-spacing:-2px}.grad{background:linear-gradient(90deg,#c4b5fd,#e879f9);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{color:var(--muted);font-size:17px;max-width:590px}.heroBtns{display:flex;gap:12px;margin-top:27px;flex-wrap:wrap}.visual{min-height:330px;border:1px solid #8b5cf644;border-radius:28px;background:linear-gradient(145deg,#251447,#100d1e 60%);position:relative;overflow:hidden;display:grid;place-items:center;box-shadow:0 25px 90px #6d28d933}.orb{width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e9d5ff,#9b5cf5 32%,#5b21b6 62%,#1d123a 72%);box-shadow:0 0 65px #a855f799;display:grid;place-items:center;font-size:58px;font-weight:1000;letter-spacing:-5px}.float{position:absolute;border:1px solid #ffffff22;background:#100d1dcc;backdrop-filter:blur(12px);padding:12px 15px;border-radius:14px;color:#e9ddff}.f1{top:28px;left:24px}.f2{bottom:28px;right:24px}.section{padding:38px 0 54px}.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:22px}.section h2{font-size:29px;margin:0 0 5px}.sub{color:var(--muted);margin:0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.game,.product,.stat,.panel{background:linear-gradient(160deg,#171329,#100e1b);border:1px solid var(--line);border-radius:19px;overflow:hidden}.cover{height:150px;display:grid;place-items:center;font-size:54px;background:radial-gradient(circle at 50% 30%,#6d38b8,#24133f 65%,#100d1c)}.cover.c2{background:radial-gradient(circle at 50% 30%,#315b9c,#171c3b 65%,#100d1c)}.cover.c3{background:radial-gradient(circle at 50% 30%,#9b3f7a,#351333 65%,#100d1c)}.gameBody,.productBody{padding:17px}.game h3,.product h3{margin:0 0 5px;font-size:18px}.muted{color:var(--muted)}.tag{font-size:11px;color:#c4b5fd;background:#8b5cf61a;border:1px solid #8b5cf633;border-radius:99px;padding:4px 8px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.gameBody .row{margin-top:15px}.product .cover{height:130px}.price{font-weight:850;color:#d8b4fe}.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{padding:22px}.panel h3{margin:0 0 14px}.field{display:grid;gap:7px;margin:12px 0}.field label{font-size:13px;color:#c9c2dc}.field input,.field select{width:100%;border:1px solid var(--line);background:#0c0a15;color:#fff;border-radius:11px;padding:12px 13px;outline:none}.field input:focus{border-color:var(--violet)}.notice{border:1px solid #9b7be744;background:#8b5cf614;color:#cfc3ee;padding:12px 14px;border-radius:12px;font-size:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{padding:16px}.stat b{font-size:24px;display:block}.hidden{display:none!important}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line)}.table th{color:var(--muted);font-weight:600}.footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);margin-top:30px}.modal{position:fixed;inset:0;z-index:50;background:#05040bdc;display:grid;place-items:center;padding:18px}.modalBox{width:min(440px,100%);background:#151126;border:1px solid #4c3a70;border-radius:20px;padding:24px;box-shadow:0 30px 100px #000}.modalTop{display:flex;justify-content:space-between;align-items:center}.close{background:none;border:0;color:#aaa;font-size:24px}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#211a35;border:1px solid #6d52a0;padding:12px 18px;border-radius:12px;z-index:80;box-shadow:0 10px 40px #0008}.mobileMenu{display:none}
-@media(max-width:760px){.wrap{padding:0 16px}.nav{height:64px}.links{display:none}.mobile{display:block}.actions .btn:not(.primary){display:none}.hero{padding:48px 0 35px;grid-template-columns:1fr}.visual{min-height:250px}.orb{width:170px;height:170px;font-size:44px}.grid{grid-template-columns:1fr 1fr;gap:12px}.cover{height:115px}.gameBody,.productBody{padding:13px}.two{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.section h2{font-size:24px}.brand{font-size:17px}}
-@media(max-width:420px){.grid{grid-template-columns:1fr}.actions .primary{padding:8px 10px}.hero h1{font-size:43px}}
-</style></head>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#f3f6ff;color:#11182d;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+ padding-bottom:100px
+}
+button{font:inherit;cursor:pointer}
+.header{
+ position:sticky;top:0;z-index:10;background:#fff;
+ padding:15px 18px;display:flex;align-items:center;
+ justify-content:space-between;border-bottom:1px solid #e6eaff
+}
+.logo{font-size:19px;font-weight:950;color:#3158d9}
+.wallet{
+ background:#f2f5ff;border:1px solid #dce4ff;
+ padding:10px 14px;border-radius:30px;
+ color:#2449a8;font-weight:850;font-size:14px
+}
+.container{max-width:760px;margin:auto;padding:16px}
+.hero{
+ border-radius:22px;padding:23px 20px;color:white;
+ background:linear-gradient(120deg,#243a9e,#6544ed);
+ box-shadow:0 8px 22px #4e54c733;
+}
+.hero small{font-weight:800;letter-spacing:1px;color:#dcdfff}
+.hero h1{font-size:26px;margin:10px 0}
+.hero p{font-size:14px;line-height:1.6;color:#e9eaff;margin:0}
+.section{
+ background:white;border:1px solid #e3e9fa;
+ border-radius:22px;padding:19px;margin-top:18px;
+ box-shadow:0 5px 18px #263d8010
+}
+.section-head{
+ display:flex;justify-content:space-between;
+ align-items:center;margin-bottom:15px;gap:8px
+}
+.section h2{font-size:19px;margin:0;font-weight:900}
+.muted{font-size:13px;color:#78829b;line-height:1.5}
+.services{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.service{
+ border:2px solid #e5e9fa;border-radius:18px;
+ overflow:hidden;background:#fff;text-align:left;padding:0;
+ color:#11182d;transition:.2s
+}
+.service.selected{border-color:#6547ed;box-shadow:0 5px 17px #6848ed25}
+.service-art{
+ height:112px;display:flex;align-items:center;
+ justify-content:center;font-size:57px;
+ background:linear-gradient(140deg,#e6edff,#eee5ff)
+}
+.service-info{padding:13px}
+.service-info b{font-size:15px;display:block}
+.price{color:#315bd9;font-size:19px;font-weight:950;margin-top:9px}
+.service-info small{color:#78829b;font-size:11px}
+.badge{
+ display:inline-block;background:#eeeaff;color:#6444db;
+ padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;
+ margin-top:9px
+}
+.primary{
+ width:100%;border:0;border-radius:14px;
+ padding:15px;background:linear-gradient(100deg,#315fdc,#7841ed);
+ color:white;font-weight:900;box-shadow:0 7px 15px #5144c733
+}
+.secondary{
+ background:#edf1ff;color:#3156cb;border:0;
+ border-radius:12px;padding:11px 14px;font-weight:800
+}
+.action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.action{
+ background:#f6f7ff;border:1px solid #e4e8fa;
+ border-radius:16px;padding:16px;text-align:left
+}
+.action .emoji{font-size:25px}
+.action b{display:block;margin-top:9px}
+.action small{color:#7b849d;font-size:12px}
+.banner{
+ padding:17px;border-radius:17px;color:white;
+ background:linear-gradient(110deg,#292078,#315fe8);
+ display:flex;justify-content:space-between;align-items:center;
+ gap:10px;margin-top:15px
+}
+.banner b{font-size:15px}
+.banner small{font-size:11px;opacity:.8}
+label{display:block;font-weight:800;font-size:14px;margin:15px 0 8px}
+input,textarea{
+ width:100%;padding:14px;border:1px solid #dce2f4;
+ border-radius:13px;background:#fafbff;font:inherit;color:#151a30;
+ outline:none
+}
+textarea{height:150px;resize:vertical;line-height:1.6}
+input:focus,textarea:focus{border-color:#7052ed}
+.summary{
+ display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px
+}
+.summary div{
+ background:#f5f6ff;padding:14px;border-radius:13px
+}
+.summary small{color:#78829b;display:block;font-size:12px}
+.summary strong{font-size:21px;display:block;margin-top:6px}
+.total{
+ margin-top:12px;padding:16px;border-radius:14px;
+ background:#edf0ff;display:flex;justify-content:space-between;
+ align-items:center;gap:10px
+}
+.total strong{color:#3156d7;font-size:22px}
+.history-item{
+ border-bottom:1px solid #edf0f8;padding:12px 0;font-size:13px
+}
+.bottom{
+ position:fixed;bottom:0;left:0;right:0;z-index:20;
+ background:#ffffffed;backdrop-filter:blur(15px);
+ border-top:1px solid #e5e9f5;padding:9px 5px 12px
+}
+.nav{
+ max-width:760px;margin:auto;display:grid;
+ grid-template-columns:repeat(5,1fr);align-items:center
+}
+.nav button{
+ border:0;background:transparent;color:#7c849c;
+ font-size:11px;font-weight:750;padding:7px 0
+}
+.nav button span{display:block;font-size:22px;margin-bottom:4px}
+.nav button.active{color:#4e49d9}
+.nav .create{
+ background:linear-gradient(130deg,#3970ef,#853df1);
+ color:white;border-radius:50%;width:54px;height:54px;
+ margin:auto;box-shadow:0 5px 15px #6844e955
+}
+.nav .create span{margin:0;font-size:30px}
+.modal{
+ display:none;position:fixed;inset:0;z-index:30;
+ background:#10142b88;padding:18px;
+ align-items:center;justify-content:center
+}
+.modal.show{display:flex}
+.modal-content{
+ width:100%;max-width:480px;max-height:88vh;
+ overflow:auto;background:white;border-radius:22px;padding:21px
+}
+.close{
+ float:right;border:0;background:#edf0fa;
+ border-radius:50%;width:34px;height:34px;font-size:19px
+}
+.notice{font-size:11px;color:#858da3;line-height:1.5;margin-top:12px}
+@media(max-width:370px){
+ .service-art{height:90px}
+ .service-info{padding:10px}
+ .price{font-size:16px}
+ .hero h1{font-size:22px}
+}
+</style>
+</head>
+
 <body>
-<header class="top"><div class="wrap nav"><div class="brand">VU<span>KHONGLONG</span></div><nav class="links"><a href="#home" class="active">Trang chủ</a><a href="#games">Danh sách game</a><a href="#shop">Cửa hàng</a><a href="#wallet">Ví tiền</a><a href="#history">Giao dịch</a></nav><div class="actions"><button class="btn" onclick="openAuth('login')">Đăng nhập</button><button class="btn primary" onclick="openAuth('register')">Đăng ký</button><button class="btn small mobile" onclick="document.getElementById('games').scrollIntoView()">☰</button></div></div></header>
-<main id="home" class="wrap">
-<section class="hero"><div><div class="eyebrow"><i class="dot"></i> GAMING COMMUNITY • VUKHONGLONG</div><h1>ENTER THE<br><span class="grad">NEXT LEVEL</span></h1><p>Khám phá thế giới game, vật phẩm và cộng đồng game thủ trong một không gian gaming hiện đại.</p><div class="heroBtns"><button class="btn primary" onclick="document.getElementById('games').scrollIntoView({behavior:'smooth'})">Khám phá game ↗</button><button class="btn" onclick="openAuth('register')">Tham gia ngay</button></div></div><div class="visual"><div class="orb">VL</div><div class="float f1">✦ VUKHONGLONG</div><div class="float f2">LEVEL UP YOUR GAME</div></div></section>
-<section class="section" id="games"><div class="sectionHead"><div><h2>Khám phá game</h2><p class="sub">Những tựa game nổi bật trong cộng đồng</p></div><span class="tag">GAME HUB</span></div><div class="grid">
-<article class="game"><div class="cover">⚔️</div><div class="gameBody"><div class="row"><h3>Game hành động</h3><span class="tag">HOT</span></div><p class="muted">Tốc độ, kỹ năng và thử thách.</p><div class="row"><span class="muted">Action</span><button class="btn small" onclick="toast('Danh mục đang được cập nhật')">Khám phá</button></div></div></article>
-<article class="game"><div class="cover c2">🚀</div><div class="gameBody"><div class="row"><h3>Game sinh tồn</h3><span class="tag">NEW</span></div><p class="muted">Sống sót và chinh phục đấu trường.</p><div class="row"><span class="muted">Survival</span><button class="btn small" onclick="toast('Danh mục đang được cập nhật')">Khám phá</button></div></div></article>
-<article class="game"><div class="cover c3">🏆</div><div class="gameBody"><div class="row"><h3>Game chiến thuật</h3><span class="tag">TOP</span></div><p class="muted">Lập chiến lược để giành chiến thắng.</p><div class="row"><span class="muted">Strategy</span><button class="btn small" onclick="toast('Danh mục đang được cập nhật')">Khám phá</button></div></div></article>
-</div></section>
-<section class="section" id="shop"><div class="sectionHead"><div><h2>Cửa hàng</h2><p class="sub">Khu vực trưng bày sản phẩm và dịch vụ game</p></div><span class="tag">STORE</span></div><div class="grid">
-<article class="product"><div class="cover">💎</div><div class="productBody"><h3>Gói vật phẩm cơ bản</h3><p class="muted">Sản phẩm mẫu — chưa kết nối thanh toán.</p><div class="row"><span class="price">20.000đ</span><button class="btn small primary" onclick="buy('Gói vật phẩm cơ bản',20000)">Mua thử</button></div></div></article>
-<article class="product"><div class="cover c2">🎁</div><div class="productBody"><h3>Gói vật phẩm nâng cao</h3><p class="muted">Sản phẩm mẫu — chưa kết nối thanh toán.</p><div class="row"><span class="price">50.000đ</span><button class="btn small primary" onclick="buy('Gói vật phẩm nâng cao',50000)">Mua thử</button></div></div></article>
-<article class="product"><div class="cover c3">👑</div><div class="productBody"><h3>Gói thành viên VIP</h3><p class="muted">Sản phẩm mẫu — chưa kết nối thanh toán.</p><div class="row"><span class="price">100.000đ</span><button class="btn small primary" onclick="buy('Gói thành viên VIP',100000)">Mua thử</button></div></div></article>
-</div></section>
-<section class="section" id="wallet"><div class="sectionHead"><div><h2>Ví tiền của bạn</h2><p class="sub">Theo dõi số dư và tạo yêu cầu nạp thử</p></div></div><div class="two"><div class="panel"><div class="muted">Số dư demo</div><div style="font-size:34px;font-weight:900;margin:8px 0" id="balance">0đ</div><div class="notice">Đây là ví mô phỏng lưu trên trình duyệt. Chưa phải tiền thật và không xác nhận chuyển khoản.</div></div><div class="panel"><h3>Tạo yêu cầu nạp tiền</h3><div class="field"><label>Số tiền (VNĐ)</label><input id="depositAmount" type="number" min="1000" step="1000" placeholder="Ví dụ: 50000"></div><button class="btn primary" onclick="deposit()">Tạo yêu cầu nạp thử</button><p class="muted" style="font-size:12px">Không chuyển tiền vào tài khoản nào từ trang demo này.</p></div></div></section>
-<section class="section" id="history"><div class="sectionHead"><div><h2>Lịch sử giao dịch</h2><p class="sub">Các hoạt động demo trên thiết bị hiện tại</p></div></div><div class="panel" style="overflow:auto"><table class="table"><thead><tr><th>Thời gian</th><th>Nội dung</th><th>Số tiền</th><th>Trạng thái</th></tr></thead><tbody id="transactions"><tr><td colspan="4" class="muted">Chưa có giao dịch.</td></tr></tbody></table></div></section>
-<section class="section" id="admin"><div class="sectionHead"><div><h2>Quản trị</h2><p class="sub">Khu vực xem trước giao diện quản trị</p></div><span class="tag">ADMIN PREVIEW</span></div><div class="panel"><div class="stats"><div class="stat"><span class="muted">Tài khoản trên thiết bị</span><b id="userCount">0</b></div><div class="stat"><span class="muted">Giao dịch demo</span><b id="txCount">0</b></div><div class="stat"><span class="muted">Sản phẩm mẫu</span><b>3</b></div></div><p class="notice" style="margin-top:16px">Đây chỉ là bản xem trước quản trị. Không có quyền quản trị an toàn, dữ liệu máy chủ hoặc xác thực admin. Cần backend và phân quyền phía máy chủ trước khi vận hành thật.</p></div></section>
-</main><footer class="footer"><div class="wrap row"><div><b>VUKHONGLONG</b><div class="muted">Gaming Hub • Level up your game</div></div><div class="muted">© 2026 VUKHONGLONG</div></div></footer>
-<div id="authModal" class="modal hidden"><div class="modalBox"><div class="modalTop"><h2 id="authTitle">Đăng nhập</h2><button class="close" onclick="closeAuth()">×</button></div><div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="email@example.com"></div><div class="field"><label>Mật khẩu</label><input id="authPass" type="password" placeholder="Ít nhất 6 ký tự"></div><button class="btn primary" style="width:100%;margin-top:8px" onclick="authSubmit()">Tiếp tục</button><p class="muted" style="font-size:12px">Tài khoản demo chỉ lưu trên trình duyệt này; không dùng mật khẩu thật.</p><button class="btn small" onclick="switchAuth()" id="switchAuth">Chưa có tài khoản? Đăng ký</button></div></div>
-<div id="toast" class="toast hidden"></div>
+
+<header class="header">
+ <div class="logo">⚔ VUKHONGLONG</div>
+ <div class="wallet">S <span id="balance">0</span>đ</div>
+</header>
+
+<main class="container">
+
+ <section class="hero">
+  <small>CHUNG SỨC LIÊN QUÂN</small>
+  <h1>SỰ KIỆN CHUNG SỨC</h1>
+  <p>Chào mừng bạn đến với VUKHONGLONG.
+  Chọn dịch vụ và nhập mã sự kiện để tạo đơn.</p>
+ </section>
+
+ <section class="section">
+  <div class="section-head">
+   <h2>⚡ Dịch vụ sự kiện</h2>
+   <span class="muted">Chọn một gói</span>
+  </div>
+
+  <div class="services">
+
+   <button class="service" id="ss" onclick="choose('ss')">
+    <div class="service-art">🏆</div>
+    <div class="service-info">
+     <b>RƯƠNG SS</b>
+     <small>Chung sức Liên Quân</small>
+     <div class="price">5.000đ</div>
+     <span class="badge">Mỗi dòng mã</span>
+    </div>
+   </button>
+
+   <button class="service" id="full" onclick="choose('full')">
+    <div class="service-art">💎</div>
+    <div class="service-info">
+     <b>FULL SK</b>
+     <small>Chung sức Liên Quân</small>
+     <div class="price">10.000đ</div>
+     <span class="badge">Mỗi dòng mã</span>
+    </div>
+   </button>
+
+  </div>
+ </section>
+
+ <section class="section">
+  <div class="section-head">
+   <h2>✦ Tạo đơn sự kiện</h2>
+  </div>
+  <p class="muted">Chọn gói phía trên rồi nhập mã sự kiện. Mỗi dòng được tính thành 2 lượt.</p>
+
+  <div id="selectedText" style="font-weight:850;color:#6445e9">
+   Chưa chọn dịch vụ
+  </div>
+
+  <label for="codes">Danh sách mã sự kiện</label>
+  <textarea id="codes" placeholder="Nhập mã thứ nhất&#10;Nhập mã thứ hai&#10;Nhập mã thứ ba"></textarea>
+
+  <div class="muted" style="margin-top:8px">
+   Mỗi mã một dòng. Dòng trống không được tính.
+  </div>
+
+  <div class="summary">
+   <div>
+    <small>Số dòng mã</small>
+    <strong id="lines">0</strong>
+   </div>
+   <div>
+    <small>Tổng số lượt</small>
+    <strong id="turns">0</strong>
+   </div>
+  </div>
+
+  <div class="total">
+   <div>
+    <b>Tổng thanh toán</b>
+    <div class="muted">Tự động cập nhật</div>
+   </div>
+   <strong id="total">0đ</strong>
+  </div>
+
+  <button class="primary" style="margin-top:16px" onclick="createOrder()">
+   XÁC NHẬN ĐƠN HÀNG
+  </button>
+ </section>
+
+ <section class="section" id="quick">
+  <h2>✦ Tiện ích</h2>
+  <div class="action-grid" style="margin-top:15px">
+   <button class="action" onclick="openModal('deposit')">
+    <span class="emoji">💳</span>
+    <b>Nạp tiền</b>
+    <small>Nạp số dư tài khoản</small>
+   </button>
+   <button class="action" onclick="openModal('history')">
+    <span class="emoji">📋</span>
+    <b>Lịch sử</b>
+    <small>Xem đơn đã tạo</small>
+   </button>
+  </div>
+
+  <div class="banner">
+   <div>
+    <small>VUKHONGLONG GAMING</small><br>
+    <b>CHUNG SỨC LIÊN QUÂN</b>
+   </div>
+   <span style="font-size:30px">⚔️</span>
+  </div>
+ </section>
+
+</main>
+
+<div class="bottom">
+ <nav class="nav">
+  <button class="active" onclick="goHome(this)">
+   <span>⌂</span>Trang chủ
+  </button>
+  <button onclick="openModal('deposit')">
+   <span>▣</span>Nạp tiền
+  </button>
+  <button class="create" onclick="goOrder()">
+   <span>＋</span>
+  </button>
+  <button onclick="goOrder()">
+   <span>◇</span>Sự kiện
+  </button>
+  <button onclick="openModal('more')">
+   <span>•••</span>Thêm
+  </button>
+ </nav>
+</div>
+
+<div class="modal" id="modal">
+ <div class="modal-content">
+  <button class="close" onclick="closeModal()">×</button>
+  <div id="modalBody"></div>
+ </div>
+</div>
+
 <script>
-const $=id=>document.getElementById(id);let authMode='login';
-const getUsers=()=>JSON.parse(localStorage.getItem('vl_users')||'[]');
-const getTx=()=>JSON.parse(localStorage.getItem('vl_tx')||'[]');
-const getBalance=()=>Number(localStorage.getItem('vl_balance')||0);
-const current=()=>localStorage.getItem('vl_user')||'';
-function money(n){return Number(n).toLocaleString('vi-VN')+'đ'}
-function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),2600)}
-function openAuth(m){authMode=m;$('authTitle').textContent=m==='login'?'Đăng nhập':'Tạo tài khoản';$('switchAuth').textContent=m==='login'?'Chưa có tài khoản? Đăng ký':'Đã có tài khoản? Đăng nhập';$('authModal').classList.remove('hidden')}
-function closeAuth(){$('authModal').classList.add('hidden')}
-function switchAuth(){openAuth(authMode==='login'?'register':'login')}
-function authSubmit(){let e=$('authEmail').value.trim().toLowerCase(),p=$('authPass').value;if(!e||p.length<6){toast('Nhập email và mật khẩu tối thiểu 6 ký tự');return}let users=getUsers();if(authMode==='register'){if(users.some(x=>x.email===e)){toast('Email đã được đăng ký trên thiết bị này');return}users.push({email:e});localStorage.setItem('vl_users',JSON.stringify(users));localStorage.setItem('vl_balance',getBalance());toast('Tạo tài khoản demo thành công')}else if(!users.some(x=>x.email===e)){toast('Chưa có tài khoản demo này. Hãy đăng ký trước.');return}else toast('Đăng nhập demo thành công');localStorage.setItem('vl_user',e);closeAuth();render()}
-function requireUser(){if(!current()){openAuth('login');toast('Đăng nhập demo trước nhé');return false}return true}
-function addTx(name,amount,status){let a=getTx();a.unshift({date:new Date().toLocaleString('vi-VN'),name,amount,status});localStorage.setItem('vl_tx',JSON.stringify(a));render()}
-function deposit(){if(!requireUser())return;let n=Number($('depositAmount').value);if(!Number.isFinite(n)||n<1000){toast('Số tiền tối thiểu 1.000đ');return}addTx('Yêu cầu nạp thử',n,'Chờ xử lý (demo)');$('depositAmount').value='';toast('Đã tạo yêu cầu demo; số dư chưa thay đổi')}
-function buy(name,price){if(!requireUser())return;if(getBalance()<price){toast('Số dư demo không đủ. Hãy lưu ý đây không phải tiền thật.');return}localStorage.setItem('vl_balance',getBalance()-price);addTx('Mua '+name,-price,'Thành công (demo)');toast('Đã mua thử '+name)}
-function render(){$('balance').textContent=money(getBalance());let tx=getTx();$('transactions').innerHTML=tx.length?tx.map(t=>`<tr><td>${t.date}</td><td>${t.name}</td><td>${money(t.amount)}</td><td>${t.status}</td></tr>`).join(''):'<tr><td colspan="4" class="muted">Chưa có giao dịch.</td></tr>';$('userCount').textContent=getUsers().length;$('txCount').textContent=tx.length;document.querySelector('.actions').innerHTML=current()?`<span class="muted" style="font-size:12px">${current()}</span><button class="btn small" onclick="logout()">Đăng xuất</button>`:`<button class="btn" onclick="openAuth('login')">Đăng nhập</button><button class="btn primary" onclick="openAuth('register')">Đăng ký</button><button class="btn small mobile" onclick="document.getElementById('games').scrollIntoView()">☰</button>`}
-function logout(){localStorage.removeItem('vl_user');render();toast('Đã đăng xuất demo')}
-render();
-</script></body></html>
+const PRICES = {
+ ss: 5000,
+ full: 10000
+};
+
+let selected = "";
+let orders = JSON.parse(localStorage.getItem("vkl_orders") || "[]");
+
+function money(n){
+ return new Intl.NumberFormat("vi-VN").format(n) + "đ";
+}
+
+function choose(type){
+ selected = type;
+
+ document.getElementById("ss").classList.toggle("selected",type==="ss");
+ document.getElementById("full").classList.toggle("selected",type==="full");
+
+ document.getElementById("selectedText").textContent =
+ type==="ss" ? "Đã chọn: RƯƠNG SS - 5.000đ/dòng" :
+ "Đã chọn: FULL SK - 10.000đ/dòng";
+
+ update();
+}
+
+function getCodes(){
+ return document.getElementById("codes").value
+ .split(/\r?\n/)
+ .map(x=>x.trim())
+ .filter(x=>x.length>0);
+}
+
+function update(){
+ const count=getCodes().length;
+ const turns=count*2;
+ const price=selected ? PRICES[selected] : 0;
+ const total=count*price;
+
+ document.getElementById("lines").textContent=count;
+ document.getElementById("turns").textContent=turns;
+ document.getElementById("total").textContent=money(total);
+}
+
+document.getElementById("codes").addEventListener("input",update);
+
+function createOrder(){
+ if(!selected){
+  alert("Vui lòng chọn RƯƠNG SS hoặc FULL SK!");
+  return;
+ }
+
+ const codes=getCodes();
+
+ if(codes.length===0){
+  alert("Vui lòng nhập mã sự kiện!");
+  return;
+ }
+
+ const order={
+  id:"VKL"+Date.now(),
+  service:selected==="ss"?"RƯƠNG SS":"FULL SK",
+  count:codes.length,
+  turns:codes.length*2,
+  total:codes.length*PRICES[selected],
+  date:new Date().toLocaleString("vi-VN")
+ };
+
+ orders.unshift(order);
+ localStorage.setItem("vkl_orders",JSON.stringify(orders));
+
+ alert(
+  "Tạo đơn thành công trên thiết bị!\n"+
+  "Dịch vụ: "+order.service+"\n"+
+  "Số dòng: "+order.count+"\n"+
+  "Số lượt: "+order.turns+"\n"+
+  "Tổng tiền: "+money(order.total)
+ );
+
+ document.getElementById("codes").value="";
+ update();
+}
+
+function openModal(type){
+ const body=document.getElementById("modalBody");
+
+ if(type==="history"){
+  body.innerHTML="<h2>Lịch sử đơn hàng</h2>";
+  if(!orders.length){
+   body.innerHTML+="<p class='muted'>Chưa có đơn hàng nào.</p>";
+  }else{
+   orders.forEach(o=>{
+    const item=document.createElement("div");
+    item.className="history-item";
+    const title=document.createElement("b");
+    title.textContent=o.service+" - "+o.id;
+    const detail=document.createElement("p");
+    detail.className="muted";
+    detail.textContent=o.count+" dòng · "+o.turns+" lượt · "+money(o.total)+" · "+o.date;
+    item.append(title,detail);
+    body.append(item);
+   });
+  }
+ }
+
+ if(type==="deposit"){
+  body.innerHTML=`
+   <h2>Nạp tiền</h2>
+   <p class="muted">Chức năng nạp tiền cần kết nối cổng thanh toán và máy chủ.</p>
+   <p>Hiện tại ví chưa kết nối thanh toán thật.</p>
+  `;
+ }
+
+ if(type==="more"){
+  body.innerHTML=`
+   <h2>VUKHONGLONG</h2>
+   <p class="muted">Sự kiện Chung Sức Liên Quân</p>
+   <p>Website phiên bản giao diện thử nghiệm.</p>
+  `;
+ }
+
+ document.getElementById("modal").classList.add("show");
+}
+
+function closeModal(){
+ document.getElementById("modal").classList.remove("show");
+}
+
+function goHome(btn){
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function goOrder(){
+ document.getElementById("codes").scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+document.getElementById("balance").textContent="0";
+</script>
+
+</body>
+</html>
