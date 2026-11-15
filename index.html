@@ -156,27 +156,31 @@ textarea:focus{border-color:#7052ed}
 }
 
 /* ICON 6 DỊCH VỤ NHẤP NHÁY */
+
 .service-icon {
   display: inline-block;
   animation: iconGlow 3s ease-in-out infinite;
   transform-origin: center;
+  filter: none;
+  -webkit-font-smoothing: antialiased;
 }
 
 @keyframes iconGlow {
   0%, 100% {
     transform: scale(1);
-    filter: brightness(1);
-    text-shadow: 0 0 5px #fff;
+    opacity: 0.85;
+    text-shadow: 0 0 3px rgba(255,255,255,.5);
   }
   50% {
-    transform: scale(1.2);
-    filter: brightness(2);
+    transform: scale(1.1);
+    opacity: 1;
     text-shadow:
-      0 0 8px #fff,
-      0 0 18px #00c8ff,
-      0 0 30px #754cff;
+      0 0 5px #fff,
+      0 0 10px rgba(0,200,255,.7),
+      0 0 16px rgba(117,76,255,.5);
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .service-icon {
