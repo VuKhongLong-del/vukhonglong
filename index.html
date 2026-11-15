@@ -396,11 +396,18 @@ body.dark .nav button.active {
     background: #303b59;
     box-shadow: 0 3px 12px #00000055;
 }
-/* Viền khi chọn dịch vụ ở nền tối */
-body.dark .service.active {
+/* Dịch vụ được chọn ở nền sáng */
+.service.selected {
+    border: 2px solid #5271ff !important;
+    box-shadow: 0 0 12px #5271ff66 !important;
+}
+
+/* Dịch vụ được chọn ở nền đen */
+body.dark .service.selected {
     border: 2px solid #00eaff !important;
-    box-shadow: 0 0 12px #00eaff,
-                0 0 25px #00eaff55 !important;
+    box-shadow:
+        0 0 8px #00eaff,
+        0 0 20px #00eaff88 !important;
     background: #252d40 !important;
 }
 </style>
