@@ -21,11 +21,6 @@ button{font:inherit;cursor:pointer}
  justify-content:space-between;border-bottom:1px solid #e6eaff
 }
 .logo{font-size:19px;font-weight:950;color:#3158d9}
-.wallet{
- background:#f2f5ff;border:1px solid #dce4ff;
- padding:10px 14px;border-radius:30px;
- color:#2449a8;font-weight:850;font-size:14px
-}
 .container{max-width:760px;margin:auto;padding:16px}
 .hero{
  border-radius:22px;padding:23px 20px;color:white;
@@ -72,11 +67,7 @@ button{font:inherit;cursor:pointer}
  padding:15px;background:linear-gradient(100deg,#315fdc,#7841ed);
  color:white;font-weight:900;box-shadow:0 7px 15px #5144c733
 }
-.secondary{
- background:#edf1ff;color:#3156cb;border:0;
- border-radius:12px;padding:11px 14px;font-weight:800
-}
-.action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.action-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .action{
  background:#f6f7ff;border:1px solid #e4e8fa;
  border-radius:16px;padding:16px;text-align:left
@@ -93,13 +84,12 @@ button{font:inherit;cursor:pointer}
 .banner b{font-size:15px}
 .banner small{font-size:11px;opacity:.8}
 label{display:block;font-weight:800;font-size:14px;margin:15px 0 8px}
-input,textarea{
+textarea{
  width:100%;padding:14px;border:1px solid #dce2f4;
  border-radius:13px;background:#fafbff;font:inherit;color:#151a30;
- outline:none
+ outline:none;height:150px;resize:vertical;line-height:1.6
 }
-textarea{height:150px;resize:vertical;line-height:1.6}
-input:focus,textarea:focus{border-color:#7052ed}
+textarea:focus{border-color:#7052ed}
 .summary{
  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px
 }
@@ -124,7 +114,7 @@ input:focus,textarea:focus{border-color:#7052ed}
 }
 .nav{
  max-width:760px;margin:auto;display:grid;
- grid-template-columns:repeat(5,1fr);align-items:center
+ grid-template-columns:repeat(4,1fr);align-items:center
 }
 .nav button{
  border:0;background:transparent;color:#7c849c;
@@ -152,7 +142,6 @@ input:focus,textarea:focus{border-color:#7052ed}
  float:right;border:0;background:#edf0fa;
  border-radius:50%;width:34px;height:34px;font-size:19px
 }
-.notice{font-size:11px;color:#858da3;line-height:1.5;margin-top:12px}
 @media(max-width:370px){
  .service-art{height:90px}
  .service-info{padding:10px}
@@ -166,7 +155,6 @@ input:focus,textarea:focus{border-color:#7052ed}
 
 <header class="header">
  <div class="logo">⚔ VUKHONGLONG</div>
- <div class="wallet">S <span id="balance">0</span>đ</div>
 </header>
 
 <main class="container">
@@ -186,23 +174,43 @@ input:focus,textarea:focus{border-color:#7052ed}
 
   <div class="services">
 
-   <button class="service" id="ss" onclick="choose('ss')">
-    <div class="service-art">🪎</div>
+   <button class="service" id="ticket1000" onclick="choose('ticket1000')">
+    <div class="service-art">🎟️</div>
     <div class="service-info">
-     <b>RƯƠNG SS</b>
+     <b>1.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
-     <div class="price">5.000đ</div>
-     <span class="badge">❤️</span>
+     <div class="price">10.000đ</div>
+     <span class="badge">❤️ Gói sự kiện</span>
     </div>
    </button>
 
-   <button class="service" id="full" onclick="choose('full')">
-    <div class="service-art">🪎</div>
+   <button class="service" id="ticket5000" onclick="choose('ticket5000')">
+    <div class="service-art">🎟️</div>
     <div class="service-info">
-     <b>FULL SK</b>
+     <b>5.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
      <div class="price">10.000đ</div>
-     <span class="badge">❤️</span>
+     <span class="badge">❤️ Gói sự kiện</span>
+    </div>
+   </button>
+
+   <button class="service" id="ticket10000" onclick="choose('ticket10000')">
+    <div class="service-art">🎟️</div>
+    <div class="service-info">
+     <b>10.000 VÉ</b>
+     <small>Chung sức Liên Quân</small>
+     <div class="price">10.000đ</div>
+     <span class="badge">❤️ Gói sự kiện</span>
+    </div>
+   </button>
+
+   <button class="service" id="ticket20000" onclick="choose('ticket20000')">
+    <div class="service-art">🎟️</div>
+    <div class="service-info">
+     <b>20.000 VÉ</b>
+     <small>Chung sức Liên Quân</small>
+     <div class="price">10.000đ</div>
+     <span class="badge">❤️ Gói sự kiện</span>
     </div>
    </button>
 
@@ -232,8 +240,8 @@ input:focus,textarea:focus{border-color:#7052ed}
     <strong id="lines">0</strong>
    </div>
    <div>
-    <small>Tổng số lượt</small>
-    <strong id="turns">0</strong>
+    <small>Tổng số vé</small>
+    <strong id="tickets">0</strong>
    </div>
   </div>
 
@@ -253,11 +261,6 @@ input:focus,textarea:focus{border-color:#7052ed}
  <section class="section" id="quick">
   <h2>✦ Tiện ích</h2>
   <div class="action-grid" style="margin-top:15px">
-   <button class="action" onclick="openModal('deposit')">
-    <span class="emoji">💳</span>
-    <b>Nạp tiền</b>
-    <small>Nạp số dư tài khoản</small>
-   </button>
    <button class="action" onclick="openModal('history')">
     <span class="emoji">📋</span>
     <b>Lịch sử</b>
@@ -278,11 +281,8 @@ input:focus,textarea:focus{border-color:#7052ed}
 
 <div class="bottom">
  <nav class="nav">
-  <button class="active" onclick="goHome(this)">
+  <button class="active" onclick="goHome()">
    <span>⌂</span>Trang chủ
-  </button>
-  <button onclick="openModal('deposit')">
-   <span>▣</span>Nạp tiền
   </button>
   <button class="create" onclick="goOrder()">
    <span>＋</span>
@@ -304,81 +304,119 @@ input:focus,textarea:focus{border-color:#7052ed}
 </div>
 
 <script>
-const PRICES = {
- ss: 5000,
- full: 10000
+const PRICE = 10000;
+
+const PACKAGES = {
+ ticket1000: {
+  name: "1.000 VÉ",
+  tickets: 1000
+ },
+ ticket5000: {
+  name: "5.000 VÉ",
+  tickets: 5000
+ },
+ ticket10000: {
+  name: "10.000 VÉ",
+  tickets: 10000
+ },
+ ticket20000: {
+  name: "20.000 VÉ",
+  tickets: 20000
+ }
 };
 
 let selected = "";
-let orders = JSON.parse(localStorage.getItem("vkl_orders") || "[]");
+
+let orders = [];
+try {
+ orders = JSON.parse(localStorage.getItem("vkl_orders") || "[]");
+ if (!Array.isArray(orders)) orders = [];
+} catch(e) {
+ orders = [];
+}
 
 function money(n){
  return new Intl.NumberFormat("vi-VN").format(n) + "đ";
 }
 
 function choose(type){
+ if (!PACKAGES[type]) return;
+
  selected = type;
 
- document.getElementById("ss").classList.toggle("selected",type==="ss");
- document.getElementById("full").classList.toggle("selected",type==="full");
+ Object.keys(PACKAGES).forEach(key => {
+  document.getElementById(key).classList.toggle("selected",key===type);
+ });
+
+ const pack = PACKAGES[type];
 
  document.getElementById("selectedText").textContent =
- type==="ss" ? "Đã chọn: RƯƠNG SS - 5.000đ/1" :
- "Đã chọn: FULL SK - 10.000đ/1";
+  "Đã chọn: " + pack.name + " - " + money(PRICE) + "/gói";
 
  update();
 }
 
 function getCodes(){
  return document.getElementById("codes").value
- .split(/\r?\n/)
- .map(x=>x.trim())
- .filter(x=>x.length>0);
+  .split(/\r?\n/)
+  .map(x=>x.trim())
+  .filter(x=>x.length>0);
 }
 
 function update(){
- const count=getCodes().length;
- const turns=count*1;
- const price=selected ? PRICES[selected] : 0;
- const total=count*price;
+ const count = getCodes().length;
+ const pack = selected ? PACKAGES[selected] : null;
 
- document.getElementById("lines").textContent=count;
- document.getElementById("turns").textContent=turns;
- document.getElementById("total").textContent=money(total);
+ const tickets = pack ? count * pack.tickets : 0;
+ const total = pack ? count * PRICE : 0;
+
+ document.getElementById("lines").textContent = count;
+ document.getElementById("tickets").textContent =
+  new Intl.NumberFormat("vi-VN").format(tickets);
+
+ document.getElementById("total").textContent = money(total);
 }
 
 document.getElementById("codes").addEventListener("input",update);
 
 function createOrder(){
  if(!selected){
-  alert("Vui lòng chọn RƯƠNG SS hoặc FULL SK!");
+  alert("Vui lòng chọn một gói vé!");
   return;
  }
 
- const codes=getCodes();
+ const codes = getCodes();
 
  if(codes.length===0){
   alert("Vui lòng nhập mã sự kiện!");
   return;
  }
 
- const order={
+ const pack = PACKAGES[selected];
+
+ const order = {
   id:"VKL"+Date.now(),
-  service:selected==="ss"?"RƯƠNG SS":"FULL SK",
+  service:pack.name,
   count:codes.length,
-  turns:codes.length*2,
-  total:codes.length*PRICES[selected],
+  tickets:codes.length * pack.tickets,
+  total:codes.length * PRICE,
   date:new Date().toLocaleString("vi-VN")
  };
 
  orders.unshift(order);
- localStorage.setItem("vkl_orders",JSON.stringify(orders));
+
+ try {
+  localStorage.setItem("vkl_orders",JSON.stringify(orders));
+ } catch(e) {
+  alert("Không thể lưu lịch sử đơn hàng trên thiết bị này.");
+  return;
+ }
 
  alert(
-  "Tạo đơn thành công !\n"+
+  "Tạo đơn thành công!\n"+
   "Dịch vụ: "+order.service+"\n"+
-  "Số dòng: "+order.count+"\n"+
-  "Số lượt: "+order.turns+"\n"+
+  "Số dòng mã: "+order.count+"\n"+
+  "Tổng số vé: "+new Intl.NumberFormat("vi-VN").format(order.tickets)+"\n"+
   "Tổng tiền: "+money(order.total)
  );
 
@@ -387,33 +425,32 @@ function createOrder(){
 }
 
 function openModal(type){
- const body=document.getElementById("modalBody");
+ const body = document.getElementById("modalBody");
 
  if(type==="history"){
   body.innerHTML="<h2>Lịch sử đơn hàng</h2>";
+
   if(!orders.length){
    body.innerHTML+="<p class='muted'>Chưa có đơn hàng nào.</p>";
   }else{
    orders.forEach(o=>{
     const item=document.createElement("div");
     item.className="history-item";
+
     const title=document.createElement("b");
     title.textContent=o.service+" - "+o.id;
+
     const detail=document.createElement("p");
     detail.className="muted";
-    detail.textContent=o.count+" dòng · "+o.turns+" lượt · "+money(o.total)+" · "+o.date;
+    detail.textContent=
+     o.count+" dòng · "+
+     new Intl.NumberFormat("vi-VN").format(o.tickets || 0)+
+     " vé · "+money(o.total)+" · "+o.date;
+
     item.append(title,detail);
     body.append(item);
    });
   }
- }
-
- if(type==="deposit"){
-  body.innerHTML=`
-   <h2>Nạp tiền</h2>
-   <p class="muted">Chức năng nạp tiền cần kết nối cổng thanh toán và máy chủ.</p>
-   <p>Hiện tại ví chưa kết nối thanh toán thật.</p>
-  `;
  }
 
  if(type==="more"){
@@ -431,15 +468,16 @@ function closeModal(){
  document.getElementById("modal").classList.remove("show");
 }
 
-function goHome(btn){
+function goHome(){
  window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function goOrder(){
- document.getElementById("codes").scrollIntoView({behavior:"smooth",block:"center"});
+ document.getElementById("codes").scrollIntoView({
+  behavior:"smooth",
+  block:"center"
+ });
 }
-
-document.getElementById("balance").textContent="0";
 </script>
 
 </body>
