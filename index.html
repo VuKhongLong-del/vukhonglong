@@ -25,7 +25,7 @@ button{font:inherit;cursor:pointer}
 .hero{
  border-radius:22px;padding:23px 20px;color:white;
  background:linear-gradient(120deg,#243a9e,#6544ed);
- box-shadow:0 8px 22px #4e54c733;
+ box-shadow:0 8px 22px #4e54c733
 }
 .hero small{font-weight:800;letter-spacing:1px;color:#dcdfff}
 .hero h1{font-size:26px;margin:10px 0}
@@ -47,7 +47,10 @@ button{font:inherit;cursor:pointer}
  overflow:hidden;background:#fff;text-align:left;padding:0;
  color:#11182d;transition:.2s
 }
-.service.selected{border-color:#6547ed;box-shadow:0 5px 17px #6848ed25}
+.service.selected{
+ border-color:#6547ed;
+ box-shadow:0 5px 17px #6848ed25
+}
 .service-art{
  height:112px;display:flex;align-items:center;
  justify-content:center;font-size:57px;
@@ -55,12 +58,15 @@ button{font:inherit;cursor:pointer}
 }
 .service-info{padding:13px}
 .service-info b{font-size:15px;display:block}
-.price{color:#315bd9;font-size:19px;font-weight:950;margin-top:9px}
+.price{
+ color:#315bd9;font-size:19px;
+ font-weight:950;margin-top:9px
+}
 .service-info small{color:#78829b;font-size:11px}
 .badge{
  display:inline-block;background:#eeeaff;color:#6444db;
- padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;
- margin-top:9px
+ padding:5px 9px;border-radius:20px;
+ font-size:11px;font-weight:800;margin-top:9px
 }
 .primary{
  width:100%;border:0;border-radius:14px;
@@ -86,16 +92,16 @@ button{font:inherit;cursor:pointer}
 label{display:block;font-weight:800;font-size:14px;margin:15px 0 8px}
 textarea{
  width:100%;padding:14px;border:1px solid #dce2f4;
- border-radius:13px;background:#fafbff;font:inherit;color:#151a30;
- outline:none;height:150px;resize:vertical;line-height:1.6
+ border-radius:13px;background:#fafbff;
+ font:inherit;color:#151a30;outline:none;
+ height:150px;resize:vertical;line-height:1.6
 }
 textarea:focus{border-color:#7052ed}
 .summary{
- display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:10px;margin-top:15px
 }
-.summary div{
- background:#f5f6ff;padding:14px;border-radius:13px
-}
+.summary div{background:#f5f6ff;padding:14px;border-radius:13px}
 .summary small{color:#78829b;display:block;font-size:12px}
 .summary strong{font-size:21px;display:block;margin-top:6px}
 .total{
@@ -174,13 +180,33 @@ textarea:focus{border-color:#7052ed}
 
   <div class="services">
 
+   <button class="service" id="ss" onclick="choose('ss')">
+    <div class="service-art">🪎</div>
+    <div class="service-info">
+     <b>RƯƠNG SS</b>
+     <small>Chung sức Liên Quân</small>
+     <div class="price">5.000đ</div>
+     <span class="badge">❤️</span>
+    </div>
+   </button>
+
+   <button class="service" id="full" onclick="choose('full')">
+    <div class="service-art">🪎</div>
+    <div class="service-info">
+     <b>FULL SK</b>
+     <small>Chung sức Liên Quân</small>
+     <div class="price">10.000đ</div>
+     <span class="badge">❤️</span>
+    </div>
+   </button>
+
    <button class="service" id="ticket1000" onclick="choose('ticket1000')">
     <div class="service-art">🎟️</div>
     <div class="service-info">
      <b>1.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
      <div class="price">10.000đ</div>
-     <span class="badge">❤️ Gói sự kiện</span>
+     <span class="badge">❤️ Gói vé</span>
     </div>
    </button>
 
@@ -190,7 +216,7 @@ textarea:focus{border-color:#7052ed}
      <b>5.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
      <div class="price">10.000đ</div>
-     <span class="badge">❤️ Gói sự kiện</span>
+     <span class="badge">❤️ Gói vé</span>
     </div>
    </button>
 
@@ -200,7 +226,7 @@ textarea:focus{border-color:#7052ed}
      <b>10.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
      <div class="price">10.000đ</div>
-     <span class="badge">❤️ Gói sự kiện</span>
+     <span class="badge">❤️ Gói vé</span>
     </div>
    </button>
 
@@ -210,7 +236,7 @@ textarea:focus{border-color:#7052ed}
      <b>20.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
      <div class="price">10.000đ</div>
-     <span class="badge">❤️ Gói sự kiện</span>
+     <span class="badge">❤️ Gói vé</span>
     </div>
    </button>
 
@@ -221,6 +247,7 @@ textarea:focus{border-color:#7052ed}
   <div class="section-head">
    <h2>✦ Tạo đơn sự kiện</h2>
   </div>
+
   <p class="muted">Chọn gói phía trên rồi nhập mã sự kiện.</p>
 
   <div id="selectedText" style="font-weight:850;color:#6445e9">
@@ -240,8 +267,8 @@ textarea:focus{border-color:#7052ed}
     <strong id="lines">0</strong>
    </div>
    <div>
-    <small>Tổng số vé</small>
-    <strong id="tickets">0</strong>
+    <small id="quantityLabel">Tổng số lượt</small>
+    <strong id="quantity">0</strong>
    </div>
   </div>
 
@@ -260,6 +287,7 @@ textarea:focus{border-color:#7052ed}
 
  <section class="section" id="quick">
   <h2>✦ Tiện ích</h2>
+
   <div class="action-grid" style="margin-top:15px">
    <button class="action" onclick="openModal('history')">
     <span class="emoji">📋</span>
@@ -284,12 +312,15 @@ textarea:focus{border-color:#7052ed}
   <button class="active" onclick="goHome()">
    <span>⌂</span>Trang chủ
   </button>
+
   <button class="create" onclick="goOrder()">
    <span>＋</span>
   </button>
+
   <button onclick="goOrder()">
    <span>◇</span>Sự kiện
   </button>
+
   <button onclick="openModal('more')">
    <span>•••</span>Thêm
   </button>
@@ -304,30 +335,54 @@ textarea:focus{border-color:#7052ed}
 </div>
 
 <script>
-const PRICE = 10000;
-
 const PACKAGES = {
+ ss: {
+  name: "RƯƠNG SS",
+  price: 5000,
+  quantity: 2,
+  label: "Tổng số lượt"
+ },
+
+ full: {
+  name: "FULL SK",
+  price: 10000,
+  quantity: 2,
+  label: "Tổng số lượt"
+ },
+
  ticket1000: {
   name: "1.000 VÉ",
-  tickets: 1000
+  price: 10000,
+  quantity: 1000,
+  label: "Tổng số vé"
  },
+
  ticket5000: {
   name: "5.000 VÉ",
-  tickets: 5000
+  price: 10000,
+  quantity: 5000,
+  label: "Tổng số vé"
  },
+
  ticket10000: {
   name: "10.000 VÉ",
-  tickets: 10000
+  price: 10000,
+  quantity: 10000,
+  label: "Tổng số vé"
  },
+
  ticket20000: {
   name: "20.000 VÉ",
-  tickets: 20000
+  price: 10000,
+  quantity: 20000,
+  label: "Tổng số vé"
  }
 };
 
 let selected = "";
 
 let orders = [];
+
 try {
  orders = JSON.parse(localStorage.getItem("vkl_orders") || "[]");
  if (!Array.isArray(orders)) orders = [];
@@ -339,19 +394,28 @@ function money(n){
  return new Intl.NumberFormat("vi-VN").format(n) + "đ";
 }
 
+function numberFormat(n){
+ return new Intl.NumberFormat("vi-VN").format(n);
+}
+
 function choose(type){
  if (!PACKAGES[type]) return;
 
  selected = type;
 
  Object.keys(PACKAGES).forEach(key => {
-  document.getElementById(key).classList.toggle("selected",key===type);
+  document.getElementById(key).classList.toggle(
+   "selected",
+   key === type
+  );
  });
 
  const pack = PACKAGES[type];
 
  document.getElementById("selectedText").textContent =
-  "Đã chọn: " + pack.name + " - " + money(PRICE) + "/gói";
+  "Đã chọn: " + pack.name + " - " + money(pack.price) + "/gói";
+
+ document.getElementById("quantityLabel").textContent = pack.label;
 
  update();
 }
@@ -359,35 +423,36 @@ function choose(type){
 function getCodes(){
  return document.getElementById("codes").value
   .split(/\r?\n/)
-  .map(x=>x.trim())
-  .filter(x=>x.length>0);
+  .map(x => x.trim())
+  .filter(x => x.length > 0);
 }
 
 function update(){
  const count = getCodes().length;
  const pack = selected ? PACKAGES[selected] : null;
 
- const tickets = pack ? count * pack.tickets : 0;
- const total = pack ? count * PRICE : 0;
+ const quantity = pack ? count * pack.quantity : 0;
+ const total = pack ? count * pack.price : 0;
 
  document.getElementById("lines").textContent = count;
- document.getElementById("tickets").textContent =
-  new Intl.NumberFormat("vi-VN").format(tickets);
+
+ document.getElementById("quantity").textContent =
+  numberFormat(quantity);
 
  document.getElementById("total").textContent = money(total);
 }
 
-document.getElementById("codes").addEventListener("input",update);
+document.getElementById("codes").addEventListener("input", update);
 
 function createOrder(){
  if(!selected){
-  alert("Vui lòng chọn một gói vé!");
+  alert("Vui lòng chọn một dịch vụ!");
   return;
  }
 
  const codes = getCodes();
 
- if(codes.length===0){
+ if(codes.length === 0){
   alert("Vui lòng nhập mã sự kiện!");
   return;
  }
@@ -395,66 +460,71 @@ function createOrder(){
  const pack = PACKAGES[selected];
 
  const order = {
-  id:"VKL"+Date.now(),
-  service:pack.name,
-  count:codes.length,
-  tickets:codes.length * pack.tickets,
-  total:codes.length * PRICE,
-  date:new Date().toLocaleString("vi-VN")
+  id: "VKL" + Date.now(),
+  service: pack.name,
+  count: codes.length,
+  quantity: codes.length * pack.quantity,
+  total: codes.length * pack.price,
+  date: new Date().toLocaleString("vi-VN")
  };
 
  orders.unshift(order);
 
  try {
-  localStorage.setItem("vkl_orders",JSON.stringify(orders));
+  localStorage.setItem("vkl_orders", JSON.stringify(orders));
  } catch(e) {
+  orders.shift();
   alert("Không thể lưu lịch sử đơn hàng trên thiết bị này.");
   return;
  }
 
  alert(
-  "Tạo đơn thành công!\n"+
-  "Dịch vụ: "+order.service+"\n"+
-  "Số dòng mã: "+order.count+"\n"+
-  "Tổng số vé: "+new Intl.NumberFormat("vi-VN").format(order.tickets)+"\n"+
-  "Tổng tiền: "+money(order.total)
+  "Tạo đơn thành công!\n" +
+  "Dịch vụ: " + order.service + "\n" +
+  "Số dòng mã: " + order.count + "\n" +
+  pack.label + ": " + numberFormat(order.quantity) + "\n" +
+  "Tổng tiền: " + money(order.total)
  );
 
- document.getElementById("codes").value="";
+ document.getElementById("codes").value = "";
  update();
 }
 
 function openModal(type){
  const body = document.getElementById("modalBody");
 
- if(type==="history"){
-  body.innerHTML="<h2>Lịch sử đơn hàng</h2>";
+ if(type === "history"){
+  body.innerHTML = "<h2>Lịch sử đơn hàng</h2>";
 
   if(!orders.length){
-   body.innerHTML+="<p class='muted'>Chưa có đơn hàng nào.</p>";
-  }else{
-   orders.forEach(o=>{
-    const item=document.createElement("div");
-    item.className="history-item";
+   body.innerHTML +=
+    "<p class='muted'>Chưa có đơn hàng nào.</p>";
+  } else {
+   orders.forEach(o => {
+    const item = document.createElement("div");
+    item.className = "history-item";
 
-    const title=document.createElement("b");
-    title.textContent=o.service+" - "+o.id;
+    const title = document.createElement("b");
+    title.textContent = o.service + " - " + o.id;
 
-    const detail=document.createElement("p");
-    detail.className="muted";
-    detail.textContent=
-     o.count+" dòng · "+
-     new Intl.NumberFormat("vi-VN").format(o.tickets || 0)+
-     " vé · "+money(o.total)+" · "+o.date;
+    const detail = document.createElement("p");
+    detail.className = "muted";
 
-    item.append(title,detail);
+    detail.textContent =
+     o.count + " dòng · " +
+     numberFormat(o.quantity || o.turns || 0) +
+     " vé/lượt · " +
+     money(o.total) + " · " +
+     o.date;
+
+    item.append(title, detail);
     body.append(item);
    });
   }
  }
 
- if(type==="more"){
-  body.innerHTML=`
+ if(type === "more"){
+  body.innerHTML = `
    <h2>VUKHONGLONG</h2>
    <p class="muted">Sự kiện Chung Sức Liên Quân</p>
    <p>Website phiên bản giao diện thử nghiệm.</p>
@@ -469,13 +539,16 @@ function closeModal(){
 }
 
 function goHome(){
- window.scrollTo({top:0,behavior:"smooth"});
+ window.scrollTo({
+  top: 0,
+  behavior: "smooth"
+ });
 }
 
 function goOrder(){
  document.getElementById("codes").scrollIntoView({
-  behavior:"smooth",
-  block:"center"
+  behavior: "smooth",
+  block: "center"
  });
 }
 </script>
