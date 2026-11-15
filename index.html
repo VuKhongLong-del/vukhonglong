@@ -323,33 +323,22 @@ body.dark .theme-toggle {
   background: #29344e;
   border-color: #46516b;
 }
-/* CHUYỂN KHOẢN - GIAO DIỆN TỐI */
-body.dark .modal-content {
-    background: #1b2336 !important;
-    color: #fff !important;
-}
-
-/* Hai ô Sacombank và MoMo */
-body.dark .modal-content .bank-info,
-body.dark .modal-content .account-info,
-body.dark .modal-content .payment-box {
+/* HAI Ô THANH TOÁN KHI BẬT NỀN ĐEN */
+body.dark .payment-box {
     background: #303744 !important;
-    color: #fff !important;
-    border-color: #46516b !important;
+    color: #ffffff !important;
+    border: 1px solid #46516b;
 }
 
-/* Toàn bộ chữ trong hai ô */
-body.dark .modal-content .bank-info *,
-body.dark .modal-content .account-info *,
-body.dark .modal-content .payment-box * {
-    color: #fff !important;
+body.dark .payment-box h3,
+body.dark .payment-box p,
+body.dark .payment-box strong {
+    color: #ffffff !important;
 }
 
-/* Nút sao chép */
-body.dark .modal-content button {
+body.dark .payment-box button {
     background: #46516b !important;
-    color: #fff !important;
-    border-color: #59657d !important;
+    color: #ffffff !important;
 }
 </style>
 </head>
@@ -801,12 +790,12 @@ function openModal(type){
   body.innerHTML = `
    <h2 style="text-align:center">💳 THÔNG TIN THANH TOÁN</h2>
 
-   <div style="
+   <div class="payment-box" style="
     background:#f3f5ff;
     padding:17px;
     border-radius:16px;
     margin-top:18px;
-   ">
+">
     <h3>🏦 SACOMBANK</h3>
 
     <p class="muted">SỐ TÀI KHOẢN</p>
@@ -822,12 +811,12 @@ function openModal(type){
     <strong>NGUYEN NGOC SON</strong>
    </div>
 
-   <div style="
+   <div class="payment-box" style="
     background:#fff0f6;
     padding:17px;
     border-radius:16px;
     margin-top:14px;
-   ">
+">
     <h3>🟣 MOMO</h3>
 
     <p class="muted">SỐ ĐIỆN THOẠI</p>
