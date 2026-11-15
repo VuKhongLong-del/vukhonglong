@@ -154,6 +154,36 @@ textarea:focus{border-color:#7052ed}
  .price{font-size:16px}
  .hero h1{font-size:22px}
 }
+
+/* ICON 6 DỊCH VỤ NHẤP NHÁY */
+.service-icon {
+  display: inline-block;
+  animation: iconGlow 1.3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes iconGlow {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+    text-shadow: 0 0 5px #fff;
+  }
+  50% {
+    transform: scale(1.2);
+    filter: brightness(2);
+    text-shadow:
+      0 0 8px #fff,
+      0 0 18px #00c8ff,
+      0 0 30px #754cff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-icon {
+    animation: none;
+  }
+}
+
 </style>
 </head>
 
@@ -181,7 +211,7 @@ textarea:focus{border-color:#7052ed}
   <div class="services">
 
    <button class="service" id="ss" onclick="choose('ss')">
-    <div class="service-art">🪎</div>
+    <div class="service-art"><span class="service-icon">🪎</span></div>
     <div class="service-info">
      <b>RƯƠNG SS</b>
      <small>Chung sức Liên Quân</small>
@@ -191,7 +221,7 @@ textarea:focus{border-color:#7052ed}
    </button>
 
    <button class="service" id="full" onclick="choose('full')">
-    <div class="service-art">🪎</div>
+    <div class="service-art"><span class="service-icon">🪎</span></div>
     <div class="service-info">
      <b>FULL SK</b>
      <small>Chung sức Liên Quân</small>
@@ -201,7 +231,7 @@ textarea:focus{border-color:#7052ed}
    </button>
 
    <button class="service" id="ticket1000" onclick="choose('ticket1000')">
-    <div class="service-art">🎟️</div>
+    <div class="service-art"><span class="service-icon">🎟️</span></div>
     <div class="service-info">
      <b>1.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
@@ -211,7 +241,7 @@ textarea:focus{border-color:#7052ed}
    </button>
 
    <button class="service" id="ticket5000" onclick="choose('ticket5000')">
-    <div class="service-art">🎟️</div>
+    <div class="service-art"><span class="service-icon">🎟️</span></div>
     <div class="service-info">
      <b>5.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
@@ -221,7 +251,7 @@ textarea:focus{border-color:#7052ed}
    </button>
 
    <button class="service" id="ticket10000" onclick="choose('ticket10000')">
-    <div class="service-art">🎟️</div>
+    <div class="service-art"><span class="service-icon">🎟️</span></div>
     <div class="service-info">
      <b>10.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
@@ -231,7 +261,7 @@ textarea:focus{border-color:#7052ed}
    </button>
 
    <button class="service" id="ticket20000" onclick="choose('ticket20000')">
-    <div class="service-art">🎟️</div>
+    <div class="service-art"><span class="service-icon">🎟️</span></div>
     <div class="service-info">
      <b>20.000 VÉ</b>
      <small>Chung sức Liên Quân</small>
