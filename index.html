@@ -195,13 +195,51 @@ textarea:focus{border-color:#7052ed}
   }
 }
 
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 19px;
+  font-weight: 950;
+}
+
+.logo-lightning {
+  display: inline-block;
+  color: #ff2525;
+  font-size: 29px;
+  text-shadow:
+    0 0 5px #ff0000,
+    0 0 12px #ff3333,
+    0 0 20px #ff0000;
+  animation: logoThunder 3s ease-in-out infinite;
+}
+
+@keyframes logoThunder {
+  0%, 100% {
+    opacity: .75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+    text-shadow:
+      0 0 8px #fff,
+      0 0 16px #ff2020,
+      0 0 28px #ff0000;
+  }
+}
+
 </style>
 </head>
 
 <body>
 
 <header class="header">
- <div class="logo">⚔ VUKHONGLONG</div>
+ <div class="logo">
+  <span class="logo-lightning">ϟ</span>
+  VUKHONGLONG
+  <span class="logo-lightning">ϟ</span>
+</div>
 </header>
 
 <main class="container">
