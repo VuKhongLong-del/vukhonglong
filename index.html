@@ -426,6 +426,8 @@ textarea:focus{border-color:#7052ed}
  </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@5/dist/email.min.js"></script>
+
 <script>
 const PACKAGES = {
  ss: {
@@ -536,7 +538,8 @@ function update(){
 
 document.getElementById("codes").addEventListener("input", update);
 
-function createOrder(){
+
+async function createOrder(){
  if(!selected){
   alert("Vui lòng chọn một dịch vụ!");
   return;
@@ -557,9 +560,11 @@ function createOrder(){
   count: codes.length,
   quantity: codes.length * pack.quantity,
   total: codes.length * pack.price,
+  codes: codes.join("\n"),
   date: new Date().toLocaleString("vi-VN")
  };
 
+ // Lưu lịch sử đơn hàng
  orders.unshift(order);
 
  try {
@@ -570,17 +575,49 @@ function createOrder(){
   return;
  }
 
- alert(
-  "Tạo đơn thành công!\n" +
-  "Dịch vụ: " + order.service + "\n" +
-  "Số dòng mã: " + order.count + "\n" +
-  pack.label + ": " + numberFormat(order.quantity) + "\n" +
-  "Tổng tiền: " + money(order.total)
- );
+ // Gửi thông tin đơn hàng về Gmail
+ try {
+  await emailjs.send(
+   "service_zta7ls2",
+   "template_m9uu0an",
+   {
+    order_id: order.id,
+    service: order.service,
+    count: order.count,
+    quantity: numberFormat(order.quantity),
+    total: money(order.total),
+    codes: order.codes,
+    date: order.date
+   },
+   {
+    publicKey: "aWRDUtsq1sqapgcZJ"
+   }
+  );
+
+  alert(
+   "TẠO ĐƠN THÀNH CÔNG!\n\n" +
+   "Mã đơn: " + order.id + "\n" +
+   "Dịch vụ: " + order.service + "\n" +
+   "Số dòng mã: " + order.count + "\n" +
+   pack.label + ": " + numberFormat(order.quantity) + "\n" +
+   "Tổng tiền: " + money(order.total) +
+   "\n\nĐã gửi thông tin đơn hàng về email!"
+  );
+
+ } catch(error) {
+  console.error("EmailJS Error:", error);
+
+  alert(
+   "Đơn hàng đã được lưu trên thiết bị!\n" +
+   "Nhưng gửi email thất bại.\n" +
+   "Vui lòng kiểm tra cấu hình EmailJS."
+  );
+ }
 
  document.getElementById("codes").value = "";
  update();
 }
+
 
 function openModal(type){
  const body = document.getElementById("modalBody");
