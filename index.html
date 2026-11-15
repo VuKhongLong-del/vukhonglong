@@ -409,9 +409,9 @@ textarea:focus{border-color:#7052ed}
    <span>＋</span>
   </button>
 
-  <button onclick="goOrder()">
+  <button onclick="openModal('transfer')">
    <span>💸</span>Chuyển Khoản
-  </button>
+</button>
 
   <button onclick="openModal('more')">
    <span>•••</span>Thêm
@@ -584,7 +584,54 @@ function createOrder(){
 
 function openModal(type){
  const body = document.getElementById("modalBody");
+ if(type === "transfer"){
+  body.innerHTML = `
+   <h2 style="text-align:center">💳 THÔNG TIN THANH TOÁN</h2>
 
+   <div style="
+    background:#f3f5ff;
+    padding:17px;
+    border-radius:16px;
+    margin-top:18px;
+   ">
+    <h3>🏦 SACOMBANK</h3>
+
+    <p class="muted">SỐ TÀI KHOẢN</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+     <strong style="font-size:19px">060319616562</strong>
+     <button onclick="copyPayment('060319616562')"
+      style="border:0;background:#e3e8ff;color:#3158d9;padding:9px;border-radius:9px;font-weight:800">
+      📋 Sao chép
+     </button>
+    </div>
+
+    <p class="muted" style="margin-top:15px">CHỦ TÀI KHOẢN</p>
+    <strong>NGUYEN NGOC SON</strong>
+   </div>
+
+   <div style="
+    background:#fff0f6;
+    padding:17px;
+    border-radius:16px;
+    margin-top:14px;
+   ">
+    <h3>🟣 MOMO</h3>
+
+    <p class="muted">SỐ ĐIỆN THOẠI</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+     <strong style="font-size:19px">0902287225</strong>
+     <button onclick="copyPayment('0902287225')"
+      style="border:0;background:#ffe0ef;color:#c02675;padding:9px;border-radius:9px;font-weight:800">
+      📋 Sao chép
+     </button>
+    </div>
+   </div>
+
+   <p class="muted" style="text-align:center;margin-top:17px">
+    Vui lòng chuyển khoản đúng thông tin và số tiền đơn hàng.
+   </p>
+  `;
+ }
  if(type === "history"){
   body.innerHTML = "<h2>Lịch sử đơn hàng</h2>";
 
@@ -625,7 +672,27 @@ function openModal(type){
 
  document.getElementById("modal").classList.add("show");
 }
+function copyPayment(value){
+ if(navigator.clipboard && window.isSecureContext){
+  navigator.clipboard.writeText(value)
+   .then(() => alert("Đã sao chép: " + value))
+   .catch(() => alert("Không thể sao chép. Vui lòng sao chép thủ công."));
+ } else {
+  const input = document.createElement("textarea");
+  input.value = value;
+  document.body.appendChild(input);
+  input.select();
 
+  try {
+   document.execCommand("copy");
+   alert("Đã sao chép: " + value);
+  } catch(e) {
+   alert("Không thể sao chép. Vui lòng sao chép thủ công.");
+  }
+
+  document.body.removeChild(input);
+ }
+}
 function closeModal(){
  document.getElementById("modal").classList.remove("show");
 }
