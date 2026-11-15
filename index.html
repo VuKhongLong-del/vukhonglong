@@ -267,7 +267,7 @@ input:focus,textarea:focus{border-color:#7052ed}
 
   <div class="banner">
    <div>
-    <small>VUKHONGLONG GAMING</small><br>
+    <small>VUKHONGLONG</small><br>
     <b>CHUNG SỨC LIÊN QUÂN</b>
    </div>
    <span style="font-size:30px">⚔️</span>
@@ -323,8 +323,8 @@ function choose(type){
  document.getElementById("full").classList.toggle("selected",type==="full");
 
  document.getElementById("selectedText").textContent =
- type==="ss" ? "Đã chọn: RƯƠNG SS - 5.000đ/dòng" :
- "Đã chọn: FULL SK - 10.000đ/dòng";
+ type==="ss" ? "Đã chọn: RƯƠNG SS - 5.000đ/1" :
+ "Đã chọn: FULL SK - 10.000đ/1";
 
  update();
 }
@@ -375,7 +375,7 @@ function createOrder(){
  localStorage.setItem("vkl_orders",JSON.stringify(orders));
 
  alert(
-  "Tạo đơn thành công trên thiết bị!\n"+
+  "Tạo đơn thành công !\n"+
   "Dịch vụ: "+order.service+"\n"+
   "Số dòng: "+order.count+"\n"+
   "Số lượt: "+order.turns+"\n"+
