@@ -165,21 +165,25 @@ textarea:focus{border-color:#7052ed}
   -webkit-font-smoothing: antialiased;
 }
 
+
 @keyframes iconGlow {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.85;
-    text-shadow: 0 0 3px rgba(255,255,255,.5);
+    opacity: 0.95;
+    text-shadow:
+      0 0 5px rgba(255,255,255,.7),
+      0 0 8px rgba(0,200,255,.4);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(1.12);
     opacity: 1;
     text-shadow:
-      0 0 5px #fff,
-      0 0 10px rgba(0,200,255,.7),
-      0 0 16px rgba(117,76,255,.5);
+      0 0 7px #fff,
+      0 0 13px rgba(0,200,255,.9),
+      0 0 22px rgba(117,76,255,.7);
   }
 }
+
 
 
 @media (prefers-reduced-motion: reduce) {
