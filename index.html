@@ -1094,7 +1094,7 @@ async function submitConfirmedOrder(){
 
  const order = pendingOrder;
 
- // LƯU ĐƠN VÀO FIREBASE TRƯỚC
+ // LƯU ĐƠN LÊN FIREBASE
  try {
   await window.saveOrderToFirebase(order);
  } catch(error) {
@@ -1105,8 +1105,7 @@ async function submitConfirmedOrder(){
 
  pendingOrder = null;
 
- document.getElementById("confirmOrderModal").style.display =
-  "none";
+ document.getElementById("confirmOrderModal").style.display = "none";
 
  // LƯU LỊCH SỬ TRÊN THIẾT BỊ
  orders.unshift(order);
@@ -1149,65 +1148,6 @@ async function submitConfirmedOrder(){
   alert("ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
    "Mã đơn: " + order.id +
    "\nTuy nhiên, email thông báo chưa gửi được.");
- }
-
- document.getElementById("codes").value = "";
- update();
-}
- if(!pendingOrder) return;
-
- const order = pendingOrder;
- pendingOrder = null;
-
- document.getElementById("confirmOrderModal").style.display =
-  "none";
-
- orders.unshift(order);
-
- try {
-  localStorage.setItem("vkl_orders", JSON.stringify(orders));
- } catch(e) {
-  orders.shift();
-  alert("Không thể lưu lịch sử đơn hàng trên thiết bị này.");
-  return;
- }
-
- try {
-  await emailjs.send(
-   "service_zta7ls2",
-   "template_m9uu0an",
-   {
-    order_id: order.id,
-    service: order.service,
-    count: order.count,
-    quantity: numberFormat(order.quantity),
-    total: money(order.total),
-    codes: order.codes,
-    date: order.date
-   },
-   {
-    publicKey: "aWRDUtsq1sqapgcZJ"
-   }
-  );
-
-  alert(
-   "TẠO ĐƠN THÀNH CÔNG!\n\n" +
-   "Mã đơn: " + order.id + "\n" +
-   "Dịch vụ: " + order.service + "\n" +
-   "Số dòng mã: " + order.count + "\n" +
-   order.label + ": " + numberFormat(order.quantity) + "\n" +
-   "Tổng tiền: " + money(order.total) +
-   "\n\nĐã gửi thông tin đơn hàng về email!"
-  );
-
- } catch(error) {
-  console.error("EmailJS Error:", error);
-
-  alert(
-   "Đơn hàng đã được lưu trên thiết bị!\n" +
-   "Nhưng gửi email thất bại.\n" +
-   "Vui lòng kiểm tra cấu hình EmailJS."
-  );
  }
 
  document.getElementById("codes").value = "";
