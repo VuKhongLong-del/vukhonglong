@@ -1051,7 +1051,10 @@ function createOrder(){
  const pack = PACKAGES[selected];
 
  pendingOrder = {
-  id: "VKL" + Date.now(),
+  id: "VKL-" + Array.from(
+  crypto.getRandomValues(new Uint8Array(16)),
+  b => b.toString(16).padStart(2, "0")
+).join("").toUpperCase(),
   service: pack.name,
   count: codes.length,
   quantity: codes.length * pack.quantity,
