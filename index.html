@@ -2004,13 +2004,15 @@ let latestReviewSnapshot = null;
 
 const moreButton = document.getElementById("vkl-more");
 
-moreButton.addEventListener("click",()=>{
-  showAllReviews = !showAllReviews;
+if(moreButton){
+  moreButton.addEventListener("click",()=>{
+    showAllReviews = !showAllReviews;
 
-  if(latestReviewSnapshot){
-    renderReviewList(latestReviewSnapshot);
-  }
-});
+    if(latestReviewSnapshot){
+      renderReviewList(latestReviewSnapshot);
+    }
+  });
+}
 
     const stars = document.querySelectorAll("#vkl-star-picker button");
     const status = document.getElementById("vkl-status");
