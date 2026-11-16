@@ -1302,7 +1302,9 @@ if(type === "transfer"){
     detail.textContent =
      o.count + " dòng · " +
      numberFormat(o.quantity || o.turns || 0) +
-     " vé/lượt · " +
+(o.service === "RƯƠNG SS" || o.service === "FULL SK"
+ ? " acc/lượt · "
+ : " vé/lượt · ") +
      money(o.total) + " · " +
      o.date;
 
