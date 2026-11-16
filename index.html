@@ -419,6 +419,88 @@ body.dark .service.selected {
         0 0 30px #00eaff44 !important;
     background: #252d40 !important;
 }
+
+.confirm-order-modal {
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:9999;
+ background:#000b;
+ align-items:center;
+ justify-content:center;
+ padding:16px;
+}
+
+.confirm-order-box {
+ width:100%;
+ max-width:430px;
+ max-height:85vh;
+ overflow-y:auto;
+ background:#fff;
+ color:#172033;
+ padding:22px;
+ border-radius:20px;
+ box-shadow:0 0 30px #0005;
+}
+
+.confirm-order-box h2 {
+ text-align:center;
+ color:#7250db;
+ font-size:21px;
+}
+
+.confirm-order-box p {
+ line-height:1.5;
+}
+
+.confirm-order-details {
+ background:#f1efff;
+ padding:14px;
+ border-radius:12px;
+ overflow-wrap:anywhere;
+}
+
+.confirm-warning {
+ font-weight:bold;
+ text-align:center;
+ margin-top:18px;
+}
+
+.confirm-back,
+.confirm-submit {
+ width:100%;
+ border:0;
+ padding:14px;
+ border-radius:12px;
+ font-weight:bold;
+ margin-top:10px;
+}
+
+.confirm-back {
+ background:#e8e8ef;
+ color:#333;
+}
+
+.confirm-submit {
+ background:linear-gradient(90deg,#7650e8,#a855f7);
+ color:white;
+}
+
+body.dark .confirm-order-box {
+ background:#202838;
+ color:white;
+}
+
+body.dark .confirm-order-details {
+ background:#303b59;
+ color:white;
+}
+
+body.dark .confirm-back {
+ background:#46516b;
+ color:white;
+}
+
 </style>
 </head>
 
@@ -746,7 +828,10 @@ function update(){
 document.getElementById("codes").addEventListener("input", update);
 
 
-async function createOrder(){
+
+let pendingOrder = null;
+
+function createOrder(){
  if(!selected){
   alert("Vui lòng chọn một dịch vụ!");
   return;
@@ -761,17 +846,50 @@ async function createOrder(){
 
  const pack = PACKAGES[selected];
 
- const order = {
+ pendingOrder = {
   id: "VKL" + Date.now(),
   service: pack.name,
   count: codes.length,
   quantity: codes.length * pack.quantity,
   total: codes.length * pack.price,
   codes: codes.join("\n"),
-  date: new Date().toLocaleString("vi-VN")
+  date: new Date().toLocaleString("vi-VN"),
+  label: pack.label
  };
 
- // Lưu lịch sử đơn hàng
+ document.getElementById("confirmOrderDetails").innerHTML =
+  '<div class="confirm-order-details">' +
+  '<b>Dịch vụ:</b> ' + pendingOrder.service + '<br><br>' +
+  '<b>Số dòng mã:</b> ' + pendingOrder.count + '<br><br>' +
+  '<b>' + pendingOrder.label + ':</b> ' +
+  numberFormat(pendingOrder.quantity) + '<br><br>' +
+  '<b>Tổng tiền:</b> ' + money(pendingOrder.total) +
+  '<br><br><b>Danh sách mã:</b><br>' +
+  pendingOrder.codes.replace(/&/g,"&amp;")
+   .replace(/</g,"&lt;")
+   .replace(/>/g,"&gt;")
+   .replace(/\n/g,"<br>") +
+  '</div>';
+
+ document.getElementById("confirmOrderModal").style.display =
+  "flex";
+}
+
+function closeOrderConfirm(){
+ pendingOrder = null;
+ document.getElementById("confirmOrderModal").style.display =
+  "none";
+}
+
+async function submitConfirmedOrder(){
+ if(!pendingOrder) return;
+
+ const order = pendingOrder;
+ pendingOrder = null;
+
+ document.getElementById("confirmOrderModal").style.display =
+  "none";
+
  orders.unshift(order);
 
  try {
@@ -782,7 +900,6 @@ async function createOrder(){
   return;
  }
 
- // Gửi thông tin đơn hàng về Gmail
  try {
   await emailjs.send(
    "service_zta7ls2",
@@ -806,7 +923,7 @@ async function createOrder(){
    "Mã đơn: " + order.id + "\n" +
    "Dịch vụ: " + order.service + "\n" +
    "Số dòng mã: " + order.count + "\n" +
-   pack.label + ": " + numberFormat(order.quantity) + "\n" +
+   order.label + ": " + numberFormat(order.quantity) + "\n" +
    "Tổng tiền: " + money(order.total) +
    "\n\nĐã gửi thông tin đơn hàng về email!"
   );
@@ -824,7 +941,6 @@ async function createOrder(){
  document.getElementById("codes").value = "";
  update();
 }
-
 
 function openModal(type){
  const body = document.getElementById("modalBody");
@@ -994,6 +1110,27 @@ function goOrder(){
  });
 }
 </script>
+
+<div id="confirmOrderModal" class="confirm-order-modal">
+  <div class="confirm-order-box">
+    <h2>📋 KIỂM TRA ĐƠN HÀNG</h2>
+    <p>Vui lòng kiểm tra lại thông tin trước khi đặt hàng.</p>
+
+    <div id="confirmOrderDetails"></div>
+
+    <p class="confirm-warning">
+      Bạn đã chắc chắn tất cả thông tin đều chính xác chưa?
+    </p>
+
+    <button onclick="closeOrderConfirm()" class="confirm-back">
+      QUAY LẠI CHỈNH SỬA
+    </button>
+
+    <button onclick="submitConfirmedOrder()" class="confirm-submit">
+      XÁC NHẬN VÀ ĐẶT HÀNG
+    </button>
+  </div>
+</div>
 
 </body>
 </html>
