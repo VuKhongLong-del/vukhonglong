@@ -1809,16 +1809,6 @@ function renderEventProgress(){
   }
 }
 
-      adminEl.innerHTML =
-        "<p style='color:green;font-weight:bold'>✓ Đã đăng nhập tài khoản quản lý</p>" +
-        "<button onclick='firebase.auth().signOut()'>ĐĂNG XUẤT</button>";
-    } else {
-      adminEl.innerHTML =
-        "<button onclick='firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())' style='width:100%;padding:12px;border:0;border-radius:10px;background:#6650ed;color:white;font-weight:bold'>🔐 ĐĂNG NHẬP GOOGLE QUẢN LÝ</button>";
-    }
-  }
-}
-
 // THEO DÕI ĐĂNG NHẬP
 auth.onAuthStateChanged(user=>{
   currentManager = user && user.email === managerEmail ? user : null;
