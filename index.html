@@ -1677,6 +1677,14 @@ XEM THÊM
     }
 
     const db = firebase.firestore();
+// KẾT NỐI ĐĂNG NHẬP GOOGLE
+const auth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+// DỮ LIỆU TIẾN ĐỘ SỰ KIỆN
+const eventProgress = db.collection("eventProgress").doc("main");
+
+const managerEmail = "haphamngu123@gmail.com";
     const reviews = db.collection("reviews");
     let selectedRating = 0;
 let showAllReviews = false;
