@@ -1331,26 +1331,7 @@ if(type === "progress"){
       border-radius:15px;
       margin-top:15px;
     ">
-      <h3 id="vkl-progress-name" style="text-align:center">
-        SỰ KIỆN LIÊN QUÂN
-      </h3>
-
-      <div style="display:flex;justify-content:space-between;margin:15px 0 8px">
-        <span id="vkl-progress-status">Đang cập nhật</span>
-        <b id="vkl-progress-percent">0%</b>
-      </div>
-
-      <div style="height:14px;background:#39445e;border-radius:20px;overflow:hidden">
-        <div id="vkl-progress-bar" style="
-          width:0%;
-          height:100%;
-          background:#16a36a;
-          border-radius:20px;
-        "></div>
-      </div>
-
-      <p id="vkl-progress-time" style="text-align:center;color:#aab8df;font-size:12px">
-        Đang tải tiến độ...
+      
       </p>
     </div>
 
@@ -1411,9 +1392,6 @@ if(type === "progress"){
 <div id="vkl-order-admin" style="margin-top:18px"></div>
   `;
 
-  if(window.renderEventProgress){
-    window.renderEventProgress();
-  }
 if(window.renderOrderAdmin){
   window.renderOrderAdmin();
 }
