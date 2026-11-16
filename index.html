@@ -2377,48 +2377,118 @@ window.updateOrderProgressByCode = async function() {
 };
 
 // CẬP NHẬT TIẾN ĐỘ ĐƠN
+
 window.updateOrderProgress = async function(code) {
   if (!currentManager || currentManager.email !== managerEmail) {
     alert("Bạn không có quyền quản lý đơn hàng.");
     return;
   }
 
-  const status = prompt("Nhập trạng thái đơn hàng:");
-  if (status === null) return;
+  const toLocalInput = date => {
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset)
+      .toISOString()
+      .slice(0, 16);
+  };
 
-  const progressText = prompt("Nhập tiến độ từ 0 đến 100:");
-  if (progressText === null) return;
+  const start = new Date();
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
 
-  const progress = Number(progressText);
+  const oldModal = document.getElementById("vkl-progress-schedule");
+  if (oldModal) oldModal.remove();
 
-  if (!Number.isInteger(progress) || progress < 0 || progress > 100) {
-    alert("Tiến độ phải là số nguyên từ 0 đến 100.");
+  const modal = document.createElement("div");
+  modal.id = "vkl-progress-schedule";
+  modal.style.cssText = `
+    position:fixed;inset:0;z-index:999999;
+    background:rgba(0,0,0,.75);
+    display:flex;align-items:center;justify-content:center;
+    padding:15px;
+  `;
+
+  modal.innerHTML = `
+    <div style="background:#1c2539;color:white;padding:20px;
+      border-radius:15px;width:100%;max-width:420px;">
+      <h3>⏱️ CÀI ĐẶT TIẾN ĐỘ TỰ ĐỘNG</h3>
+
+      <label>Trạng thái đơn hàng</label>
+      <input id="vkl-schedule-status" value="Đang xử lý"
+        style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0 15px;">
+
+      <label>Thời gian bắt đầu</label>
+      <input id="vkl-schedule-start" type="datetime-local"
+        value="${toLocalInput(start)}"
+        style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0 15px;">
+
+      <label>Thời gian hoàn thành dự kiến</label>
+      <input id="vkl-schedule-end" type="datetime-local"
+        value="${toLocalInput(end)}"
+        style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0 15px;">
+
+      <label>Ghi chú cho khách hàng</label>
+      <textarea id="vkl-schedule-note"
+        style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0 15px;"
+        placeholder="Nhập ghi chú..."></textarea>
+
+      <button onclick="window.saveOrderProgressSchedule('${code}')"
+        style="width:100%;padding:13px;background:#16a36a;color:white;
+        border:0;border-radius:9px;font-weight:bold;">
+        LƯU LỊCH TIẾN ĐỘ
+      </button>
+
+      <button onclick="document.getElementById('vkl-progress-schedule').remove()"
+        style="width:100%;padding:12px;margin-top:8px;">
+        HỦY
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+};
+
+window.saveOrderProgressSchedule = async function(code) {
+  if (!currentManager || currentManager.email !== managerEmail) {
+    alert("Bạn không có quyền quản lý đơn hàng.");
     return;
   }
 
-  const eta = prompt("Nhập thời gian dự kiến hoàn thành:");
-  if (eta === null) return;
+  const status = document.getElementById("vkl-schedule-status").value.trim();
+  const startText = document.getElementById("vkl-schedule-start").value;
+  const endText = document.getElementById("vkl-schedule-end").value;
+  const note = document.getElementById("vkl-schedule-note").value.trim();
 
-  const note = prompt("Nhập ghi chú cho khách hàng:");
-  if (note === null) return;
+  const startAt = new Date(startText).getTime();
+  const endAt = new Date(endText).getTime();
+
+  if (!status || !startText || !endText ||
+      !Number.isFinite(startAt) || !Number.isFinite(endAt) ||
+      endAt <= startAt) {
+    alert("Vui lòng chọn thời gian hợp lệ. Thời gian kết thúc phải sau thời gian bắt đầu.");
+    return;
+  }
 
   try {
     await db.collection("orderTracking").doc(code).update({
-      status: status.trim(),
-      progress: progress,
-      eta: eta.trim(),
-      note: note.trim(),
+      status: status,
+      startAt: startAt,
+      endAt: endAt,
+      progress: 0,
+      eta: new Date(endAt).toLocaleString("vi-VN"),
+      note: note,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    alert("Đã cập nhật tiến độ đơn hàng!");
+    document.getElementById("vkl-progress-schedule").remove();
+
+    alert("Đã lưu lịch tiến độ tự động!");
     await window.renderOrderAdmin();
 
   } catch(error) {
-    console.error("Lỗi cập nhật tiến độ:", error);
-    alert("Không cập nhật được. Vui lòng kiểm tra quyền Firebase.");
+    console.error("Lỗi lưu lịch tiến độ:", error);
+    alert("Không lưu được lịch tiến độ.");
   }
 };
+
 
 // TỰ TẢI BẢNG KHI QUẢN TRỊ ĐĂNG NHẬP
 auth.onAuthStateChanged(user => {
