@@ -1346,8 +1346,12 @@ if(type === "progress"){
       </p>
     </div>
 
-    <div id="vkl-progress-admin" style="margin-top:18px"></div>
+        <div id="vkl-progress-admin" style="margin-top:18px"></div>
   `;
+
+  if(window.renderEventProgress){
+    window.renderEventProgress();
+  }
 }
  
 const modal = document.getElementById("modal");
@@ -1739,8 +1743,59 @@ function renderEventProgress(){
     }
   }
 
-  if(adminEl){
-    if(currentManager && currentManager.email === managerEmail){
+  
+if(adminEl){
+  if(currentManager && currentManager.email === managerEmail){
+
+    if(!document.getElementById("vkl-event-form")){
+      adminEl.innerHTML = `
+        <div id="vkl-event-form">
+        <hr style="margin:18px 0">
+        <h3>🔐 QUẢN LÝ TIẾN ĐỘ</h3>
+
+        <label>Tên sự kiện</label>
+        <input id="vkl-event-title" placeholder="Nhập tên sự kiện"
+          style="width:100%;padding:11px;margin:7px 0">
+
+        <label>Tiến độ bắt đầu (%)</label>
+        <input id="vkl-start-percent" type="number"
+          min="0" max="100" value="0"
+          style="width:100%;padding:11px;margin:7px 0">
+
+        <label>Thời gian bắt đầu</label>
+        <input id="vkl-start-time" type="datetime-local"
+          style="width:100%;padding:11px;margin:7px 0">
+
+        <label>Thời gian kết thúc</label>
+        <input id="vkl-end-time" type="datetime-local"
+          style="width:100%;padding:11px;margin:7px 0">
+
+        <button onclick="saveEventProgress()" style="
+          width:100%;padding:13px;margin-top:12px;
+          border:0;border-radius:10px;
+          background:#6650ed;color:white;font-weight:bold">
+          💾 LƯU TIẾN ĐỘ
+        </button>
+
+        <button onclick="firebase.auth().signOut()" style="
+          width:100%;padding:11px;margin-top:9px;
+          border:0;border-radius:10px;
+          background:#ddd;color:#222;font-weight:bold">
+          ĐĂNG XUẤT
+        </button>
+              </div>
+      `;
+    }
+  } else {
+    adminEl.innerHTML = `
+      <button onclick="firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())"
+        style="width:100%;padding:12px;border:0;border-radius:10px;background:#6650ed;color:white;font-weight:bold">
+        🔐 ĐĂNG NHẬP GOOGLE QUẢN LÝ
+      </button>
+    `;
+  }
+}
+
       adminEl.innerHTML =
         "<p style='color:green;font-weight:bold'>✓ Đã đăng nhập tài khoản quản lý</p>" +
         "<button onclick='firebase.auth().signOut()'>ĐĂNG XUẤT</button>";
@@ -1769,6 +1824,54 @@ eventProgress.onSnapshot(snapshot=>{
 setInterval(renderEventProgress,1000);
 
 window.renderEventProgress = renderEventProgress;
+
+// LƯU TIẾN ĐỘ SỰ KIỆN
+window.saveEventProgress = async function(){
+  if(!currentManager || currentManager.email !== managerEmail){
+    alert("Bạn không có quyền quản lý!");
+    return;
+  }
+
+  const name = document.getElementById("vkl-event-title").value.trim();
+  const startPercent = Number(document.getElementById("vkl-start-percent").value);
+  const startValue = document.getElementById("vkl-start-time").value;
+  const endValue = document.getElementById("vkl-end-time").value;
+
+  if(!name || !startValue || !endValue){
+    alert("Vui lòng nhập đầy đủ thông tin!");
+    return;
+  }
+
+  if(!Number.isFinite(startPercent) || startPercent < 0 || startPercent > 100){
+    alert("Tiến độ phải từ 0 đến 100%!");
+    return;
+  }
+
+  const startDate = new Date(startValue);
+  const endDate = new Date(endValue);
+
+  if(endDate <= startDate){
+    alert("Thời gian kết thúc phải sau thời gian bắt đầu!");
+    return;
+  }
+
+  try{
+    await eventProgress.set({
+      name: name,
+      startPercent: startPercent,
+      startAt: firebase.firestore.Timestamp.fromDate(startDate),
+      endAt: firebase.firestore.Timestamp.fromDate(endDate),
+      paused: false,
+      pausedPercent: startPercent,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("Đã lưu tiến độ thành công!");
+  }catch(error){
+    console.error(error);
+    alert("Không lưu được. Hãy kiểm tra quyền Firebase!");
+  }
+};
 
     const reviews = db.collection("reviews");
     let selectedRating = 0;
