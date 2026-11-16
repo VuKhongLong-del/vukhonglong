@@ -1704,36 +1704,31 @@ function renderEventProgress(){
 
   if(!percentEl || !barEl) return;
 
-  if(!progressData){
-    percentEl.textContent = "0%";
-    barEl.style.width = "0%";
-    statusEl.textContent = "Chưa có dữ liệu";
-  } else {
-    let percent = Number(progressData.startPercent || 0);
+  let percent = 0;
+
+  if(progressData){
+    percent = Number(progressData.startPercent || 0);
 
     if(progressData.paused){
       percent = Number(progressData.pausedPercent || 0);
     } else if(progressData.startAt && progressData.endAt){
       const start = progressData.startAt.toDate().getTime();
       const end = progressData.endAt.toDate().getTime();
-      const now = Date.now();
 
       if(end > start){
-        const elapsed = Math.max(0,Math.min(1,(now-start)/(end-start)));
+        const elapsed = Math.max(0,Math.min(1,(Date.now()-start)/(end-start)));
         percent += (100-percent)*elapsed;
       }
     }
 
-    percent = Math.max(0,Math.min(100,percent));
-
-    percentEl.textContent = percent.toFixed(1)+"%";
-    barEl.style.width = percent+"%";
-    statusEl.textContent = progressData.paused
-      ? "Đã tạm dừng"
-      : percent >= 100 ? "Đã hoàn thành" : "Đang diễn ra";
-
     if(nameEl){
       nameEl.textContent = progressData.name || "SỰ KIỆN LIÊN QUÂN";
+    }
+
+    if(statusEl){
+      statusEl.textContent = progressData.paused
+        ? "Đã tạm dừng"
+        : percent >= 100 ? "Đã hoàn thành" : "Đang diễn ra";
     }
 
     if(timeEl){
@@ -1741,75 +1736,67 @@ function renderEventProgress(){
         ? "Tiến độ đang được tạm dừng"
         : "Tiến độ tự động cập nhật";
     }
+  } else {
+    if(nameEl) nameEl.textContent = "SỰ KIỆN LIÊN QUÂN";
+    if(statusEl) statusEl.textContent = "Chưa có dữ liệu";
+    if(timeEl) timeEl.textContent = "Đang chờ quản lý cập nhật";
   }
 
-  
-if(adminEl){
-  if(currentManager && currentManager.email === managerEmail){
+  percent = Math.max(0,Math.min(100,percent));
+  percentEl.textContent = percent.toFixed(1)+"%";
+  barEl.style.width = percent+"%";
 
+  if(!adminEl) return;
+
+  if(currentManager && currentManager.email === managerEmail){
     if(!document.getElementById("vkl-event-form")){
       adminEl.innerHTML = `
         <div id="vkl-event-form">
-        <hr style="margin:18px 0">
-        <h3>🔐 QUẢN LÝ TIẾN ĐỘ</h3>
+          <hr style="margin:18px 0">
+          <h3>🔐 QUẢN LÝ TIẾN ĐỘ</h3>
 
-        <label>Tên sự kiện</label>
-        <input id="vkl-event-title" placeholder="Nhập tên sự kiện"
-          style="width:100%;padding:11px;margin:7px 0">
+          <label>Tên sự kiện</label>
+          <input id="vkl-event-title" placeholder="Nhập tên sự kiện"
+            style="width:100%;padding:11px;margin:7px 0">
 
-        <label>Tiến độ bắt đầu (%)</label>
-        <input id="vkl-start-percent" type="number"
-          min="0" max="100" value="0"
-          style="width:100%;padding:11px;margin:7px 0">
+          <label>Tiến độ bắt đầu (%)</label>
+          <input id="vkl-start-percent" type="number"
+            min="0" max="100" value="0"
+            style="width:100%;padding:11px;margin:7px 0">
 
-        <label>Thời gian bắt đầu</label>
-        <input id="vkl-start-time" type="datetime-local"
-          style="width:100%;padding:11px;margin:7px 0">
+          <label>Thời gian bắt đầu</label>
+          <input id="vkl-start-time" type="datetime-local"
+            style="width:100%;padding:11px;margin:7px 0">
 
-        <label>Thời gian kết thúc</label>
-        <input id="vkl-end-time" type="datetime-local"
-          style="width:100%;padding:11px;margin:7px 0">
+          <label>Thời gian kết thúc</label>
+          <input id="vkl-end-time" type="datetime-local"
+            style="width:100%;padding:11px;margin:7px 0">
 
-        <button onclick="saveEventProgress()" style="
-          width:100%;padding:13px;margin-top:12px;
-          border:0;border-radius:10px;
-          background:#6650ed;color:white;font-weight:bold">
-          💾 LƯU TIẾN ĐỘ
-        </button>
+          <button onclick="saveEventProgress()" style="width:100%;padding:13px;margin-top:12px;border:0;border-radius:10px;background:#6650ed;color:white;font-weight:bold">
+            💾 LƯU TIẾN ĐỘ
+          </button>
 
-<button onclick="pauseEventProgress()" style="
-  width:100%;padding:12px;margin-top:9px;
-  border:0;border-radius:10px;
-  background:#e9a23b;color:white;font-weight:bold">
-  ⏸ TẠM DỪNG
-</button>
+          <button onclick="pauseEventProgress()" style="width:100%;padding:12px;margin-top:9px;border:0;border-radius:10px;background:#e9a23b;color:white;font-weight:bold">
+            ⏸ TẠM DỪNG
+          </button>
 
-<button onclick="resumeEventProgress()" style="
-  width:100%;padding:12px;margin-top:9px;
-  border:0;border-radius:10px;
-  background:#16a36a;color:white;font-weight:bold">
-  ▶ TIẾP TỤC
-</button>
+          <button onclick="resumeEventProgress()" style="width:100%;padding:12px;margin-top:9px;border:0;border-radius:10px;background:#16a36a;color:white;font-weight:bold">
+            ▶ TIẾP TỤC
+          </button>
 
-<label>Chỉnh tiến độ thủ công (%)</label>
-<input id="vkl-manual-percent" type="number"
-  min="0" max="100" placeholder="Nhập phần trăm"
-  style="width:100%;padding:11px;margin:7px 0">
+          <label>Chỉnh tiến độ thủ công (%)</label>
+          <input id="vkl-manual-percent" type="number"
+            min="0" max="100" placeholder="Nhập phần trăm"
+            style="width:100%;padding:11px;margin:7px 0">
 
-<button onclick="manualEventProgress()" style="
-  width:100%;padding:12px;margin-top:5px;
-  border:0;border-radius:10px;
-  background:#6650ed;color:white;font-weight:bold">
-  ✏️ CẬP NHẬT TIẾN ĐỘ
-</button>
+          <button onclick="manualEventProgress()" style="width:100%;padding:12px;margin-top:5px;border:0;border-radius:10px;background:#6650ed;color:white;font-weight:bold">
+            ✏️ CẬP NHẬT TIẾN ĐỘ
+          </button>
 
-        <button onclick="firebase.auth().signOut()" style="
-          width:100%;padding:11px;margin-top:9px;
-          border:0;border-radius:10px;
-          background:#ddd;color:#222;font-weight:bold">
-          ĐĂNG XUẤT
-        </button>
-              </div>
+          <button onclick="firebase.auth().signOut()" style="width:100%;padding:11px;margin-top:9px;border:0;border-radius:10px;background:#ddd;color:#222;font-weight:bold">
+            ĐĂNG XUẤT
+          </button>
+        </div>
       `;
     }
   } else {
