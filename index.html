@@ -1143,7 +1143,8 @@ if(type === "contact"){
    </div>
   `;
 }
- if(type === "transfer"){
+ 
+if(type === "transfer"){
   body.innerHTML = `
    <h2 style="text-align:center">💳 THÔNG TIN THANH TOÁN</h2>
 
@@ -1152,7 +1153,8 @@ if(type === "contact"){
     padding:17px;
     border-radius:16px;
     margin-top:18px;
-">
+    text-align:center;
+   ">
     <h3>🔵 ZALOPAY</h3>
 
     <p class="muted">SỐ TÀI KHOẢN</p>
@@ -1166,6 +1168,11 @@ if(type === "contact"){
 
     <p class="muted" style="margin-top:15px">CHỦ TÀI KHOẢN</p>
     <strong>NGUYEN NGOC SON</strong>
+
+    <p class="muted" style="margin-top:18px">QUÉT MÃ QR ZALOPAY</p>
+    <img src="qr-zalopay.jpeg"
+     onclick="showQR('qr-zalopay.jpeg')"
+     style="width:100%;max-width:280px;border-radius:14px;cursor:zoom-in">
    </div>
 
    <div class="payment-box" style="
@@ -1173,7 +1180,8 @@ if(type === "contact"){
     padding:17px;
     border-radius:16px;
     margin-top:14px;
-">
+    text-align:center;
+   ">
     <h3>🟣 MOMO</h3>
 
     <p class="muted">SỐ TÀI KHOẢN</p>
@@ -1184,16 +1192,30 @@ if(type === "contact"){
       📋 Sao chép
      </button>
     </div>
-    
+
     <p class="muted" style="margin-top:15px">CHỦ TÀI KHOẢN</p>
     <strong>NGUYEN NGOC SON</strong>
+
+    <p class="muted" style="margin-top:18px">QUÉT MÃ QR MOMO</p>
+    <img src="qr-momo.jpeg"
+     onclick="showQR('qr-momo.jpeg')"
+     style="width:100%;max-width:280px;border-radius:14px;cursor:zoom-in">
    </div>
 
    <p class="muted" style="text-align:center;margin-top:17px">
     Vui lòng chuyển khoản đúng thông tin và số tiền đơn hàng.
    </p>
+
+   <div id="qrPreview" onclick="closeQR()" style="
+    display:none;position:fixed;inset:0;z-index:99999;
+    background:rgba(0,0,0,.88);
+    align-items:center;justify-content:center;padding:20px;
+   ">
+    <span style="position:absolute;top:25px;right:25px;color:white;font-size:32px">✕</span>
+    <img id="qrPreviewImg" style="width:100%;max-width:420px;border-radius:15px">
+   </div>
   `;
- }
+}
  if(type === "history"){
   body.innerHTML = "<h2>Lịch sử đơn hàng</h2>";
 
@@ -1279,6 +1301,15 @@ function copyPayment(value){
  }
 }
 
+function showQR(src){
+ const preview = document.getElementById("qrPreview");
+ document.getElementById("qrPreviewImg").src = src;
+ preview.style.display = "flex";
+}
+
+function closeQR(){
+ document.getElementById("qrPreview").style.display = "none";
+}
 function closeModal(){
  const modal = document.getElementById("modal");
  modal.classList.remove("show");
