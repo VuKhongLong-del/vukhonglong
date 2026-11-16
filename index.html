@@ -2127,9 +2127,18 @@ function renderReviewList(snapshot){
       "★".repeat(data.rating)+"☆".repeat(5-data.rating);
 
     const comment = document.createElement("p");
-    comment.textContent = data.comment || "Không có nhận xét.";
+comment.textContent = data.comment || "Không có nhận xét.";
 
-    item.append(rating,comment);
+const time = document.createElement("small");
+time.style.cssText = "display:block;color:#999;font-size:12px;margin-top:6px;";
+
+if (data.createdAt) {
+  time.textContent = data.createdAt.toDate().toLocaleString("vi-VN");
+} else {
+  time.textContent = "Chưa có thời gian";
+}
+
+item.append(rating,comment,time);
     list.appendChild(item);
   });
 
