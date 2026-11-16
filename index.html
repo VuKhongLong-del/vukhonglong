@@ -1088,7 +1088,72 @@ function closeOrderConfirm(){
   "none";
 }
 
+
 async function submitConfirmedOrder(){
+ if(!pendingOrder) return;
+
+ const order = pendingOrder;
+
+ // LƯU ĐƠN VÀO FIREBASE TRƯỚC
+ try {
+  await window.saveOrderToFirebase(order);
+ } catch(error) {
+  console.error("Lỗi lưu đơn Firebase:", error);
+  alert("Không thể lưu đơn hàng lên hệ thống. Vui lòng thử lại.");
+  return;
+ }
+
+ pendingOrder = null;
+
+ document.getElementById("confirmOrderModal").style.display =
+  "none";
+
+ // LƯU LỊCH SỬ TRÊN THIẾT BỊ
+ orders.unshift(order);
+
+ try {
+  localStorage.setItem("vkl_orders", JSON.stringify(orders));
+ } catch(e) {
+  console.warn("Không lưu được lịch sử trên thiết bị:", e);
+ }
+
+ // GỬI EMAIL THÔNG BÁO
+ try {
+  await emailjs.send(
+   "service_zta7ls2",
+   "template_m9uu0an",
+   {
+    order_id: order.id,
+    service: order.service,
+    count: order.count,
+    quantity: numberFormat(order.quantity),
+    total: money(order.total),
+    codes: order.codes,
+    date: order.date
+   },
+   {
+    publicKey: "aWRDUtsq1sqapgcZJ"
+   }
+  );
+
+  alert("TẠO ĐƠN THÀNH CÔNG!\n\n" +
+   "Mã đơn: " + order.id + "\n" +
+   "Dịch vụ: " + order.service + "\n" +
+   "Số dòng mã: " + order.count + "\n" +
+   order.label + ": " + numberFormat(order.quantity) + "\n" +
+   "Tổng tiền: " + money(order.total) +
+   "\n\nĐã lưu đơn lên hệ thống và gửi email thông báo!");
+ } catch(error) {
+  console.error("Lỗi gửi email:", error);
+
+  alert("ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
+   "Mã đơn: " + order.id +
+   "\nTuy nhiên, email thông báo chưa gửi được.");
+ }
+
+ document.getElementById("codes").value = "";
+ update();
+}
  if(!pendingOrder) return;
 
  const order = pendingOrder;
@@ -1403,11 +1468,14 @@ if(type === "progress"){
     </div>
 
     <div id="vkl-progress-admin" style="margin-top:18px"></div>
+<div id="vkl-order-admin" style="margin-top:18px"></div>
   `;
 
   if(window.renderEventProgress){
     window.renderEventProgress();
   }
+if(window.renderOrderAdmin){
+  window.renderOrderAdmin();
 }
  
 const modal = document.getElementById("modal");
@@ -2190,6 +2258,192 @@ window.saveOrderToFirebase = async function(order) {
   await batch.commit();
   return true;
 };
+
+window.lookupOrderProgress = async function() {
+  const codeInput = document.getElementById("vkl-order-code");
+  const result = document.getElementById("vkl-order-result");
+
+  const code = codeInput.value.trim().toUpperCase();
+
+  if (!code) {
+    result.textContent = "Vui lòng nhập mã đơn hàng.";
+    return;
+  }
+
+  result.textContent = "Đang tìm đơn hàng...";
+
+  try {
+    const doc = await db
+      .collection("orderTracking")
+      .doc(code)
+      .get();
+
+    if (!doc.exists) {
+      result.textContent = "Không tìm thấy đơn hàng. Vui lòng kiểm tra lại mã.";
+      return;
+    }
+
+    const data = doc.data();
+
+    result.innerHTML = `
+      <div style="background:#293650;padding:15px;border-radius:12px;">
+        <h3 style="margin-top:0;">📦 THÔNG TIN ĐƠN HÀNG</h3>
+        <p><b>Mã đơn:</b> <span id="vkl-result-code"></span></p>
+        <p><b>Dịch vụ:</b> <span id="vkl-result-service"></span></p>
+        <p><b>Trạng thái:</b> <span id="vkl-result-status"></span></p>
+        <p><b>Tiến độ:</b> <span id="vkl-result-percent"></span></p>
+        <div style="height:12px;background:#39445e;border-radius:20px;overflow:hidden;">
+          <div id="vkl-result-bar" style="height:100%;width:0%;background:#16a36a;"></div>
+        </div>
+        <p><b>Dự kiến hoàn thành:</b> <span id="vkl-result-eta"></span></p>
+        <p><b>Ghi chú:</b> <span id="vkl-result-note"></span></p>
+      </div>
+    `;
+
+    document.getElementById("vkl-result-code").textContent = code;
+    document.getElementById("vkl-result-service").textContent = data.service || "";
+    document.getElementById("vkl-result-status").textContent = data.status || "";
+    document.getElementById("vkl-result-percent").textContent =
+      Math.max(0, Math.min(100, Number(data.progress) || 0)) + "%";
+
+    document.getElementById("vkl-result-bar").style.width =
+      Math.max(0, Math.min(100, Number(data.progress) || 0)) + "%";
+
+    document.getElementById("vkl-result-eta").textContent = data.eta || "Chưa xác định";
+    document.getElementById("vkl-result-note").textContent = data.note || "Không có";
+  } catch (error) {
+    console.error("Lỗi tra cứu đơn:", error);
+    result.textContent = "Không thể tra cứu lúc này. Vui lòng thử lại.";
+  }
+};
+
+function escapeOrderText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+// HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
+window.renderOrderAdmin = async function() {
+  const area = document.getElementById("vkl-order-admin");
+  if (!area) return;
+
+  if (!currentManager || currentManager.email !== managerEmail) {
+    area.innerHTML = "";
+    return;
+  }
+
+  area.innerHTML = "Đang tải danh sách đơn hàng...";
+
+  try {
+    const snapshot = await db.collection("orders")
+      .orderBy("createdAt", "desc")
+      .limit(50)
+      .get();
+
+    if (snapshot.empty) {
+      area.innerHTML = "<p>Chưa có đơn hàng nào.</p>";
+      return;
+    }
+
+    let html = `
+      <div style="background:#1c2539;color:white;padding:16px;border-radius:15px;">
+        <h3 style="text-align:center;">🔐 QUẢN LÝ ĐƠN HÀNG</h3>
+        <p style="color:#aab8df;text-align:center;">
+          50 đơn hàng gần nhất
+        </p>
+    `;
+
+    snapshot.forEach(doc => {
+      const order = doc.data();
+      const id = doc.id;
+
+      // Chỉ chấp nhận mã đơn theo định dạng mới
+      if (!/^VKL-[A-F0-9]{32}$/.test(id)) return;
+
+      html += `
+        <div style="background:#293650;padding:13px;border-radius:12px;margin-top:12px;">
+          <b>${escapeOrderText(id)}</b>
+          <p>Dịch vụ: ${escapeOrderText(order.service)}</p>
+          <p>Số dòng mã: ${escapeOrderText(order.count)}</p>
+          <p>Số lượng: ${escapeOrderText(order.quantity)}</p>
+          <p>Tổng tiền: ${escapeOrderText(order.total)}</p>
+          <button onclick="window.updateOrderProgress('${id}')"
+            style="width:100%;padding:11px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold;">
+            CẬP NHẬT TIẾN ĐỘ
+          </button>
+        </div>
+      `;
+    });
+
+    html += "</div>";
+    area.innerHTML = html;
+
+  } catch(error) {
+    console.error("Lỗi tải danh sách đơn:", error);
+    area.textContent = "Không tải được danh sách đơn hàng.";
+  }
+};
+
+// CẬP NHẬT TIẾN ĐỘ ĐƠN
+window.updateOrderProgress = async function(code) {
+  if (!currentManager || currentManager.email !== managerEmail) {
+    alert("Bạn không có quyền quản lý đơn hàng.");
+    return;
+  }
+
+  const status = prompt("Nhập trạng thái đơn hàng:");
+  if (status === null) return;
+
+  const progressText = prompt("Nhập tiến độ từ 0 đến 100:");
+  if (progressText === null) return;
+
+  const progress = Number(progressText);
+
+  if (!Number.isInteger(progress) || progress < 0 || progress > 100) {
+    alert("Tiến độ phải là số nguyên từ 0 đến 100.");
+    return;
+  }
+
+  const eta = prompt("Nhập thời gian dự kiến hoàn thành:");
+  if (eta === null) return;
+
+  const note = prompt("Nhập ghi chú cho khách hàng:");
+  if (note === null) return;
+
+  try {
+    await db.collection("orderTracking").doc(code).update({
+      status: status.trim(),
+      progress: progress,
+      eta: eta.trim(),
+      note: note.trim(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("Đã cập nhật tiến độ đơn hàng!");
+    await window.renderOrderAdmin();
+
+  } catch(error) {
+    console.error("Lỗi cập nhật tiến độ:", error);
+    alert("Không cập nhật được. Vui lòng kiểm tra quyền Firebase.");
+  }
+};
+
+// TỰ TẢI BẢNG KHI QUẢN TRỊ ĐĂNG NHẬP
+auth.onAuthStateChanged(user => {
+  if (user && user.email === managerEmail && user.emailVerified) {
+    currentManager = user;
+    window.renderOrderAdmin();
+  } else {
+    currentManager = null;
+    const area = document.getElementById("vkl-order-admin");
+    if (area) area.innerHTML = "";
+  }
+});
 
   }catch(error){
     console.error(error);
