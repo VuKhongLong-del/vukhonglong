@@ -1346,7 +1346,60 @@ if(type === "progress"){
       </p>
     </div>
 
-        <div id="vkl-progress-admin" style="margin-top:18px"></div>
+        
+    <!-- TRA CỨU TIẾN ĐỘ ĐƠN HÀNG -->
+    <div style="
+      background:#1c2539;
+      color:white;
+      padding:18px;
+      border-radius:15px;
+      margin-top:18px;
+    ">
+      <h3 style="text-align:center;margin-top:0">
+        📦 TRA CỨU TIẾN ĐỘ ĐƠN HÀNG
+      </h3>
+
+      <p style="color:#aab8df;font-size:13px;text-align:center">
+        Nhập mã đơn hàng để xem tiến độ xử lý riêng của bạn
+      </p>
+
+      <input
+        id="vkl-order-code"
+        type="text"
+        placeholder="Ví dụ: VKL-XXXXXXXX"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          padding:13px;
+          border:1px solid #52617f;
+          border-radius:10px;
+          background:#fff;
+          color:#111;
+          font-size:15px;
+          margin-bottom:10px;
+        "
+      >
+
+      <button
+        onclick="lookupOrderProgress()"
+        style="
+          width:100%;
+          padding:13px;
+          border:0;
+          border-radius:10px;
+          background:#16a36a;
+          color:white;
+          font-weight:900;
+          font-size:15px;
+        "
+      >
+        TRA CỨU ĐƠN HÀNG
+      </button>
+
+      <div id="vkl-order-result" style="margin-top:15px"></div>
+    </div>
+
+    <div id="vkl-progress-admin" style="margin-top:18px"></div>
   `;
 
   if(window.renderEventProgress){
