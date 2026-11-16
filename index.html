@@ -2225,8 +2225,22 @@ window.lookupOrderProgress = async function() {
     document.getElementById("vkl-result-percent").textContent =
       Math.max(0, Math.min(100, Number(data.progress) || 0)) + "%";
 
-    document.getElementById("vkl-result-bar").style.width =
-      Math.max(0, Math.min(100, Number(data.progress) || 0)) + "%";
+    
+const progressValue = Math.max(
+  0,
+  Math.min(100, Number(data.progress) || 0)
+);
+
+const progressBar = document.getElementById("vkl-result-bar");
+
+progressBar.style.width = progressValue + "%";
+progressBar.style.minWidth = progressValue > 0 ? "4px" : "0";
+progressBar.style.backgroundColor = "#16a36a";
+progressBar.style.height = "100%";
+progressBar.style.display = "block";
+progressBar.style.borderRadius = "20px";
+progressBar.style.transition = "width 0.5s ease";
+
 
     document.getElementById("vkl-result-eta").textContent = data.eta || "Chưa xác định";
     document.getElementById("vkl-result-note").textContent = data.note || "Không có";
