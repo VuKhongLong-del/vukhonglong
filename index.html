@@ -1144,73 +1144,77 @@ if(type === "contact"){
   `;
 }
  
+
 if(type === "transfer"){
   body.innerHTML = `
    <h2 style="text-align:center">💳 THÔNG TIN THANH TOÁN</h2>
 
    <div class="payment-box" style="
     background:#f3f5ff;
-    padding:17px;
+    padding:20px;
     border-radius:16px;
     margin-top:18px;
     text-align:center;
    ">
     <h3>🔵 ZALOPAY</h3>
 
-    
-<p class="muted">SỐ TÀI KHOẢN</p>
+    <p class="muted">SỐ TÀI KHOẢN</p>
+    <strong style="display:block;font-size:24px;margin:12px 0">
+     0902287225
+    </strong>
 
-<strong style="display:block;text-align:center;font-size:24px;margin:12px 0">
-  0902287225
-</strong>
+    <button onclick="copyPayment('0902287225')"
+     style="border:0;background:#e3e8ff;color:#3158d9;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700">
+     📋 Sao chép
+    </button>
 
-<button onclick="copyPayment('0902287225')"
- style="border:0;background:#e3e8ff;color:#3158d9;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700;display:block;margin:auto">
- 📋 Sao chép
-</button>
-    </div>
+    <p class="muted" style="margin-top:18px">CHỦ TÀI KHOẢN</p>
+    <strong style="font-size:18px">NGUYEN NGOC SON</strong>
+   </div>
 
-    <p class="muted" style="margin-top:15px">CHỦ TÀI KHOẢN</p>
-    <strong>NGUYEN NGOC SON</strong>
-
-    <p class="muted" style="margin-top:18px">QUÉT MÃ QR ZALOPAY</p>
+   <div style="text-align:center;margin-top:18px">
+    <p class="muted">QUÉT MÃ QR ZALOPAY</p>
     <img src="qr-zalopay.jpeg"
      onclick="showQR('qr-zalopay.jpeg')"
      style="width:100%;max-width:280px;border-radius:14px;cursor:zoom-in">
    </div>
 
+   <div style="
+    border-top:2px solid #48516b;
+    margin:28px 0;
+   "></div>
+
    <div class="payment-box" style="
     background:#fff0f6;
-    padding:17px;
+    padding:20px;
     border-radius:16px;
-    margin-top:14px;
+    margin-top:18px;
     text-align:center;
    ">
     <h3>🟣 MOMO</h3>
 
-    
-<p class="muted">SỐ TÀI KHOẢN</p>
+    <p class="muted">SỐ TÀI KHOẢN</p>
+    <strong style="display:block;font-size:24px;margin:12px 0">
+     0902287225
+    </strong>
 
-<strong style="display:block;text-align:center;font-size:24px;margin:12px 0">
-  0902287225
-</strong>
+    <button onclick="copyPayment('0902287225')"
+     style="border:0;background:#ffe0ef;color:#c02675;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700">
+     📋 Sao chép
+    </button>
 
-<button onclick="copyPayment('0902287225')"
- style="border:0;background:#ffe0ef;color:#c02675;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700;display:block;margin:auto">
- 📋 Sao chép
-</button>
-    </div>
+    <p class="muted" style="margin-top:18px">CHỦ TÀI KHOẢN</p>
+    <strong style="font-size:18px">NGUYEN NGOC SON</strong>
+   </div>
 
-    <p class="muted" style="margin-top:15px">CHỦ TÀI KHOẢN</p>
-    <strong>NGUYEN NGOC SON</strong>
-
-    <p class="muted" style="margin-top:18px">QUÉT MÃ QR MOMO</p>
+   <div style="text-align:center;margin-top:18px">
+    <p class="muted">QUÉT MÃ QR MOMO</p>
     <img src="qr-momo.jpeg"
      onclick="showQR('qr-momo.jpeg')"
      style="width:100%;max-width:280px;border-radius:14px;cursor:zoom-in">
    </div>
 
-   <p class="muted" style="text-align:center;margin-top:17px">
+   <p class="muted" style="text-align:center;margin-top:20px">
     Vui lòng chuyển khoản đúng thông tin và số tiền đơn hàng.
    </p>
 
