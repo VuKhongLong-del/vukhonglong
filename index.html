@@ -143,6 +143,25 @@ textarea:focus{border-color:#7052ed}
  align-items:center;justify-content:center
 }
 .modal.show{display:flex}
+
+/* TRANG CHUYỂN KHOẢN VÀ LỊCH SỬ */
+.modal.page-mode{
+ display:flex;
+ padding:0;
+ background:#f3f5ff;
+ align-items:stretch;
+ justify-content:stretch;
+}
+
+.modal.page-mode .modal-content{
+ width:100%;
+ max-width:none;
+ height:100%;
+ max-height:100%;
+ overflow-y:auto;
+ border-radius:0;
+ padding:22px;
+}
 .modal-content{
  width:100%;max-width:480px;max-height:88vh;
  overflow:auto;background:white;border-radius:22px;padding:21px
@@ -1132,7 +1151,30 @@ if(type === "contact"){
   `;
  }
 
- document.getElementById("modal").classList.add("show");
+ 
+const modal = document.getElementById("modal");
+
+if(type === "transfer" || type === "history"){
+ modal.classList.add("page-mode");
+
+ body.insertAdjacentHTML("afterbegin", `
+  <button onclick="closeModal()" style="
+   border:0;
+   background:#e8eaff;
+   color:#5146c8;
+   padding:11px 17px;
+   border-radius:12px;
+   font-weight:900;
+   margin-bottom:18px;
+   font-size:15px;">
+   ← QUAY LẠI TRANG CHỦ
+  </button>
+ `);
+} else {
+ modal.classList.remove("page-mode");
+}
+
+modal.classList.add("show");
 }
 function copyPayment(value){
  if(navigator.clipboard && window.isSecureContext){
@@ -1155,8 +1197,11 @@ function copyPayment(value){
   document.body.removeChild(input);
  }
 }
+
 function closeModal(){
- document.getElementById("modal").classList.remove("show");
+ const modal = document.getElementById("modal");
+ modal.classList.remove("show");
+ modal.classList.remove("page-mode");
 }
 
 function goHome(){
