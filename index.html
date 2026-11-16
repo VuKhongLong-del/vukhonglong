@@ -1811,18 +1811,6 @@ function renderEventProgress(){
 
 // THEO DÕI ĐĂNG NHẬP
 auth.onAuthStateChanged(user=>{
-  console.log("Tài khoản Google:", user ? user.email : "Chưa đăng nhập");
-
-  currentManager = user &&
-    user.email &&
-    user.email.toLowerCase() === managerEmail.toLowerCase()
-      ? user
-      : null;
-
-  console.log("Quyền quản lý:", currentManager ? "ĐÃ CẤP" : "CHƯA CẤP");
-
-  renderEventProgress();
-});
   currentManager = user && user.email === managerEmail ? user : null;
   renderEventProgress();
 });
