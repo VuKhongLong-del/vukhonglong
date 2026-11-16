@@ -2272,8 +2272,16 @@ window.lookupOrderProgress = async function() {
       }
 
       percent.textContent = progress + "%";
-      bar.style.width = progress + "%";
-      time.textContent = timeText;
+bar.style.width = progress + "%";
+time.textContent = timeText;
+
+const statusElement = document.getElementById("vkl-result-status");
+
+if (progress >= 100) {
+  statusElement.textContent = "Đã hoàn thành";
+} else {
+  statusElement.textContent = data.status || "";
+}
     }
 
     updateProgress();
