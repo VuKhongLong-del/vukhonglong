@@ -2247,6 +2247,7 @@ function escapeOrderText(value) {
 }
 
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
+
 window.renderOrderAdmin = async function() {
   const area = document.getElementById("vkl-order-admin");
   if (!area) return;
@@ -2264,24 +2265,39 @@ window.renderOrderAdmin = async function() {
       .limit(50)
       .get();
 
-    if (snapshot.empty) {
-      area.innerHTML = "<p>Chưa có đơn hàng nào.</p>";
-      return;
-    }
-
     let html = `
       <div style="background:#1c2539;color:white;padding:16px;border-radius:15px;">
-        <h3 style="text-align:center;">🔐 QUẢN LÝ ĐƠN HÀNG</h3>
-        <p style="color:#aab8df;text-align:center;">
+        <h3 style="text-align:center;">🔐 QUẢN LÝ TIẾN ĐỘ ĐƠN HÀNG</h3>
+
+        <div style="background:#293650;padding:14px;border-radius:12px;margin-top:12px;">
+          <b>NHẬP MÃ ĐƠN KHÁCH HÀNG</b>
+          <input
+            id="vkl-admin-order-code"
+            type="text"
+            placeholder="Nhập mã đơn VKL-..."
+            style="width:100%;box-sizing:border-box;padding:12px;margin-top:10px;border:0;border-radius:8px;"
+          >
+          <button
+            onclick="window.updateOrderProgressByCode()"
+            style="width:100%;padding:12px;margin-top:10px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold;"
+          >
+            TRA CỨU VÀ CẬP NHẬT TIẾN ĐỘ
+          </button>
+        </div>
+
+        <p style="color:#aab8df;text-align:center;margin-top:18px;">
           50 đơn hàng gần nhất
         </p>
     `;
+
+    if (snapshot.empty) {
+      html += "<p>Chưa có đơn hàng nào.</p>";
+    }
 
     snapshot.forEach(doc => {
       const order = doc.data();
       const id = doc.id;
 
-      // Chỉ chấp nhận mã đơn theo định dạng mới
       if (!/^VKL-[A-F0-9]{32}$/.test(id)) return;
 
       html += `
@@ -2305,6 +2321,44 @@ window.renderOrderAdmin = async function() {
   } catch(error) {
     console.error("Lỗi tải danh sách đơn:", error);
     area.textContent = "Không tải được danh sách đơn hàng.";
+  }
+};
+
+
+window.updateOrderProgressByCode = async function() {
+  if (!currentManager || currentManager.email !== managerEmail) {
+    alert("Bạn không có quyền quản lý đơn hàng.");
+    return;
+  }
+
+  const input = document.getElementById("vkl-admin-order-code");
+  const code = input ? input.value.trim().toUpperCase() : "";
+
+  if (!/^VKL-[A-F0-9]{32}$/.test(code)) {
+    alert("Mã đơn không đúng định dạng.");
+    return;
+  }
+
+  try {
+    const orderSnap = await db.collection("orders").doc(code).get();
+
+    if (!orderSnap.exists) {
+      alert("Không tìm thấy đơn hàng này.");
+      return;
+    }
+
+    const trackingSnap = await db.collection("orderTracking").doc(code).get();
+
+    if (!trackingSnap.exists) {
+      alert("Đơn hàng chưa có dữ liệu tiến độ.");
+      return;
+    }
+
+    await window.updateOrderProgress(code);
+
+  } catch(error) {
+    console.error("Lỗi tra cứu mã đơn:", error);
+    alert("Không thể tra cứu đơn hàng.");
   }
 };
 
