@@ -1459,6 +1459,19 @@ function goOrder(){
 
   <h3>Đánh giá gần đây</h3>
   <div id="vkl-review-list">Đang tải đánh giá...</div>
+
+<button id="vkl-more" type="button" style="
+display:none;
+width:100%;
+margin-top:12px;
+padding:10px;
+border:0;
+border-radius:10px;
+background:#6650ed;
+color:white;
+font-weight:bold;">
+XEM THÊM
+</button>
 </section>
 
 <style>
@@ -1624,7 +1637,18 @@ function goOrder(){
     const db = firebase.firestore();
     const reviews = db.collection("reviews");
     let selectedRating = 0;
+let showAllReviews = false;
+let latestReviewSnapshot = null;
 
+const moreButton = document.getElementById("vkl-more");
+
+moreButton.addEventListener("click",()=>{
+  showAllReviews = !showAllReviews;
+
+  if(latestReviewSnapshot){
+    renderReviewList(latestReviewSnapshot);
+  }
+});
     const stars = document.querySelectorAll("#vkl-star-picker button");
     const status = document.getElementById("vkl-status");
     const submit = document.getElementById("vkl-submit");
@@ -1676,44 +1700,61 @@ function goOrder(){
       }
     });
 
-    reviews.orderBy("createdAt","desc").limit(50).onSnapshot(snapshot=>{
-      const list = document.getElementById("vkl-review-list");
-      const count = snapshot.size;
-      let total = 0;
-      list.replaceChildren();
 
-      snapshot.forEach(doc=>{
-        const data = doc.data();
-        total += data.rating;
+function renderReviewList(snapshot){
+  const list = document.getElementById("vkl-review-list");
+  const count = snapshot.size;
+  let total = 0;
 
-        const item = document.createElement("div");
-        item.className = "vkl-review-item";
+  snapshot.forEach(doc=>{
+    total += doc.data().rating;
+  });
 
-        const rating = document.createElement("div");
-        rating.className = "vkl-review-stars";
-        rating.textContent = "★".repeat(data.rating) +
-          "☆".repeat(5-data.rating);
+  document.getElementById("vkl-average").textContent =
+    count ? (total/count).toFixed(1)+"/5" : "--/5";
 
-        const comment = document.createElement("p");
-        comment.textContent = data.comment || "Không có nhận xét.";
-        item.append(rating,comment);
-        list.appendChild(item);
-      });
+  document.getElementById("vkl-count").textContent =
+    count+" lượt đánh giá";
 
-      document.getElementById("vkl-average").textContent =
-        count ? (total/count).toFixed(1)+"/5" : "--/5";
+  list.replaceChildren();
 
-      document.getElementById("vkl-count").textContent =
-        count+" lượt đánh giá";
+  const visibleDocs = showAllReviews
+    ? snapshot.docs
+    : snapshot.docs.slice(0,3);
 
-      if(!count){
-        list.textContent = "Chưa có đánh giá nào. Hãy là người đầu tiên!";
-      }
-    },error=>{
-      console.error(error);
-      document.getElementById("vkl-review-list").textContent =
-        "Không tải được đánh giá. Vui lòng thử lại.";
-    });
+  visibleDocs.forEach(doc=>{
+    const data = doc.data();
+    const item = document.createElement("div");
+    item.className = "vkl-review-item";
+
+    const rating = document.createElement("div");
+    rating.className = "vkl-review-stars";
+    rating.textContent =
+      "★".repeat(data.rating)+"☆".repeat(5-data.rating);
+
+    const comment = document.createElement("p");
+    comment.textContent = data.comment || "Không có nhận xét.";
+
+    item.append(rating,comment);
+    list.appendChild(item);
+  });
+
+  if(!count){
+    list.textContent = "Chưa có đánh giá nào. Hãy là người đầu tiên!";
+  }
+
+  moreButton.style.display = count > 3 ? "block" : "none";
+  moreButton.textContent = showAllReviews ? "THU GỌN" : "XEM THÊM";
+}
+
+reviews.orderBy("createdAt","desc").limit(50).onSnapshot(snapshot=>{
+  latestReviewSnapshot = snapshot;
+  renderReviewList(snapshot);
+},error=>{
+  console.error(error);
+  document.getElementById("vkl-review-list").textContent =
+    "Không tải được đánh giá. Vui lòng thử lại.";
+});
 
   }catch(error){
     console.error(error);
