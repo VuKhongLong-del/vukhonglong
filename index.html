@@ -2158,6 +2158,36 @@ reviews.orderBy("createdAt","desc").limit(50).onSnapshot(snapshot=>{
     "Không tải được đánh giá. Vui lòng thử lại.";
 });
 
+window.saveOrderToFirebase = async function(order) {
+  const batch = db.batch();
+
+  const orderRef = db.collection("orders").doc(order.id);
+  const trackingRef = db.collection("orderTracking").doc(order.id);
+
+  batch.set(orderRef, {
+    service: order.service,
+    count: order.count,
+    quantity: order.quantity,
+    total: order.total,
+    codes: order.codes,
+    date: order.date,
+    label: order.label,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  batch.set(trackingRef, {
+    service: order.service,
+    status: "Đã tiếp nhận",
+    progress: 0,
+    eta: "Chưa xác định",
+    note: "Đơn hàng đã được tiếp nhận.",
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  await batch.commit();
+  return true;
+};
+
   }catch(error){
     console.error(error);
     document.getElementById("vkl-status").textContent =
