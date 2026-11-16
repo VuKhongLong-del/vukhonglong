@@ -944,42 +944,43 @@ async function submitConfirmedOrder(){
 
 function openModal(type){
  const body = document.getElementById("modalBody");
- if(type === "contact"){
+
+if(type === "contact"){
   body.innerHTML = `
    <h2 style="text-align:center">📞 LIÊN HỆ VUKHONGLONG</h2>
    <p class="muted" style="text-align:center">
     Kết nối với tôi qua các nền tảng
    </p>
 
-   <a href="https://zalo.me/0902287225" target="_blank"
+   <div style="display:flex;flex-direction:column;gap:8px">
+
+    <a href="https://zalo.me/0902287225" target="_blank"
     rel="noopener noreferrer"
-    style="display:block;background:#e9f2ff;padding:17px;border-radius:14px;margin-top:14px;text-decoration:none;color:#1769d2;font-weight:900">
+    style="display:block;background:#e9f2ff;padding:11px 14px;border-radius:10px;text-decoration:none;color:#1769d2;font-weight:900">
     💬 ZALO
-    <small style="display:block;color:#66758e;margin-top:5px">☝️</small>
-   </a>
+    </a>
 
-   <a href="https://www.facebook.com/share/19mgeiTH7o/?mibextid=wwXIfr" target="_blank"
+    <a href="https://www.facebook.com/share/19mgeiTH7o/?mibextid=wwXIfr" target="_blank"
     rel="noopener noreferrer"
-    style="display:block;background:#edf2ff;padding:17px;border-radius:14px;margin-top:12px;text-decoration:none;color:#2459c9;font-weight:900">
+    style="display:block;background:#edf2ff;padding:11px 14px;border-radius:10px;text-decoration:none;color:#2459c9;font-weight:900">
     🔵 FACEBOOK
-    <small style="display:block;color:#66758e;margin-top:5px">☝️</small>
-   </a>
+    </a>
 
-   <a href="https://discord.gg/QUeSyr2cM" target="_blank"
+    <a href="https://discord.gg/QUeSyr2cM" target="_blank"
     rel="noopener noreferrer"
-    style="display:block;background:#f0edff;padding:17px;border-radius:14px;margin-top:12px;text-decoration:none;color:#6352ce;font-weight:900">
+    style="display:block;background:#f0edff;padding:11px 14px;border-radius:10px;text-decoration:none;color:#6352ce;font-weight:900">
     🎮 DISCORD
-    <small style="display:block;color:#66758e;margin-top:5px">☝️</small>
-   </a>
+    </a>
 
-   <a href="https://www.tiktok.com/@son.hm_7" target="_blank"
+    <a href="https://www.tiktok.com/@son.hm_7" target="_blank"
     rel="noopener noreferrer"
-    style="display:block;background:#f5f0f2;padding:17px;border-radius:14px;margin-top:12px;text-decoration:none;color:#111;font-weight:900">
+    style="display:block;background:#f5f0f2;padding:11px 14px;border-radius:10px;text-decoration:none;color:#111;font-weight:900">
     🎵 TIKTOK
-    <small style="display:block;color:#66758e;margin-top:5px">☝️</small>
-   </a>
+    </a>
+
+   </div>
   `;
- }
+}
  if(type === "transfer"){
   body.innerHTML = `
    <h2 style="text-align:center">💳 THÔNG TIN THANH TOÁN</h2>
