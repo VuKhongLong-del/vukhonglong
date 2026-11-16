@@ -222,6 +222,12 @@ textarea:focus{border-color:#7052ed}
  pointer-events:none;
 }
 
+.contact-menu a img{
+ width:25px;
+ height:25px;
+ object-fit:contain;
+ display:block;
+}
 /* HIỆU ỨNG NÚT LIÊN HỆ */
 .contact-menu.show a{
  animation: contactPop .45s ease both,
@@ -833,18 +839,30 @@ body.dark .confirm-back {
    <span>📜</span>Lịch sử
   </button>
 
-  <div class="contact-menu" id="contactMenu">
-   <a href="https://zalo.me/0902287225" target="_blank">💬</a>
-   <a href="https://www.facebook.com/share/19mgeiTH7o/?mibextid=wwXIfr" target="_blank">🔵</a>
-   <a href="https://discord.gg/QUeSyr2cM" target="_blank">🎮</a>
-   <a href="https://www.tiktok.com/@son.hm_7" target="_blank">🎵</a>
-  </div>
+  
+<div class="contact-menu" id="contactMenu">
+  <a href="https://zalo.me/0902287225" target="_blank" style="background:#0068ff">
+   <img src="https://cdn.simpleicons.org/zalo/FFFFFF" alt="Zalo">
+  </a>
 
-  <button class="create" onclick="toggleContactMenu()">
-   <span>☎️</span>
-  </button>
+  <a href="https://www.facebook.com/share/19mgeiTH7o/?mibextid=wwXIfr" target="_blank" style="background:#0866ff">
+   <img src="https://cdn.simpleicons.org/facebook/FFFFFF" alt="Facebook">
+  </a>
 
- </nav>
+  <a href="https://discord.gg/QUeSyr2cM" target="_blank" style="background:#5865F2">
+   <img src="https://cdn.simpleicons.org/discord/FFFFFF" alt="Discord">
+  </a>
+
+  <a href="https://www.tiktok.com/@son.hm_7" target="_blank" style="background:#000000">
+   <img src="https://cdn.simpleicons.org/tiktok/FFFFFF" alt="TikTok">
+  </a>
+</div>
+
+<button class="create" onclick="toggleContactMenu()">
+ <span>☎️</span>
+</button>
+
+</nav>
 </div>
 
 <div class="modal" id="modal">
