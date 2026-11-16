@@ -1777,6 +1777,32 @@ if(adminEl){
           💾 LƯU TIẾN ĐỘ
         </button>
 
+<button onclick="pauseEventProgress()" style="
+  width:100%;padding:12px;margin-top:9px;
+  border:0;border-radius:10px;
+  background:#e9a23b;color:white;font-weight:bold">
+  ⏸ TẠM DỪNG
+</button>
+
+<button onclick="resumeEventProgress()" style="
+  width:100%;padding:12px;margin-top:9px;
+  border:0;border-radius:10px;
+  background:#16a36a;color:white;font-weight:bold">
+  ▶ TIẾP TỤC
+</button>
+
+<label>Chỉnh tiến độ thủ công (%)</label>
+<input id="vkl-manual-percent" type="number"
+  min="0" max="100" placeholder="Nhập phần trăm"
+  style="width:100%;padding:11px;margin:7px 0">
+
+<button onclick="manualEventProgress()" style="
+  width:100%;padding:12px;margin-top:5px;
+  border:0;border-radius:10px;
+  background:#6650ed;color:white;font-weight:bold">
+  ✏️ CẬP NHẬT TIẾN ĐỘ
+</button>
+
         <button onclick="firebase.auth().signOut()" style="
           width:100%;padding:11px;margin-top:9px;
           border:0;border-radius:10px;
@@ -1870,6 +1896,104 @@ window.saveEventProgress = async function(){
   }catch(error){
     console.error(error);
     alert("Không lưu được. Hãy kiểm tra quyền Firebase!");
+  }
+};
+
+function getCurrentEventPercent(){
+  if(!progressData) return 0;
+
+  if(progressData.paused){
+    return Number(progressData.pausedPercent || 0);
+  }
+
+  const start = progressData.startAt.toDate().getTime();
+  const end = progressData.endAt.toDate().getTime();
+
+  const elapsed = Math.max(0,Math.min(1,(Date.now()-start)/(end-start)));
+
+  const initial = Number(progressData.startPercent || 0);
+
+  return initial + (100-initial)*elapsed;
+}
+
+// TẠM DỪNG
+window.pauseEventProgress = async function(){
+  if(!currentManager || !progressData || progressData.paused) return;
+
+  const percent = getCurrentEventPercent();
+
+  try{
+    await eventProgress.update({
+      paused: true,
+      pausedPercent: percent,
+      pausedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("Đã tạm dừng tiến độ!");
+  }catch(error){
+    alert("Không thể tạm dừng: "+error.message);
+  }
+};
+
+// TIẾP TỤC
+window.resumeEventProgress = async function(){
+  if(!currentManager || !progressData || !progressData.paused) return;
+
+  try{
+    const now = new Date();
+    const pausedAt = progressData.pausedAt
+      ? progressData.pausedAt.toDate()
+      : now;
+
+    const remaining = Math.max(
+      60000,
+      progressData.endAt.toDate().getTime()-pausedAt.getTime()
+    );
+
+    await eventProgress.update({
+      paused: false,
+      startPercent: Number(progressData.pausedPercent || 0),
+      startAt: firebase.firestore.Timestamp.fromDate(now),
+      endAt: firebase.firestore.Timestamp.fromDate(
+        new Date(now.getTime()+remaining)
+      )
+    });
+
+    alert("Đã tiếp tục tiến độ!");
+  }catch(error){
+    alert("Không thể tiếp tục: "+error.message);
+  }
+};
+
+// CHỈNH TIẾN ĐỘ THỦ CÔNG
+window.manualEventProgress = async function(){
+  if(!currentManager || !progressData) return;
+
+  const input = document.getElementById("vkl-manual-percent");
+  const percent = Number(input.value);
+
+  if(input.value === "" || !Number.isFinite(percent) || percent < 0 || percent > 100){
+    alert("Nhập tiến độ từ 0 đến 100%!");
+    return;
+  }
+
+  if(progressData.endAt.toDate().getTime() <= Date.now()){
+    alert("Sự kiện đã hết thời gian. Hãy cài đặt lại thời gian sự kiện!");
+    return;
+  }
+
+  try{
+    await eventProgress.update({
+      startPercent: percent,
+      pausedPercent: percent,
+      startAt: firebase.firestore.Timestamp.now(),
+      paused: false
+    });
+
+    input.value = "";
+    alert("Đã cập nhật tiến độ!");
+  }catch(error){
+    alert("Không thể cập nhật: "+error.message);
   }
 };
 
