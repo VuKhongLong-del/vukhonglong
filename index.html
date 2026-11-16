@@ -652,6 +652,34 @@ body.dark .confirm-back {
  background:transparent !important;
  border-radius:0 !important;
 }
+
+/* Hiệu ứng điện thoại rung nhẹ */
+.nav .create span{
+ display:inline-block;
+ transform-origin:center;
+ animation:phoneShake 2.5s ease-in-out infinite;
+}
+
+@keyframes phoneShake{
+ 0%, 70%, 100%{
+  transform:rotate(0deg);
+ }
+ 73%{
+  transform:rotate(-12deg);
+ }
+ 76%{
+  transform:rotate(12deg);
+ }
+ 79%{
+  transform:rotate(-10deg);
+ }
+ 82%{
+  transform:rotate(10deg);
+ }
+ 85%{
+  transform:rotate(0deg);
+ }
+}
 </style>
 </head>
 
