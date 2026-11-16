@@ -1685,6 +1685,91 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 const eventProgress = db.collection("eventProgress").doc("main");
 
 const managerEmail = "haphamngu123@gmail.com";
+
+// TRẠNG THÁI TIẾN ĐỘ
+let progressData = null;
+let currentManager = null;
+
+function renderEventProgress(){
+  const percentEl = document.getElementById("vkl-progress-percent");
+  const barEl = document.getElementById("vkl-progress-bar");
+  const statusEl = document.getElementById("vkl-progress-status");
+  const nameEl = document.getElementById("vkl-progress-name");
+  const timeEl = document.getElementById("vkl-progress-time");
+  const adminEl = document.getElementById("vkl-progress-admin");
+
+  if(!percentEl || !barEl) return;
+
+  if(!progressData){
+    percentEl.textContent = "0%";
+    barEl.style.width = "0%";
+    statusEl.textContent = "Chưa có dữ liệu";
+  } else {
+    let percent = Number(progressData.startPercent || 0);
+
+    if(progressData.paused){
+      percent = Number(progressData.pausedPercent || 0);
+    } else if(progressData.startAt && progressData.endAt){
+      const start = progressData.startAt.toDate().getTime();
+      const end = progressData.endAt.toDate().getTime();
+      const now = Date.now();
+
+      if(end > start){
+        const elapsed = Math.max(0,Math.min(1,(now-start)/(end-start)));
+        percent += (100-percent)*elapsed;
+      }
+    }
+
+    percent = Math.max(0,Math.min(100,percent));
+
+    percentEl.textContent = percent.toFixed(1)+"%";
+    barEl.style.width = percent+"%";
+    statusEl.textContent = progressData.paused
+      ? "Đã tạm dừng"
+      : percent >= 100 ? "Đã hoàn thành" : "Đang diễn ra";
+
+    if(nameEl){
+      nameEl.textContent = progressData.name || "SỰ KIỆN LIÊN QUÂN";
+    }
+
+    if(timeEl){
+      timeEl.textContent = progressData.paused
+        ? "Tiến độ đang được tạm dừng"
+        : "Tiến độ tự động cập nhật";
+    }
+  }
+
+  if(adminEl){
+    if(currentManager && currentManager.email === managerEmail){
+      adminEl.innerHTML =
+        "<p style='color:green;font-weight:bold'>✓ Đã đăng nhập tài khoản quản lý</p>" +
+        "<button onclick='firebase.auth().signOut()'>ĐĂNG XUẤT</button>";
+    } else {
+      adminEl.innerHTML =
+        "<button onclick='firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())' style='width:100%;padding:12px;border:0;border-radius:10px;background:#6650ed;color:white;font-weight:bold'>🔐 ĐĂNG NHẬP GOOGLE QUẢN LÝ</button>";
+    }
+  }
+}
+
+// THEO DÕI ĐĂNG NHẬP
+auth.onAuthStateChanged(user=>{
+  currentManager = user && user.email === managerEmail ? user : null;
+  renderEventProgress();
+});
+
+// THEO DÕI DỮ LIỆU FIREBASE
+eventProgress.onSnapshot(snapshot=>{
+  progressData = snapshot.exists ? snapshot.data() : null;
+  renderEventProgress();
+},error=>{
+  console.error("Lỗi tải tiến độ:",error);
+});
+
+// TỰ CẬP NHẬT PHẦN TRĂM
+setInterval(renderEventProgress,1000);
+
+window.renderEventProgress = renderEventProgress;
+
     const reviews = db.collection("reviews");
     let selectedRating = 0;
 let showAllReviews = false;
