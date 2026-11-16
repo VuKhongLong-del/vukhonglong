@@ -1811,7 +1811,14 @@ function renderEventProgress(){
 
 // THEO DÕI ĐĂNG NHẬP
 auth.onAuthStateChanged(user=>{
-  currentManager = user && user.email === managerEmail ? user : null;
+  console.log("Firebase user:", user);
+  console.log("Email:", user ? user.email : "Chưa đăng nhập");
+  console.log("Manager email:", managerEmail);
+
+  currentManager = user && user.email &&
+    user.email.toLowerCase() === managerEmail.toLowerCase()
+      ? user : null;
+
   renderEventProgress();
 });
 
