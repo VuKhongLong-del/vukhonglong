@@ -2178,6 +2178,7 @@ window.saveOrderToFirebase = async function(order) {
   return true;
 };
 
+
 window.lookupOrderProgress = async function() {
   const codeInput = document.getElementById("vkl-order-code");
   const result = document.getElementById("vkl-order-result");
@@ -2189,13 +2190,15 @@ window.lookupOrderProgress = async function() {
     return;
   }
 
+  if (window.vklProgressTimer) {
+    clearInterval(window.vklProgressTimer);
+    window.vklProgressTimer = null;
+  }
+
   result.textContent = "Đang tìm đơn hàng...";
 
   try {
-    const doc = await db
-      .collection("orderTracking")
-      .doc(code)
-      .get();
+    const doc = await db.collection("orderTracking").doc(code).get();
 
     if (!doc.exists) {
       result.textContent = "Không tìm thấy đơn hàng. Vui lòng kiểm tra lại mã.";
@@ -2205,15 +2208,20 @@ window.lookupOrderProgress = async function() {
     const data = doc.data();
 
     result.innerHTML = `
-      <div style="background:#293650;padding:15px;border-radius:12px;">
-        <h3 style="margin-top:0;">📦 THÔNG TIN ĐƠN HÀNG</h3>
+      <div style="background:#293650;color:white;padding:15px;border-radius:12px;">
+        <h3>📦 THÔNG TIN ĐƠN HÀNG</h3>
         <p><b>Mã đơn:</b> <span id="vkl-result-code"></span></p>
         <p><b>Dịch vụ:</b> <span id="vkl-result-service"></span></p>
         <p><b>Trạng thái:</b> <span id="vkl-result-status"></span></p>
         <p><b>Tiến độ:</b> <span id="vkl-result-percent"></span></p>
-        <div style="height:12px;background:#39445e;border-radius:20px;overflow:hidden;">
-          <div id="vkl-result-bar" style="height:100%;width:0%;background:#16a36a;"></div>
+
+        <div style="height:14px;background:#39445e;border-radius:20px;overflow:hidden;">
+          <div id="vkl-result-bar"
+            style="height:100%;width:0%;background:#16a36a;border-radius:20px;transition:width 1s linear;">
+          </div>
         </div>
+
+        <p id="vkl-result-time"></p>
         <p><b>Dự kiến hoàn thành:</b> <span id="vkl-result-eta"></span></p>
         <p><b>Ghi chú:</b> <span id="vkl-result-note"></span></p>
       </div>
@@ -2222,28 +2230,56 @@ window.lookupOrderProgress = async function() {
     document.getElementById("vkl-result-code").textContent = code;
     document.getElementById("vkl-result-service").textContent = data.service || "";
     document.getElementById("vkl-result-status").textContent = data.status || "";
-    document.getElementById("vkl-result-percent").textContent =
-      Math.max(0, Math.min(100, Number(data.progress) || 0)) + "%";
-
-    
-const progressValue = Math.max(
-  0,
-  Math.min(100, Number(data.progress) || 0)
-);
-
-const progressBar = document.getElementById("vkl-result-bar");
-
-progressBar.style.width = progressValue + "%";
-progressBar.style.minWidth = progressValue > 0 ? "4px" : "0";
-progressBar.style.backgroundColor = "#16a36a";
-progressBar.style.height = "100%";
-progressBar.style.display = "block";
-progressBar.style.borderRadius = "20px";
-progressBar.style.transition = "width 0.5s ease";
-
-
     document.getElementById("vkl-result-eta").textContent = data.eta || "Chưa xác định";
     document.getElementById("vkl-result-note").textContent = data.note || "Không có";
+
+    function updateProgress() {
+      let progress = Number(data.progress) || 0;
+      let timeText = "";
+
+      if (
+        Number.isFinite(Number(data.startAt)) &&
+        Number.isFinite(Number(data.endAt)) &&
+        Number(data.endAt) > Number(data.startAt)
+      ) {
+        const start = Number(data.startAt);
+        const end = Number(data.endAt);
+        const now = Date.now();
+
+        progress = Math.max(
+          0,
+          Math.min(100, ((now - start) / (end - start)) * 100)
+        );
+
+        if (now < start) {
+          timeText = "Tiến độ sẽ bắt đầu khi đến giờ đã hẹn.";
+        } else if (now >= end) {
+          timeText = "Đã đến thời gian hoàn thành dự kiến.";
+        } else {
+          timeText = "Tiến độ đang tự động cập nhật.";
+        }
+      }
+
+      progress = Math.round(progress * 10) / 10;
+
+      const bar = document.getElementById("vkl-result-bar");
+      const percent = document.getElementById("vkl-result-percent");
+      const time = document.getElementById("vkl-result-time");
+
+      if (!bar || !percent || !time) {
+        clearInterval(window.vklProgressTimer);
+        return;
+      }
+
+      percent.textContent = progress + "%";
+      bar.style.width = progress + "%";
+      time.textContent = timeText;
+    }
+
+    updateProgress();
+
+    window.vklProgressTimer = setInterval(updateProgress, 1000);
+
   } catch (error) {
     console.error("Lỗi tra cứu đơn:", error);
     result.textContent = "Không thể tra cứu lúc này. Vui lòng thử lại.";
