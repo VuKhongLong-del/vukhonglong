@@ -2919,6 +2919,41 @@ window.openCustomerAuth = function() {
     alert("LỖI: " + error.message);
   }
 };
+window.loadCustomerWallet = async function(uid, username) {
+  const balanceEl = document.getElementById("vkl-coin-balance");
+  if (!balanceEl) return;
+
+  balanceEl.textContent = "Đang tải...";
+
+  try {
+    const db = firebase.firestore();
+    const walletRef = db.collection("wallets").doc(uid);
+    let walletSnap = await walletRef.get();
+
+    if (!walletSnap.exists) {
+      const userId = String(
+        100000 + Array.from(uid)
+          .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 900000, 0)
+      );
+
+      await walletRef.set({
+        userId: userId,
+        username: username,
+        coins: 0,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      walletSnap = await walletRef.get();
+    }
+
+    const coins = Number(walletSnap.data().coins || 0);
+    balanceEl.textContent = coins.toLocaleString("vi-VN") + " Xu";
+
+  } catch (error) {
+    console.error("Lỗi tải ví Xu:", error);
+    balanceEl.textContent = "Lỗi ví: " + (error.code || error.message);
+  }
+};
 </script>
 
 <script>
