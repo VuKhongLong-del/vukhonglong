@@ -2869,6 +2869,23 @@ window.customerLogin = async function() {
     message.textContent = "Lỗi: " + error.message;
   }
 };
+window.customerLogout = async function() {
+  try {
+    if (!window.auth) {
+      alert("Firebase chưa sẵn sàng!");
+      return;
+    }
+
+    await window.auth.signOut();
+
+    alert("Đăng xuất thành công!");
+
+    closeModal();
+
+  } catch(error) {
+    alert("Lỗi đăng xuất: " + error.message);
+  }
+};
 
 alert("ĐÃ TẠO HAI HÀM TÀI KHOẢN!");
 } catch(error) {
