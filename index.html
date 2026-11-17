@@ -771,14 +771,19 @@ body.dark .admin-dark-panel input {
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: adminPinkRun 3s linear infinite;
+    animation: adminPinkBlink 1.2s ease-in-out infinite;
   pointer-events: none;
   z-index: 2;
 }
 
-@keyframes adminPinkRun {
-  to {
-    transform: rotate(360deg);
+@keyframes adminPinkBlink {
+  0%, 100% {
+    opacity: 0.35;
+    filter: brightness(0.8);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.8);
   }
 }
 </style>
@@ -1708,14 +1713,6 @@ if (transferUser) {
 if(type === "progress"){
   body.innerHTML = `
     <h2 style="text-align:center">📊 THEO DÕI TIẾN ĐỘ</h2>
-
-    <div style="
-      background:#1c2539;
-      color:white;
-      padding:18px;
-      border-radius:15px;
-      margin-top:15px;
-    ">
       
       </p>
     </div>
