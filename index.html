@@ -2301,7 +2301,10 @@ function renderReviewList(snapshot){
     const data = doc.data();
     const item = document.createElement("div");
     item.className = "vkl-review-item";
-
+const rawName = String(data.name || "Khách").trim() || "Khách";
+const name = document.createElement("strong");
+name.style.cssText = "display:block;color:#dbe4ff;font-size:13px;margin-bottom:4px;";
+name.textContent = rawName.slice(0, 2) + "••••";
     const rating = document.createElement("div");
     rating.className = "vkl-review-stars";
     rating.textContent =
@@ -2319,7 +2322,7 @@ if (data.createdAt) {
   time.textContent = "Chưa có thời gian";
 }
 
-item.append(rating,comment,time);
+item.append(name,rating,comment,time);
     list.appendChild(item);
   });
 
@@ -2963,11 +2966,17 @@ if (!firebase.apps.length) {
       status.textContent = "Đang gửi đánh giá...";
 
       try {
-        await reviews.add({
-          rating: selectedRating,
-          comment: comment,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        const user = window.auth.currentUser;
+const accountName = user
+  ? (user.email || user.displayName || "Khách").split("@")[0]
+  : "Khách";
+
+await reviews.add({
+  name: accountName,
+  rating: selectedRating,
+  comment: comment,
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
 
         status.textContent = "Gửi đánh giá thành công! Cảm ơn bạn ❤️";
         if (commentEl) commentEl.value = "";
