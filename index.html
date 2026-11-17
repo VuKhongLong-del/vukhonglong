@@ -1868,9 +1868,16 @@ window.customerLogin = async function() {
 
 window.customerLogout = async function() {
   try {
+    if (!window.auth) {
+      alert("Firebase chưa sẵn sàng!");
+      return;
+    }
+
     await window.auth.signOut();
+
     alert("Đã đăng xuất!");
     window.openCustomerAuth();
+
   } catch(error) {
     alert("Lỗi đăng xuất: " + error.message);
   }
@@ -1984,7 +1991,7 @@ function renderEventProgress(){
             ✏️ CẬP NHẬT TIẾN ĐỘ
           </button>
 
-          <button onclick="firebase.auth().signOut()" style="width:100%;padding:11px;margin-top:9px;border:0;border-radius:10px;background:#ddd;color:#222;font-weight:bold">
+          <button onclick="window.customerLogout()" style="width:100%;padding:11px;margin-top:9px;border:0;border-radius:10px;background:#ddd;color:#222;font-weight:bold">
             ĐĂNG XUẤT
           </button>
         </div>
