@@ -2791,7 +2791,20 @@ window.openCustomerAuth = function() {
 };
 </script>
 <script>
-alert("SCRIPT RIÊNG ĐÃ CHẠY");
+try {
+  window.auth = firebase.auth();
+
+  alert(
+    "Firebase Auth: " +
+    typeof window.auth +
+    "\nĐăng ký: " +
+    typeof window.customerRegister +
+    "\nĐăng nhập: " +
+    typeof window.customerLogin
+  );
+} catch(error) {
+  alert("LỖI FIREBASE: " + error.message);
+}
 </script>
 <style>
 .touch-heart{
