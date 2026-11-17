@@ -1780,54 +1780,6 @@ window.openCustomerAuth = function() {
   openModal("account");
 };
 
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "vkl-customer-auth";
-    modal.style.cssText = `
-      position:fixed;inset:0;z-index:999999;
-      background:rgba(0,0,0,.75);
-      display:flex;align-items:center;justify-content:center;
-      padding:15px;
-    `;
-
-    modal.innerHTML = `
-      <div style="background:white;color:#222;padding:22px;
-        border-radius:15px;width:100%;max-width:380px;">
-        <h2 style="text-align:center">TÀI KHOẢN</h2>
-
-        <input id="vkl-auth-email" type="email"
-          placeholder="Địa chỉ email"
-          style="width:100%;box-sizing:border-box;padding:13px;margin:8px 0;">
-
-        <input id="vkl-auth-password" type="password"
-          placeholder="Mật khẩu (ít nhất 6 ký tự)"
-          style="width:100%;box-sizing:border-box;padding:13px;margin:8px 0;">
-
-        <button onclick="window.customerRegister()"
-          style="width:100%;padding:13px;margin-top:10px;background:#16a36a;color:white;border:0;border-radius:9px;">
-          ĐĂNG KÝ
-        </button>
-
-        <button onclick="window.customerLogin()"
-          style="width:100%;padding:13px;margin-top:8px;background:#6650ed;color:white;border:0;border-radius:9px;">
-          ĐĂNG NHẬP
-        </button>
-
-        <button onclick="document.getElementById('vkl-customer-auth').remove()"
-          style="width:100%;padding:12px;margin-top:8px;">
-          ĐÓNG
-        </button>
-
-        <p id="vkl-auth-message" style="font-size:13px;"></p>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-  } else {
-    modal.style.display = "flex";
-  }
-};
-
 window.customerRegister = async function() {
   const email = document.getElementById("vkl-auth-email").value.trim();
   const password = document.getElementById("vkl-auth-password").value;
