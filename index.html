@@ -1530,6 +1530,9 @@ if(type === "progress"){
 if(window.renderOrderAdmin){
   window.renderOrderAdmin();
 }
+if(window.renderEventProgress){
+  window.renderEventProgress();
+}
 }
  
 const modal = document.getElementById("modal");
@@ -2097,8 +2100,14 @@ function renderEventProgress(){
   }
 
   percent = Math.max(0,Math.min(100,percent));
+
+if(percentEl) {
   percentEl.textContent = percent.toFixed(1)+"%";
+}
+
+if(barEl) {
   barEl.style.width = percent+"%";
+}
 
   if(!adminEl) return;
 
@@ -2184,7 +2193,7 @@ function renderEventProgress(){
     `;
   }
 }
-
+window.renderEventProgress = renderEventProgress;
 // THEO DÕI ĐĂNG NHẬP
 window.auth.onAuthStateChanged(user=>{
   console.log("Firebase user:", user);
