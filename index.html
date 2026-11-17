@@ -1293,12 +1293,18 @@ if(type === "contact"){
  
 
 if(type === "transfer"){
-            const transferUser = window.auth.currentUser;
-const transferId = String(
-  100000 + Array.from(transferUser.uid)
-    .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 900000, 0)
-);
-const transferContent = "chuyentien " + transferId;
+            const transferUser = window.auth && window.auth.currentUser;
+
+const transferId = transferUser
+  ? String(
+      100000 + Array.from(transferUser.uid)
+        .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 900000, 0)
+    )
+  : "";
+
+const transferContent = transferId
+  ? "chuyentien " + transferId
+  : "Vui lòng đăng nhập";
   body.innerHTML = `
    <h2 style="text-align:center">💳 THÔNG TIN THANH TOÁN</h2>
 <div class="payment-box" style="padding:15px;margin-top:15px;text-align:center;border-radius:12px">
