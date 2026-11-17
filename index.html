@@ -2802,9 +2802,20 @@ window.openCustomerAuth = function() {
   window.vklReviewInit = true;
 
   try {
-    if (!window.firebase || !firebase.apps.length) {
-      throw new Error("Firebase chưa khởi tạo.");
-    }
+    if (!window.firebase) {
+  throw new Error("Không tìm thấy Firebase SDK.");
+}
+
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyCSdvkb2q8TIDty0fCqOqkJ15KpmFy98sY",
+    authDomain: "vukhonglong-9cfcb.firebaseapp.com",
+    projectId: "vukhonglong-9cfcb",
+    storageBucket: "vukhonglong-9cfcb.firebasestorage.app",
+    messagingSenderId: "821726837864",
+    appId: "1:821726837864:web:6228e0d8fe135eed8c4fdd",
+    measurementId: "G-HL008X522E"
+  });
 
     const db = firebase.firestore();
     const reviews = db.collection("reviews");
