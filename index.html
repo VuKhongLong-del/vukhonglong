@@ -1336,9 +1336,13 @@ if(type === "transfer"){
             const transferUser = window.auth && window.auth.currentUser;
 
 const transferId = transferUser
-  ? String(
-      100000 + Array.from(transferUser.uid)
-        .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 900000, 0)
+  ? (
+      transferUser.email === "haphamngu123@gmail.com"
+        ? "777777"
+        : String(
+            100000 + Array.from(transferUser.uid)
+              .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 900000, 0)
+          )
     )
   : "";
 
