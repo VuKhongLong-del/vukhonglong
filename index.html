@@ -2476,7 +2476,14 @@ window.saveOrderToFirebase = async function(order) {
   await batch.commit();
   return true;
 };
+window.lookupOrderProgress = async function() {
+  const code = document.getElementById("vkl-order-code").value.trim();
+  const result = document.getElementById("vkl-order-result");
 
+  if (!code) {
+    result.textContent = "Vui lòng nhập mã đơn hàng.";
+    return;
+  }
   if (window.vklProgressTimer) {
     clearInterval(window.vklProgressTimer);
     window.vklProgressTimer = null;
