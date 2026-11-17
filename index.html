@@ -2005,7 +2005,34 @@ window.customerLogout = async function() {
 const eventProgress = db.collection("eventProgress").doc("main");
 
 const managerEmail = "haphamngu123@gmail.com";
+// TẢI VÀ KHỞI TẠO VÍ XU
+window.loadCustomerWallet = async function(uid, username) {
+  const balanceEl = document.getElementById("vkl-coin-balance");
+  if (!balanceEl) return;
 
+  try {
+    const walletRef = db.collection("wallets").doc(uid);
+    let walletSnap = await walletRef.get();
+
+    if (!walletSnap.exists) {
+      await walletRef.set({
+        userId: uid,
+        username: username,
+        coins: 0,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      walletSnap = await walletRef.get();
+    }
+
+    const coins = Number(walletSnap.data().coins || 0);
+    balanceEl.textContent = coins.toLocaleString("vi-VN") + " Xu";
+
+  } catch (error) {
+    console.error("Lỗi tải ví Xu:", error);
+    balanceEl.textContent = "Chưa tải được";
+  }
+};
 // TRẠNG THÁI TIẾN ĐỘ
 let progressData = null;
 let currentManager = null;
