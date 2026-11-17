@@ -2794,6 +2794,172 @@ window.openCustomerAuth = function() {
   }
 };
 </script>
+
+<script>
+/* PHẦN ĐÁNH GIÁ ĐỘC LẬP */
+(function(){
+  if (window.vklReviewInit) return;
+  window.vklReviewInit = true;
+
+  try {
+    if (!window.firebase || !firebase.apps.length) {
+      throw new Error("Firebase chưa khởi tạo.");
+    }
+
+    const db = firebase.firestore();
+    const reviews = db.collection("reviews");
+    const stars = document.querySelectorAll("#vkl-star-picker button");
+    const status = document.getElementById("vkl-status");
+    const submit = document.getElementById("vkl-submit");
+    const list = document.getElementById("vkl-review-list");
+    const moreButton = document.getElementById("vkl-more");
+
+    let selectedRating = 0;
+    let showAllReviews = false;
+    let latestReviewSnapshot = null;
+
+    if (!stars.length || !submit || !status || !list) {
+      throw new Error("Không tìm thấy đầy đủ giao diện đánh giá.");
+    }
+
+    stars.forEach(button => {
+      button.addEventListener("click", () => {
+        selectedRating = Number(button.dataset.star);
+        stars.forEach(star => {
+          star.classList.toggle(
+            "selected",
+            Number(star.dataset.star) <= selectedRating
+          );
+        });
+      });
+    });
+
+    function renderReviewList(snapshot) {
+      const count = snapshot.size;
+      let total = 0;
+
+      snapshot.forEach(doc => {
+        total += Number(doc.data().rating) || 0;
+      });
+
+      const average = document.getElementById("vkl-average");
+      const countEl = document.getElementById("vkl-count");
+
+      if (average) {
+        average.textContent = count
+          ? (total / count).toFixed(1) + "/5"
+          : "--/5";
+      }
+
+      if (countEl) countEl.textContent = count + " lượt đánh giá";
+
+      list.replaceChildren();
+
+      const docs = showAllReviews
+        ? snapshot.docs
+        : snapshot.docs.slice(0, 3);
+
+      docs.forEach(doc => {
+        const data = doc.data();
+        const item = document.createElement("div");
+        item.className = "vkl-review-item";
+
+        const rating = document.createElement("div");
+        rating.className = "vkl-review-stars";
+
+        const score = Math.max(0, Math.min(5, Number(data.rating) || 0));
+        rating.textContent = "★".repeat(score) + "☆".repeat(5 - score);
+
+        const comment = document.createElement("p");
+        comment.textContent = data.comment || "Không có nhận xét.";
+
+        const time = document.createElement("small");
+        time.style.cssText =
+          "display:block;color:#999;font-size:12px;margin-top:6px;";
+        time.textContent = data.createdAt && data.createdAt.toDate
+          ? data.createdAt.toDate().toLocaleString("vi-VN")
+          : "Chưa có thời gian";
+
+        item.append(rating, comment, time);
+        list.appendChild(item);
+      });
+
+      if (!count) {
+        list.textContent = "Chưa có đánh giá nào. Hãy là người đầu tiên!";
+      }
+
+      if (moreButton) {
+        moreButton.style.display = count > 3 ? "block" : "none";
+        moreButton.textContent = showAllReviews ? "THU GỌN" : "XEM THÊM";
+      }
+    }
+
+    if (moreButton) {
+      moreButton.addEventListener("click", () => {
+        showAllReviews = !showAllReviews;
+        if (latestReviewSnapshot) {
+          renderReviewList(latestReviewSnapshot);
+        }
+      });
+    }
+
+    submit.addEventListener("click", async () => {
+      const commentEl = document.getElementById("vkl-comment");
+      const comment = commentEl ? commentEl.value.trim() : "";
+
+      if (selectedRating < 1) {
+        status.textContent = "Bạn hãy chọn số sao nhé!";
+        return;
+      }
+
+      if (comment.length > 500) {
+        status.textContent = "Nhận xét tối đa 500 ký tự.";
+        return;
+      }
+
+      submit.disabled = true;
+      status.textContent = "Đang gửi đánh giá...";
+
+      try {
+        await reviews.add({
+          rating: selectedRating,
+          comment: comment,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        status.textContent = "Gửi đánh giá thành công! Cảm ơn bạn ❤️";
+        if (commentEl) commentEl.value = "";
+        selectedRating = 0;
+        stars.forEach(star => star.classList.remove("selected"));
+      } catch (error) {
+        console.error("Lỗi gửi đánh giá:", error);
+        status.textContent = "Không gửi được: " + error.message;
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    reviews.orderBy("createdAt", "desc").limit(50).onSnapshot(
+      snapshot => {
+        latestReviewSnapshot = snapshot;
+        renderReviewList(snapshot);
+      },
+      error => {
+        console.error("Lỗi tải đánh giá:", error);
+        list.textContent = "Không tải được đánh giá: " + error.message;
+      }
+    );
+
+  } catch (error) {
+    console.error("Lỗi khởi tạo đánh giá:", error);
+    const reviewList = document.getElementById("vkl-review-list");
+    if (reviewList) {
+      reviewList.textContent = "Lỗi phần đánh giá: " + error.message;
+    }
+  }
+})();
+</script>
+
 <script>
 try {
   if (!firebase.apps.length) {
