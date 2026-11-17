@@ -1870,6 +1870,18 @@ window.customerLogin = async function() {
 
 window.customerLogout = async function() {
   try {
+    await window.auth.signOut();
+
+    alert("Đã đăng xuất thành công!");
+
+    closeModal();
+    window.openCustomerAuth();
+
+  } catch(error) {
+    alert("Lỗi đăng xuất: " + error.message);
+  }
+};
+  try {
     if (!window.auth) {
       alert("Firebase chưa sẵn sàng!");
       return;
