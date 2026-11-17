@@ -2792,18 +2792,22 @@ window.openCustomerAuth = function() {
 </script>
 <script>
 try {
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCSdvkb2q8TIDty0fCqOqkJ15KpmFy98sY",
+      authDomain: "vukhonglong-9cfcb.firebaseapp.com",
+      projectId: "vukhonglong-9cfcb",
+      storageBucket: "vukhonglong-9cfcb.firebasestorage.app",
+      messagingSenderId: "821726837864",
+      appId: "1:821726837864:web:6228e0d8fe135eed8c4fdd"
+    });
+  }
+
   window.auth = firebase.auth();
 
-  alert(
-    "Firebase Auth: " +
-    typeof window.auth +
-    "\nĐăng ký: " +
-    typeof window.customerRegister +
-    "\nĐăng nhập: " +
-    typeof window.customerLogin
-  );
+  alert("FIREBASE ĐÃ KHỞI TẠO!");
 } catch(error) {
-  alert("LỖI FIREBASE: " + error.message);
+  alert("LỖI: " + error.message);
 }
 </script>
 <style>
