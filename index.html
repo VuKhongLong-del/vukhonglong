@@ -3295,8 +3295,14 @@ window.loadTransferHistory = async function() {
             +${Number(item.amount || 0).toLocaleString("vi-VN")} Xu
           </strong>
         </div>
-        <small style="color:#888">
+                <small style="color:#888;display:block">
           Số dư sau nạp: ${Number(item.balanceAfter || 0).toLocaleString("vi-VN")} Xu
+        </small>
+        <small style="color:#888;display:block;margin-top:5px">
+          <i class="fa fa-clock"></i>
+          ${item.createdAt?.toDate
+            ? item.createdAt.toDate().toLocaleString("vi-VN")
+            : "Chưa có thời gian"}
         </small>
       </div>
     `).join("");
