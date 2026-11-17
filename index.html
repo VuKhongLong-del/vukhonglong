@@ -3774,11 +3774,16 @@ body.dark .vkl-notice-button {
     </div>
 
     <div class="vkl-notice-footer">
-      <button class="vkl-notice-button"
-        onclick="document.getElementById('vkl-notice-overlay').remove()">
-        ✓ TÔI ĐÃ HIỂU & ĐỒNG Ý
-      </button>
-    </div>
+  <button class="vkl-notice-button vkl-notice-close-btn"
+    onclick="document.getElementById('vkl-notice-overlay').remove()">
+    Đóng
+  </button>
+
+  <button class="vkl-notice-button vkl-notice-2h-btn"
+    onclick="localStorage.setItem('vklNoticeHiddenUntil', Date.now() + 2 * 60 * 60 * 1000); document.getElementById('vkl-notice-overlay').remove()">
+    Đóng 2 giờ
+  </button>
+</div>
   </div>
 </div>
 
