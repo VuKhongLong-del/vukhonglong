@@ -3702,16 +3702,20 @@ document.addEventListener("pointerdown",function(e){
 }
 
 .vkl-notice-footer {
-  padding: 15px;
+  padding: 20px;
   border-top: 1px solid #ddd;
-  display: flex;
-  gap: 10px;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
 }
 
-.vkl-notice-button {
-  width: auto;
-flex: 1;
-  padding: 17px 10px;
+.vkl-notice-footer .vkl-notice-button {
+  width: auto !important;
+  flex: 0 0 auto !important;
+  min-width: 135px;
+  padding: 14px 22px;
   border: 0;
   border-radius: 12px;
   background: #ffb900;
@@ -3719,6 +3723,10 @@ flex: 1;
   font-size: 15px;
   font-weight: 900;
   cursor: pointer;
+}
+
+.vkl-notice-footer .vkl-notice-2h-btn {
+  min-width: 195px;
 }
 
 body.dark #vkl-notice-overlay {
