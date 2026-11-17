@@ -1177,8 +1177,8 @@ function openModal(type){
  const body = document.getElementById("modalBody");
 
 if(type === "account"){
-  if(auth.currentUser){
-    const username = auth.currentUser.email.split("@")[0];
+  if(window.auth.currentUser){
+    const username = window.auth.currentUser.email.split("@")[0];
 
     body.innerHTML = `
       <div style="max-width:420px;margin:25px auto;text-align:center">
@@ -1793,8 +1793,8 @@ XEM THÊM
 
     const db = firebase.firestore();
 // KẾT NỐI ĐĂNG NHẬP GOOGLE
-const auth = firebase.auth();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
+window.auth = firebase.auth();
+const googleProvider = new firebase.window.auth.GoogleAuthProvider();
 // ĐĂNG NHẬP VÀ ĐĂNG KÝ KHÁCH HÀNG
 // MỞ TRANG TÀI KHOẢN
 window.openCustomerAuth = function() {
@@ -1827,7 +1827,7 @@ window.customerRegister = async function() {
       throw new Error("Mật khẩu phải có ít nhất 6 ký tự.");
     }
 
-    await auth.createUserWithEmailAndPassword(email, password);
+    await window.auth.createUserWithEmailAndPassword(email, password);
 
     alert("Đăng ký thành công!");
     closeModal();
@@ -1843,7 +1843,7 @@ window.customerLogin = async function() {
   try {
     const email = getCustomerLoginEmail();
 
-    await auth.signInWithEmailAndPassword(email, password);
+    await window.auth.signInWithEmailAndPassword(email, password);
 
     alert("Đăng nhập thành công!");
     closeModal();
@@ -1855,7 +1855,7 @@ window.customerLogin = async function() {
 
 window.customerLogout = async function() {
   try {
-    await auth.signOut();
+    await window.auth.signOut();
     alert("Đã đăng xuất!");
     window.openCustomerAuth();
   } catch(error) {
@@ -1988,7 +1988,7 @@ function renderEventProgress(){
 }
 
 // THEO DÕI ĐĂNG NHẬP
-auth.onAuthStateChanged(user=>{
+window.auth.onAuthStateChanged(user=>{
   console.log("Firebase user:", user);
   console.log("Email:", user ? user.email : "Chưa đăng nhập");
   console.log("Manager email:", managerEmail);
@@ -2679,7 +2679,7 @@ window.saveOrderProgressSchedule = async function(code) {
 
 
 // TỰ TẢI BẢNG KHI QUẢN TRỊ ĐĂNG NHẬP
-auth.onAuthStateChanged(user => {
+window.auth.onAuthStateChanged(user => {
   if (user && user.email === managerEmail && user.emailVerified) {
     currentManager = user;
     window.renderOrderAdmin();
