@@ -1175,34 +1175,55 @@ function toggleContactMenu(){
 }
 function openModal(type){
  const body = document.getElementById("modalBody");
+
 if(type === "account"){
-  body.innerHTML = `
-    <div style="max-width:420px;margin:25px auto;text-align:center">
-      <div style="font-size:55px">👤</div>
-      <h2>TÀI KHOẢN VUKHONGLONG</h2>
-      <p class="muted">Đăng nhập hoặc tạo tài khoản để sử dụng dịch vụ</p>
+  if(auth.currentUser){
+    const username = auth.currentUser.email.split("@")[0];
 
-      <input id="vkl-auth-email" type="email"
-        placeholder="Địa chỉ email"
-        style="width:100%;box-sizing:border-box;padding:14px;margin:9px 0;border:1px solid #ddd;border-radius:10px">
+    body.innerHTML = `
+      <div style="max-width:420px;margin:25px auto;text-align:center">
+        <div style="font-size:55px">👤</div>
+        <h2>TÀI KHOẢN CỦA BẠN</h2>
+        <p style="color:#16a36a;font-weight:bold;font-size:18px">
+          ${username}
+        </p>
+        <p class="muted">Bạn đã đăng nhập thành công</p>
 
-      <input id="vkl-auth-password" type="password"
-        placeholder="Mật khẩu (ít nhất 6 ký tự)"
-        style="width:100%;box-sizing:border-box;padding:14px;margin:9px 0;border:1px solid #ddd;border-radius:10px">
+        <button onclick="window.customerLogout()"
+          style="width:100%;padding:14px;margin-top:15px;background:#e53935;color:white;border:0;border-radius:10px;font-weight:bold">
+          ĐĂNG XUẤT
+        </button>
+      </div>
+    `;
+  } else {
+    body.innerHTML = `
+      <div style="max-width:420px;margin:25px auto;text-align:center">
+        <div style="font-size:55px">👤</div>
+        <h2>TÀI KHOẢN VUKHONGLONG</h2>
+        <p class="muted">Đăng nhập hoặc tạo tài khoản để sử dụng dịch vụ</p>
 
-      <button onclick="window.customerRegister()"
-        style="width:100%;padding:14px;margin-top:12px;background:#16a36a;color:white;border:0;border-radius:10px;font-weight:bold">
-        ĐĂNG KÝ
-      </button>
+        <input id="vkl-auth-username" type="text"
+          placeholder="Tên tài khoản (4–20 chữ và số)"
+          style="width:100%;box-sizing:border-box;padding:14px;margin:9px 0;border:1px solid #ddd;border-radius:10px">
 
-      <button onclick="window.customerLogin()"
-        style="width:100%;padding:14px;margin-top:10px;background:#6650ed;color:white;border:0;border-radius:10px;font-weight:bold">
-        ĐĂNG NHẬP
-      </button>
+        <input id="vkl-auth-password" type="password"
+          placeholder="Mật khẩu (ít nhất 6 ký tự)"
+          style="width:100%;box-sizing:border-box;padding:14px;margin:9px 0;border:1px solid #ddd;border-radius:10px">
 
-      <p id="vkl-auth-message" style="font-size:13px"></p>
-    </div>
-  `;
+        <button onclick="window.customerRegister()"
+          style="width:100%;padding:14px;margin-top:12px;background:#16a36a;color:white;border:0;border-radius:10px;font-weight:bold">
+          ĐĂNG KÝ
+        </button>
+
+        <button onclick="window.customerLogin()"
+          style="width:100%;padding:14px;margin-top:10px;background:#6650ed;color:white;border:0;border-radius:10px;font-weight:bold">
+          ĐĂNG NHẬP
+        </button>
+
+        <p id="vkl-auth-message" style="font-size:13px"></p>
+      </div>
+    `;
+  }
 }
 
 if(type === "contact"){
@@ -1780,38 +1801,64 @@ window.openCustomerAuth = function() {
   openModal("account");
 };
 
+
+function getCustomerLoginEmail() {
+  const username = document.getElementById("vkl-auth-username").value.trim();
+
+  if (!/^[A-Za-z0-9]{4,20}$/.test(username)) {
+    throw new Error("Tên tài khoản phải có 4–20 ký tự, chỉ gồm chữ và số.");
+  }
+
+  return username.toLowerCase() + "@login.vukhongglong.com";
+}
+
 window.customerRegister = async function() {
-  const email = document.getElementById("vkl-auth-email").value.trim();
+  const message = document.getElementById("vkl-auth-message");
   const password = document.getElementById("vkl-auth-password").value;
 
   try {
+    const email = getCustomerLoginEmail();
+
+    if (password.length < 6) {
+      throw new Error("Mật khẩu phải có ít nhất 6 ký tự.");
+    }
+
     await auth.createUserWithEmailAndPassword(email, password);
+
     alert("Đăng ký thành công!");
     closeModal();
   } catch(error) {
-    document.getElementById("vkl-auth-message").textContent =
-      "Lỗi: " + error.message;
+    message.textContent = "Lỗi: " + error.message;
   }
 };
 
 window.customerLogin = async function() {
-  const email = document.getElementById("vkl-auth-email").value.trim();
+  const message = document.getElementById("vkl-auth-message");
   const password = document.getElementById("vkl-auth-password").value;
 
   try {
+    const email = getCustomerLoginEmail();
+
     await auth.signInWithEmailAndPassword(email, password);
+
     alert("Đăng nhập thành công!");
     closeModal();
   } catch(error) {
-    document.getElementById("vkl-auth-message").textContent =
-      "Lỗi: " + error.message;
+    message.textContent = "Lỗi: " + error.message;
   }
 };
 
+
 window.customerLogout = async function() {
-  await auth.signOut();
-  alert("Đã đăng xuất!");
+  try {
+    await auth.signOut();
+    alert("Đã đăng xuất!");
+    window.openCustomerAuth();
+  } catch(error) {
+    alert("Lỗi đăng xuất: " + error.message);
+  }
 };
+
 // DỮ LIỆU TIẾN ĐỘ SỰ KIỆN
 const eventProgress = db.collection("eventProgress").doc("main");
 
