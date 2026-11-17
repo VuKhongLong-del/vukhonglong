@@ -2619,7 +2619,50 @@ function escapeOrderText(value) {
     "'": "&#39;"
   })[char]);
 }
+// TÌM VÍ KHÁCH HÀNG THEO ID
+window.findWalletById = async function() {
+  if (!currentManager || currentManager.email.toLowerCase() !== managerEmail.toLowerCase()) {
+    alert("Bạn không có quyền quản lý!");
+    return;
+  }
 
+  const id = document.getElementById("vkl-wallet-admin-id").value.trim();
+  const result = document.getElementById("vkl-wallet-admin-result");
+
+  if (!/^\d{6}$/.test(id)) {
+    result.textContent = "Vui lòng nhập ID gồm 6 chữ số.";
+    return;
+  }
+
+  result.textContent = "Đang tìm tài khoản...";
+
+  try {
+    const snapshot = await db.collection("wallets")
+      .where("userId", "==", id)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      result.textContent = "Không tìm thấy ví. Khách hàng cần đăng nhập và mở tài khoản ít nhất một lần.";
+      return;
+    }
+
+    const walletDoc = snapshot.docs[0];
+    const wallet = walletDoc.data();
+
+    window.currentWalletAdminUid = walletDoc.id;
+
+    result.innerHTML = `
+      <b>TÌM THẤY TÀI KHOẢN</b>
+      <p>Username: ${escapeOrderText(wallet.username)}</p>
+      <p>ID: ${id}</p>
+      <p>Số dư: ${Number(wallet.coins || 0).toLocaleString("vi-VN")} Xu</p>
+    `;
+  } catch (error) {
+    console.error(error);
+    result.textContent = "Lỗi tìm ví: " + error.message;
+  }
+};
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
 
 window.renderOrderAdmin = async function() {
