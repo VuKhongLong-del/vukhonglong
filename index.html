@@ -2425,6 +2425,7 @@ reviews.orderBy("createdAt","desc").limit(50).onSnapshot(snapshot=>{
 });
 
 
+
 window.saveOrderToFirebase = async function(order) {
   const user = window.auth.currentUser;
 
@@ -2432,37 +2433,81 @@ window.saveOrderToFirebase = async function(order) {
     throw new Error("Bạn cần đăng nhập trước khi tạo đơn.");
   }
 
-  const batch = db.batch();
-
+  const uid = user.uid;
+  const walletRef = db.collection("wallets").doc(uid);
   const orderRef = db.collection("orders").doc(order.id);
   const trackingRef = db.collection("orderTracking").doc(order.id);
+  const historyRef = db.collection("coinTransactions").doc(order.id);
 
-  batch.set(orderRef, {
-    userId: user.uid,
-    username: user.email.split("@")[0],
-    service: order.service,
-    count: order.count,
-    quantity: order.quantity,
-    total: order.total,
-    codes: order.codes,
-    date: order.date,
-    label: order.label,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  const amount = Number(order.total);
+
+  if (!Number.isSafeInteger(amount) || amount <= 0) {
+    throw new Error("Tổng tiền đơn hàng không hợp lệ.");
+  }
+
+  await db.runTransaction(async transaction => {
+    const walletSnap = await transaction.get(walletRef);
+
+    if (!walletSnap.exists) {
+      throw new Error("Không tìm thấy ví Xu của bạn.");
+    }
+
+    const wallet = walletSnap.data();
+    const oldBalance = Number(wallet.coins || 0);
+
+    if (oldBalance < amount) {
+      throw new Error(
+        "Số dư không đủ! Bạn cần " +
+        amount.toLocaleString("vi-VN") +
+        " Xu để thanh toán đơn hàng."
+      );
+    }
+
+    const newBalance = oldBalance - amount;
+
+    transaction.update(walletRef, {
+      coins: newBalance,
+      lastOrderId: order.id,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    transaction.set(orderRef, {
+      userId: uid,
+      username: user.email.split("@")[0],
+      service: order.service,
+      count: order.count,
+      quantity: order.quantity,
+      total: amount,
+      codes: order.codes,
+      date: order.date,
+      label: order.label,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    transaction.set(trackingRef, {
+      userId: uid,
+      service: order.service,
+      status: "Đã tiếp nhận",
+      progress: 0,
+      eta: "Chưa xác định",
+      note: "Đơn hàng đã được tiếp nhận.",
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    transaction.set(historyRef, {
+      uid: uid,
+      userId: String(wallet.userId),
+      type: "subtract",
+      amount: amount,
+      balanceAfter: newBalance,
+      note: "Thanh toán đơn hàng " + order.id,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
   });
 
-  batch.set(trackingRef, {
-    userId: user.uid,
-    service: order.service,
-    status: "Đã tiếp nhận",
-    progress: 0,
-    eta: "Chưa xác định",
-    note: "Đơn hàng đã được tiếp nhận.",
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  await batch.commit();
   return true;
 };
+
 window.lookupOrderProgress = async function() {
   const code = document.getElementById("vkl-order-code").value.trim();
   const result = document.getElementById("vkl-order-result");
