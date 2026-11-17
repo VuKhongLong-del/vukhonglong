@@ -3016,7 +3016,23 @@ try {
   }
 
   window.auth = firebase.auth();
+window.customerGoogleLogin = async function() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await window.auth.signInWithPopup(provider);
 
+    const email = (result.user.email || "").toLowerCase();
+
+    if (email !== "haphamngu123@gmail.com") {
+      await window.auth.signOut();
+      throw new Error("Tài khoản Google này không có quyền quản lý.");
+    }
+
+    closeModal();
+  } catch(error) {
+    alert("Lỗi đăng nhập Google: " + error.code + " - " + error.message);
+  }
+};
 window.customerRegister = async function() {
   const message = document.getElementById("vkl-auth-message");
   try {
