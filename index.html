@@ -2240,42 +2240,6 @@ if(moreButton){
       });
     });
 
-    submit.addEventListener("click",async()=>{
-      const comment = document.getElementById("vkl-comment").value.trim();
-
-      if(selectedRating < 1){
-        status.textContent = "Bạn hãy chọn số sao nhé!";
-        return;
-      }
-
-      if(comment.length > 500){
-        status.textContent = "Nhận xét tối đa 500 ký tự.";
-        return;
-      }
-
-      submit.disabled = true;
-      status.textContent = "Đang gửi đánh giá...";
-
-      try{
-        await reviews.add({
-          rating: selectedRating,
-          comment: comment,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        status.textContent = "Gửi đánh giá thành công! Cảm ơn bạn ❤️";
-        document.getElementById("vkl-comment").value = "";
-        selectedRating = 0;
-        stars.forEach(star=>star.classList.remove("selected"));
-      }catch(error){
-        console.error(error);
-        status.textContent = "Không gửi được. Hãy thử lại sau.";
-      }finally{
-        submit.disabled = false;
-      }
-    });
-
-
 function renderReviewList(snapshot){
   const list = document.getElementById("vkl-review-list");
   const count = snapshot.size;
