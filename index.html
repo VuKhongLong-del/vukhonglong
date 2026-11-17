@@ -3786,6 +3786,20 @@ body.dark .vkl-notice-button {
 </div>
   </div>
 </div>
+<script>
+(function () {
+  const hiddenUntil = Number(
+    localStorage.getItem("vklNoticeHiddenUntil") || 0
+  );
+
+  if (Date.now() < hiddenUntil) {
+    const notice = document.getElementById("vkl-notice-overlay");
+    if (notice) notice.remove();
+  } else {
+    localStorage.removeItem("vklNoticeHiddenUntil");
+  }
+})();
+</script>
 
 </body>
 </html>
