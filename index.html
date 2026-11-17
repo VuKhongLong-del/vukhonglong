@@ -2653,7 +2653,33 @@ window.findWalletById = async function() {
     window.currentWalletAdminUid = walletDoc.id;
 
     result.innerHTML = `
-      <b>TÌM THẤY TÀI KHOẢN</b>
+  <b>🎉 TÌM THẤY TÀI KHOẢN</b>
+  <p>Username: ${escapeOrderText(wallet.username)}</p>
+  <p>ID: ${id}</p>
+  <p>Số dư: ${Number(wallet.coins || 0).toLocaleString("vi-VN")} Xu</p>
+
+  <hr style="border-color:#52617f">
+
+  <label>Số Xu cần thay đổi</label>
+  <input id="vkl-wallet-amount" type="number" min="1" step="1"
+    placeholder="Nhập số Xu"
+    style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border:0;border-radius:8px">
+
+  <label>Lý do giao dịch</label>
+  <input id="vkl-wallet-note" type="text"
+    placeholder="Ví dụ: Nạp tiền"
+    style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border:0;border-radius:8px">
+
+  <button onclick="window.changeWalletCoins('add')"
+    style="width:100%;padding:12px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold">
+    ➕ CỘNG XU
+  </button>
+
+  <button onclick="window.changeWalletCoins('subtract')"
+    style="width:100%;padding:12px;margin-top:8px;border:0;border-radius:9px;background:#e53935;color:white;font-weight:bold">
+    ➖ TRỪ XU
+  </button>
+`;
       <p>Username: ${escapeOrderText(wallet.username)}</p>
       <p>ID: ${id}</p>
       <p>Số dư: ${Number(wallet.coins || 0).toLocaleString("vi-VN")} Xu</p>
