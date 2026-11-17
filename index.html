@@ -2680,10 +2680,6 @@ window.findWalletById = async function() {
     ➖ TRỪ XU
   </button>
 `;
-      <p>Username: ${escapeOrderText(wallet.username)}</p>
-      <p>ID: ${id}</p>
-      <p>Số dư: ${Number(wallet.coins || 0).toLocaleString("vi-VN")} Xu</p>
-    `;
   } catch (error) {
     console.error(error);
     result.textContent = "Lỗi tìm ví: " + error.message;
