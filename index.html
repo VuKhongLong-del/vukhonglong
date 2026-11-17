@@ -1881,21 +1881,6 @@ window.customerLogout = async function() {
     alert("Lỗi đăng xuất: " + error.message);
   }
 };
-  try {
-    if (!window.auth) {
-      alert("Firebase chưa sẵn sàng!");
-      return;
-    }
-
-    await window.auth.signOut();
-
-    alert("Đã đăng xuất!");
-    window.openCustomerAuth();
-
-  } catch(error) {
-    alert("Lỗi đăng xuất: " + error.message);
-  }
-};
 
 // DỮ LIỆU TIẾN ĐỘ SỰ KIỆN
 const eventProgress = db.collection("eventProgress").doc("main");
