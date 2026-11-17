@@ -1051,6 +1051,11 @@ document.getElementById("codes").addEventListener("input", update);
 let pendingOrder = null;
 
 function createOrder(){
+ if(!window.auth || !window.auth.currentUser){
+  alert("Vui lòng đăng nhập hoặc đăng ký tài khoản trước khi tạo đơn!");
+  window.openCustomerAuth();
+  return;
+ }           
  if(!selected){
   alert("Vui lòng chọn một dịch vụ!");
   return;
@@ -2292,13 +2297,22 @@ reviews.orderBy("createdAt","desc").limit(50).onSnapshot(snapshot=>{
     "Không tải được đánh giá. Vui lòng thử lại.";
 });
 
+
 window.saveOrderToFirebase = async function(order) {
+  const user = window.auth.currentUser;
+
+  if (!user) {
+    throw new Error("Bạn cần đăng nhập trước khi tạo đơn.");
+  }
+
   const batch = db.batch();
 
   const orderRef = db.collection("orders").doc(order.id);
   const trackingRef = db.collection("orderTracking").doc(order.id);
 
   batch.set(orderRef, {
+    userId: user.uid,
+    username: user.email.split("@")[0],
     service: order.service,
     count: order.count,
     quantity: order.quantity,
@@ -2310,6 +2324,7 @@ window.saveOrderToFirebase = async function(order) {
   });
 
   batch.set(trackingRef, {
+    userId: user.uid,
     service: order.service,
     status: "Đã tiếp nhận",
     progress: 0,
@@ -2321,18 +2336,6 @@ window.saveOrderToFirebase = async function(order) {
   await batch.commit();
   return true;
 };
-
-
-window.lookupOrderProgress = async function() {
-  const codeInput = document.getElementById("vkl-order-code");
-  const result = document.getElementById("vkl-order-result");
-
-  const code = codeInput.value.trim().toUpperCase();
-
-  if (!code) {
-    result.textContent = "Vui lòng nhập mã đơn hàng.";
-    return;
-  }
 
   if (window.vklProgressTimer) {
     clearInterval(window.vklProgressTimer);
