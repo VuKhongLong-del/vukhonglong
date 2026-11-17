@@ -2834,16 +2834,18 @@ if (!firebase.apps.length) {
     }
 
     stars.forEach(button => {
-      button.addEventListener("click", () => {
-        selectedRating = Number(button.dataset.star);
-        stars.forEach(star => {
-          star.classList.toggle(
-            "selected",
-            Number(star.dataset.star) <= selectedRating
-          );
-        });
-      });
+  button.onclick = function() {
+    selectedRating = Number(this.getAttribute("data-star"));
+
+    stars.forEach(star => {
+      const value = Number(star.getAttribute("data-star"));
+      star.classList.toggle("selected", value <= selectedRating);
+      star.style.color = value <= selectedRating ? "#ffc928" : "#999";
     });
+
+    status.textContent = "Bạn đã chọn " + selectedRating + " sao.";
+  };
+});
 
     function renderReviewList(snapshot) {
       const count = snapshot.size;
