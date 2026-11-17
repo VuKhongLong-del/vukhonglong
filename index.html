@@ -2700,12 +2700,16 @@ window.auth.onAuthStateChanged(user => {
   }
 })();
 window.openCustomerAuth = function() {
-  if (!window.auth) {
-    alert("Firebase chưa khởi tạo được. Vui lòng tải lại trang.");
-    return;
-  }
+  alert(
+    "auth: " + typeof window.auth +
+    "\nopenModal: " + typeof openModal
+  );
 
-  openModal("account");
+  try {
+    openModal("account");
+  } catch(error) {
+    alert("LỖI: " + error.message);
+  }
 };
 </script>
 
