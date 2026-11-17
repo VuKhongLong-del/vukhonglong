@@ -3639,5 +3639,148 @@ document.addEventListener("pointerdown",function(e){
 });
 </script>
 
+<style>
+#vkl-notice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.vkl-notice-card {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  color: #222;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 12px 45px rgba(0,0,0,.25);
+}
+
+.vkl-notice-header {
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  color: #d58200;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.vkl-notice-close {
+  border: 0;
+  background: none;
+  color: #888;
+  font-size: 32px;
+  cursor: pointer;
+}
+
+.vkl-notice-content {
+  margin: 25px;
+  padding: 24px 18px;
+  text-align: center;
+  border: 2px dashed #ffdfb0;
+  border-radius: 15px;
+  background: #fff9f1;
+  color: #222;
+  line-height: 1.7;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.vkl-notice-content strong {
+  display: inline;
+  color: #c87900;
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+.vkl-notice-footer {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.vkl-notice-button {
+  width: 100%;
+  padding: 17px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: #ffb900;
+  color: #222;
+  font-size: 19px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+body.dark #vkl-notice-overlay {
+  background: rgba(0,0,0,.78);
+}
+
+body.dark .vkl-notice-card {
+  background: #202938;
+  color: #f5f5f5;
+}
+
+body.dark .vkl-notice-header,
+body.dark .vkl-notice-footer {
+  border-color: #455064;
+}
+
+body.dark .vkl-notice-content {
+  background: #30394a;
+  border-color: #8a683d;
+  color: #f5f5f5;
+}
+
+body.dark .vkl-notice-content strong {
+  color: #ffbd55;
+}
+
+body.dark .vkl-notice-button {
+  background: #d99520;
+  color: #fff;
+}
+
+@media(max-width:480px) {
+  .vkl-notice-header {
+    font-size: 19px;
+  }
+  .vkl-notice-content {
+    font-size: 17px;
+    margin: 20px;
+  }
+}
+</style>
+
+<div id="vkl-notice-overlay">
+  <div class="vkl-notice-card">
+    <div class="vkl-notice-header">
+      <span>⚠️ THÔNG BÁO ⚠️</span>
+      <button class="vkl-notice-close"
+        onclick="document.getElementById('vkl-notice-overlay').remove()">×</button>
+    </div>
+
+    <div class="vkl-notice-content">
+      <strong>SỐ DƯ XU</strong>
+      NẾU HIỂN THỊ LÀ "ĐANG TẢI..." THÌ LOAD WEB LẠI VÀI LẦN LÀ HẾT NHÉ !
+      <br><br>
+      Gặp lỗi hoặc sự cố gì thì liên hệ Admin ❤️
+    </div>
+
+    <div class="vkl-notice-footer">
+      <button class="vkl-notice-button"
+        onclick="document.getElementById('vkl-notice-overlay').remove()">
+        ✓ TÔI ĐÃ HIỂU & ĐỒNG Ý
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
