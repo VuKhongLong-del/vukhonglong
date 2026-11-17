@@ -1195,6 +1195,7 @@ function openModal(type){
 if(type === "account"){
   if(window.auth && window.auth.currentUser){
     const username = window.auth.currentUser.email.split("@")[0];
+const isOwnerAccount = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com";
 const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com"
   ? "777777"
   : String(
@@ -1205,9 +1206,30 @@ const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gma
       <div style="max-width:420px;margin:25px auto;text-align:center">
         <div style="font-size:55px">👤</div>
         <h2>TÀI KHOẢN CỦA BẠN</h2>
-        <p style="color:#16a36a;font-weight:bold;font-size:18px">
-          ${username}
-        </p>
+        <style>
+@keyframes vklRainbowMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.vkl-rainbow-name {
+  display: inline-block;
+  font-weight: 900;
+  font-size: 18px;
+  background: linear-gradient(90deg,
+    #ff1744,#ff9100,#ffee00,#00e676,
+    #00b0ff,#7c4dff,#ff1744);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: vklRainbowMove 3s linear infinite;
+}
+</style>
+
+<p class="${isOwnerAccount ? "vkl-rainbow-name" : ""}"
+   style="${isOwnerAccount ? "" : "color:#16a36a;"}font-weight:bold;font-size:18px">
+  ${username}
+</p>
         <p style="font-size:15px;font-weight:bold;color:#64748b">
           ID tài khoản: <span style="color:#2563eb">${userId}</span>
         </p>
