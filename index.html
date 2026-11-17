@@ -1877,7 +1877,25 @@ window.customerLogin = async function() {
     message.textContent = "Lỗi: " + error.message;
   }
 };
+window.customerGoogleLogin = async function() {
+  const message = document.getElementById("vkl-auth-message");
 
+  try {
+    const result = await window.auth.signInWithPopup(googleProvider);
+    const email = (result.user.email || "").toLowerCase();
+
+    if (email !== managerEmail.toLowerCase()) {
+      await window.auth.signOut();
+      throw new Error("Tài khoản Google này không có quyền quản lý.");
+    }
+
+    closeModal();
+  } catch(error) {
+    if (message) {
+      message.textContent = "Lỗi đăng nhập Google: " + error.message;
+    }
+  }
+};
 
 window.customerLogout = async function() {
   try {
