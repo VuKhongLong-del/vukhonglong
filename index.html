@@ -1224,13 +1224,38 @@ const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gma
   background-clip: text;
   animation: vklRainbowMove 3s linear infinite;
 }
+.rainbow-id {
+  background: linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    lime,
+    cyan,
+    blue,
+    violet,
+    red
+  );
+  background-size: 300% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: rainbowId 3s linear infinite;
+  font-weight: bold;
+}
+
+@keyframes rainbowId {
+  to {
+    background-position: 300% center;
+  }
+}
 </style>
 
 <p class="vkl-rainbow-name">
   ${username}
 </p>
         <p style="font-size:15px;font-weight:bold;color:#64748b">
-          ID tài khoản: <span style="color:#2563eb">${userId}</span>
+          ID tài khoản: <span class="rainbow-id">${userId}</span>
         </p>
         <p class="muted">Bạn đã đăng nhập thành công</p>
 
