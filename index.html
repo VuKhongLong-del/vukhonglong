@@ -1798,9 +1798,13 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 // ĐĂNG NHẬP VÀ ĐĂNG KÝ KHÁCH HÀNG
 // MỞ TRANG TÀI KHOẢN
 window.openCustomerAuth = function() {
-  openModal("account");
+  try {
+    openModal("account");
+  } catch(error) {
+    alert("Lỗi trang tài khoản: " + error.message);
+    console.error(error);
+  }
 };
-
 
 function getCustomerLoginEmail() {
   const username = document.getElementById("vkl-auth-username").value.trim();
