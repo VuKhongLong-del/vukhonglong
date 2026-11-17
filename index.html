@@ -2692,6 +2692,87 @@ window.findWalletById = async function() {
     result.textContent = "Lỗi tìm ví: " + error.message;
   }
 };
+// CỘNG / TRỪ XU CHO KHÁCH HÀNG
+window.changeWalletCoins = async function(type) {
+  if (!currentManager ||
+      currentManager.email.toLowerCase() !== managerEmail.toLowerCase()) {
+    alert("Bạn không có quyền quản lý!");
+    return;
+  }
+
+  const uid = window.currentWalletAdminUid;
+  const amount = Number(document.getElementById("vkl-wallet-amount").value);
+  const note = document.getElementById("vkl-wallet-note").value.trim();
+
+  if (!uid) {
+    alert("Vui lòng tìm tài khoản trước!");
+    return;
+  }
+
+  if (!Number.isSafeInteger(amount) || amount <= 0) {
+    alert("Vui lòng nhập số Xu nguyên lớn hơn 0!");
+    return;
+  }
+
+  if (!note) {
+    alert("Vui lòng nhập lý do giao dịch!");
+    return;
+  }
+
+  if (type !== "add" && type !== "subtract") {
+    alert("Loại giao dịch không hợp lệ!");
+    return;
+  }
+
+  try {
+    const walletRef = db.collection("wallets").doc(uid);
+    const historyRef = db.collection("coinTransactions").doc();
+
+    await db.runTransaction(async transaction => {
+      const walletSnap = await transaction.get(walletRef);
+
+      if (!walletSnap.exists) {
+        throw new Error("Không tìm thấy ví khách hàng!");
+      }
+
+      const wallet = walletSnap.data();
+      const oldBalance = Number(wallet.coins || 0);
+
+      const newBalance = type === "add"
+        ? oldBalance + amount
+        : oldBalance - amount;
+
+      if (!Number.isSafeInteger(newBalance) || newBalance < 0) {
+        throw new Error("Số dư không đủ để trừ!");
+      }
+
+      transaction.update(walletRef, {
+        coins: newBalance,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      transaction.set(historyRef, {
+        uid: uid,
+        userId: String(wallet.userId),
+        type: type,
+        amount: amount,
+        balanceAfter: newBalance,
+        note: note,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+
+    alert(type === "add"
+      ? "Đã cộng Xu thành công!"
+      : "Đã trừ Xu thành công!");
+
+    await window.findWalletById();
+
+  } catch (error) {
+    console.error("Lỗi thay đổi Xu:", error);
+    alert("Không thể thay đổi Xu: " + error.message);
+  }
+};
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
 
 window.renderOrderAdmin = async function() {
