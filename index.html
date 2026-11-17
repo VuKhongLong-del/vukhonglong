@@ -2908,7 +2908,10 @@ if (!firebase.apps.length) {
         const data = doc.data();
         const item = document.createElement("div");
         item.className = "vkl-review-item";
-
+const rawName = String(data.name || "Khách").trim() || "Khách";
+const name = document.createElement("strong");
+name.style.cssText = "display:block;color:#dbe4ff;font-size:13px;margin-bottom:4px;";
+name.textContent = rawName.slice(0, 2) + "••••";
         const rating = document.createElement("div");
         rating.className = "vkl-review-stars";
 
