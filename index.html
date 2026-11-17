@@ -2916,6 +2916,10 @@ name.textContent = rawName.slice(0, 2) + "••••";
     }
 
     submit.addEventListener("click", async () => {
+                  if (!window.auth || !window.auth.currentUser) {
+        status.textContent = "Bạn cần đăng nhập để gửi đánh giá!";
+        return;
+      }
       const commentEl = document.getElementById("vkl-comment");
       const comment = commentEl ? commentEl.value.trim() : "";
 
