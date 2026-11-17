@@ -1217,12 +1217,7 @@ const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gma
   <p style="margin:0;color:#64748b;font-weight:bold">SỐ DƯ XU</p>
   <strong id="vkl-coin-balance" style="font-size:26px;color:#6650ed">Đang tải...</strong>
 </div>
-<div style="margin:15px 0;padding:14px;background:rgba(102,80,237,.08);border-radius:12px">
-  <p style="margin:0 0 10px;font-weight:bold">LỊCH SỬ GIAO DỊCH XU</p>
-  <div id="vkl-coin-history">
-    <span style="color:#888">Đang tải lịch sử...</span>
-  </div>
-</div>
+
         <button onclick="window.customerLogout()"
           style="width:100%;padding:14px;margin-top:15px;background:#e53935;color:white;border:0;border-radius:10px;font-weight:bold">
           ĐĂNG XUẤT
@@ -1434,7 +1429,19 @@ const transferContent = transferId
    <p class="muted" style="text-align:center;margin-top:20px">
     Vui lòng chuyển khoản đúng thông tin và số tiền đơn hàng.
    </p>
-
+<div style="
+  margin-top:20px;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(128,128,128,.12);
+">
+  <h3 style="margin:0 0 12px;text-align:center">
+    📜 LỊCH SỬ NẠP TIỀN
+  </h3>
+  <div id="vkl-transfer-history">
+    <span style="color:#888">Đang tải lịch sử...</span>
+  </div>
+</div>
    <div id="qrPreview" onclick="closeQR()" style="
     display:none;position:fixed;inset:0;z-index:99999;
     background:rgba(0,0,0,.88);
@@ -1444,6 +1451,13 @@ const transferContent = transferId
     <img id="qrPreviewImg" style="width:100%;max-width:420px;border-radius:15px">
    </div>
   `;
+if (transferUser) {
+  setTimeout(() => {
+    if (typeof window.loadTransferHistory === "function") {
+      window.loadTransferHistory();
+    }
+  }, 100);
+}
 }
  if(type === "history"){
   body.innerHTML = "<h2>Lịch sử đơn hàng</h2>";
@@ -3206,7 +3220,54 @@ if (isAdmin && walletSnap.exists && walletSnap.data().userId !== "777777") {
     balanceEl.textContent = "Lỗi ví: " + (error.code || error.message);
   }
 };
+window.loadTransferHistory = async function() {
+  const historyEl = document.getElementById("vkl-transfer-history");
+  const user = window.auth.currentUser;
 
+  if (!historyEl || !user) return;
+
+  historyEl.textContent = "Đang tải lịch sử...";
+
+  try {
+    const db = firebase.firestore();
+
+    const snapshot = await db.collection("coinTransactions")
+      .where("uid", "==", user.uid)
+      .limit(100)
+      .get();
+
+    const items = snapshot.docs
+      .map(doc => doc.data())
+      .filter(item => item.type === "add")
+      .sort((a, b) =>
+        (b.createdAt?.toMillis?.() || 0) -
+        (a.createdAt?.toMillis?.() || 0)
+      );
+
+    if (items.length === 0) {
+      historyEl.textContent = "Chưa có lịch sử nạp Xu.";
+      return;
+    }
+
+    historyEl.innerHTML = items.map(item => `
+      <div style="padding:10px 0;border-bottom:1px solid #ddd">
+        <div style="display:flex;justify-content:space-between;gap:8px">
+          <span>${item.note || "Nạp Xu"}</span>
+          <strong style="color:#16a34a;white-space:nowrap">
+            +${Number(item.amount || 0).toLocaleString("vi-VN")} Xu
+          </strong>
+        </div>
+        <small style="color:#888">
+          Số dư sau nạp: ${Number(item.balanceAfter || 0).toLocaleString("vi-VN")} Xu
+        </small>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Lỗi tải lịch sử nạp Xu:", error);
+    historyEl.textContent = "Không tải được lịch sử nạp Xu.";
+  }
+};
 </script>
 
 <script>
