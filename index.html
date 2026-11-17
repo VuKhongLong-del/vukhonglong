@@ -2699,6 +2699,14 @@ window.auth.onAuthStateChanged(user => {
       "Lỗi kết nối Firebase. Vui lòng kiểm tra cấu hình.";
   }
 })();
+window.openCustomerAuth = function() {
+  if (!window.auth) {
+    alert("Firebase chưa khởi tạo được. Vui lòng tải lại trang.");
+    return;
+  }
+
+  openModal("account");
+};
 </script>
 
 <style>
