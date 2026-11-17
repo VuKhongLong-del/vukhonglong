@@ -1849,7 +1849,7 @@ window.customerLogin = async function() {
   try {
     await auth.signInWithEmailAndPassword(email, password);
     alert("Đăng nhập thành công!");
-    document.getElementById("vkl-customer-auth").remove();
+    closeModal();
   } catch(error) {
     document.getElementById("vkl-auth-message").textContent =
       "Lỗi: " + error.message;
