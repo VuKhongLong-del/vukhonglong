@@ -1222,10 +1222,11 @@ const userId = String(
         </button>
       </div>
     `;
-    window.loadCustomerWallet(
-      window.auth.currentUser.uid,
-      username
-    );
+    if (typeof window.loadCustomerWallet === "function") {
+  window.loadCustomerWallet(
+    window.auth.currentUser.uid,
+    username
+  );
 
   } else {
     body.innerHTML = `
