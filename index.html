@@ -1192,7 +1192,7 @@ function openModal(type){
  const body = document.getElementById("modalBody");
 
 if(type === "account"){
-  if(window.auth.currentUser){
+  if(window.auth && window.auth.currentUser){
     const username = window.auth.currentUser.email.split("@")[0];
 
     body.innerHTML = `
