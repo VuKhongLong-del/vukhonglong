@@ -2016,7 +2016,10 @@ window.loadCustomerWallet = async function(uid, username) {
 
     if (!walletSnap.exists) {
       await walletRef.set({
-        userId: uid,
+        userId: String(
+  100000 + Array.from(uid)
+    .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 900000, 0)
+),
         username: username,
         coins: 0,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
