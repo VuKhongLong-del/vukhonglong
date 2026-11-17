@@ -1249,23 +1249,60 @@ const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gma
     background-position: 300% center;
   }
 }
+/* ADMIN - GIAO DIỆN SÁNG */
 .admin-dark-panel {
-  background: #1c2539 !important;
-  color: #fff !important;
-  border: 1px solid #35435e !important;
+  background: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid #dddddd !important;
   border-radius: 15px;
   padding: 16px;
 }
 
-.admin-dark-panel label {
-  color: #fff;
+.admin-dark-panel h3,
+.admin-dark-panel p,
+.admin-dark-panel b,
+.admin-dark-panel label,
+.admin-dark-panel hr {
+  color: #222222 !important;
+}
+
+.admin-dark-panel > div {
+  background: #f1f3f8 !important;
+  color: #222222 !important;
 }
 
 .admin-dark-panel input,
 .admin-dark-panel textarea {
+  background: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid #cccccc !important;
+}
+
+/* ADMIN - GIAO DIỆN TỐI */
+body.dark .admin-dark-panel {
+  background: #1c2539 !important;
+  color: #ffffff !important;
+  border-color: #35435e !important;
+}
+
+body.dark .admin-dark-panel h3,
+body.dark .admin-dark-panel p,
+body.dark .admin-dark-panel b,
+body.dark .admin-dark-panel label,
+body.dark .admin-dark-panel hr {
+  color: #ffffff !important;
+}
+
+body.dark .admin-dark-panel > div {
   background: #293650 !important;
-  color: #fff !important;
-  border: 1px solid #52617f !important;
+  color: #ffffff !important;
+}
+
+body.dark .admin-dark-panel input,
+body.dark .admin-dark-panel textarea {
+  background: #293650 !important;
+  color: #ffffff !important;
+  border-color: #52617f !important;
 }
 </style>
 
