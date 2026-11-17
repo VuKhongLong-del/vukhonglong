@@ -2710,6 +2710,72 @@ window.auth.onAuthStateChanged(user => {
     "Lỗi kết nối Firebase.";
 }
 })();
+// KHỞI TẠO ĐĂNG NHẬP RIÊNG
+try {
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCSdvkb2q8TIDty0fCqOqkJ15KpmFy98sY",
+      authDomain: "vukhonglong-9cfcb.firebaseapp.com",
+      projectId: "vukhonglong-9cfcb",
+      storageBucket: "vukhonglong-9cfcb.firebasestorage.app",
+      messagingSenderId: "821726837864",
+      appId: "1:821726837864:web:6228e0d8fe135eed8c4fdd"
+    });
+  }
+
+  window.auth = firebase.auth();
+
+  window.customerRegister = async function() {
+    const message = document.getElementById("vkl-auth-message");
+    try {
+      const username = document.getElementById("vkl-auth-username").value.trim();
+      const password = document.getElementById("vkl-auth-password").value;
+
+      if (!/^[A-Za-z0-9]{4,20}$/.test(username)) {
+        throw new Error("Tên tài khoản phải có 4–20 ký tự chữ và số.");
+      }
+      if (password.length < 6) {
+        throw new Error("Mật khẩu phải có ít nhất 6 ký tự.");
+      }
+
+      await window.auth.createUserWithEmailAndPassword(
+        username.toLowerCase() + "@login.vukhongglong.com",
+        password
+      );
+
+      alert("Đăng ký thành công!");
+      closeModal();
+    } catch(error) {
+      message.textContent = "Lỗi: " + error.message;
+    }
+  };
+
+  window.customerLogin = async function() {
+    const message = document.getElementById("vkl-auth-message");
+    try {
+      const username = document.getElementById("vkl-auth-username").value.trim();
+      const password = document.getElementById("vkl-auth-password").value;
+
+      if (!/^[A-Za-z0-9]{4,20}$/.test(username)) {
+        throw new Error("Tên tài khoản phải có 4–20 ký tự chữ và số.");
+      }
+
+      await window.auth.signInWithEmailAndPassword(
+        username.toLowerCase() + "@login.vukhongglong.com",
+        password
+      );
+
+      alert("Đăng nhập thành công!");
+      closeModal();
+    } catch(error) {
+      message.textContent = "Lỗi: " + error.message;
+    }
+  };
+
+} catch(error) {
+  alert("Lỗi khởi tạo tài khoản: " + error.message);
+  console.error(error);
+}
 window.openCustomerAuth = function() {
   alert(
     "auth: " + typeof window.auth +
