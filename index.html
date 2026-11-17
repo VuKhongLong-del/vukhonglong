@@ -158,12 +158,22 @@ textarea:focus{border-color:#7052ed}
  border:0;
  box-shadow:0 5px 15px #6844e955;
 }
- background:linear-gradient(130deg,#3970ef,#853df1);
- color:white;border-radius:50%;width:54px;height:54px;
- margin:auto;box-shadow:0 5px 15px #6844e955
+
+.bottom .create span{
+ margin:0;
+ font-size:30px;
 }
-.bottom .create span{margin:0;font-size:30px}
+
 .modal{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:30;
+ background:#10142b88;
+ padding:18px;
+ align-items:center;
+ justify-content:center;
+}
  display:none;position:fixed;inset:0;z-index:30;
  background:#10142b88;padding:18px;
  align-items:center;justify-content:center
