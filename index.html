@@ -1260,7 +1260,7 @@ const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gma
         <p class="muted">Bạn đã đăng nhập thành công</p>
 
 <div style="margin:18px 0;padding:16px;background:rgba(102,80,237,.10);border-radius:12px">
-  <p style="margin:0;color:#64748b;font-weight:bold">SỐ DƯ XU</p>
+  <p style="margin:0;color:#64748b;font-weight:bold">SỐ DƯ</p>
   <strong id="vkl-coin-balance" style="font-size:26px;color:#6650ed">Đang tải...</strong>
 </div>
 
@@ -1273,7 +1273,7 @@ const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gma
 if (window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com") {
   body.insertAdjacentHTML("beforeend", `
     <hr style="margin:20px 0;border-color:#52617f">
-    <h3>🪙 QUẢN LÝ VÍ XU</h3>
+    <h3>🪙 QUẢN LÝ VÍ TIỀN</h3>
 
     <label>ID tài khoản khách hàng</label>
     <input id="vkl-wallet-admin-id"
@@ -2169,10 +2169,10 @@ if (isAdmin && walletSnap.exists && walletSnap.data().userId !== "777777") {
     }
 
     const coins = Number(walletSnap.data().coins || 0);
-    balanceEl.textContent = coins.toLocaleString("vi-VN") + " Xu";
+    balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
 
   } catch (error) {
-    console.error("Lỗi tải ví Xu:", error);
+    console.error("Lỗi tải ví:", error);
     balanceEl.textContent = "Chưa tải được";
   }
 };
@@ -2550,7 +2550,7 @@ window.saveOrderToFirebase = async function(order) {
       throw new Error(
         "Số dư không đủ! Bạn cần " +
         amount.toLocaleString("vi-VN") +
-        " Xu để thanh toán đơn hàng."
+        " VNĐ để thanh toán đơn hàng."
       );
     }
 
@@ -2761,9 +2761,9 @@ window.findWalletById = async function() {
 
   <hr style="border-color:#52617f">
 
-  <label>Số Xu cần thay đổi</label>
+  <label>Số Tiền cần thay đổi</label>
   <input id="vkl-wallet-amount" type="number" min="1" step="1"
-    placeholder="Nhập số Xu"
+    placeholder="Nhập số Tiền"
     style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border:0;border-radius:8px">
 
   <label>Lý do giao dịch</label>
@@ -2773,12 +2773,12 @@ window.findWalletById = async function() {
 
   <button onclick="window.changeWalletCoins('add')"
     style="width:100%;padding:12px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold">
-    ➕ CỘNG XU
+    ➕ CỘNG TIỀN
   </button>
 
   <button onclick="window.changeWalletCoins('subtract')"
     style="width:100%;padding:12px;margin-top:8px;border:0;border-radius:9px;background:#e53935;color:white;font-weight:bold">
-    ➖ TRỪ XU
+    ➖ TRỪ TIỀN
   </button>
 `;
   } catch (error) {
@@ -2804,7 +2804,7 @@ window.changeWalletCoins = async function(type) {
   }
 
   if (!Number.isSafeInteger(amount) || amount <= 0) {
-    alert("Vui lòng nhập số Xu nguyên lớn hơn 0!");
+    alert("Vui lòng nhập số Tiền nguyên lớn hơn 0!");
     return;
   }
 
@@ -2857,8 +2857,8 @@ window.changeWalletCoins = async function(type) {
     });
 
     alert(type === "add"
-      ? "Đã cộng Xu thành công!"
-      : "Đã trừ Xu thành công!");
+      ? "Đã cộng Tiền thành công!"
+      : "Đã trừ Tiền thành công!");
 
     await window.findWalletById();
 
@@ -3234,7 +3234,7 @@ if (isAdmin && walletSnap.exists && walletSnap.data().userId !== "777777") {
 
 
     const coins = Number(walletSnap.data().coins || 0);
-    balanceEl.textContent = coins.toLocaleString("vi-VN") + " Xu";
+    balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
 
     // TẢI LỊCH SỬ GIAO DỊCH XU
     const historyEl = document.getElementById("vkl-coin-history");
@@ -3264,18 +3264,18 @@ if (isAdmin && walletSnap.exists && walletSnap.data().userId !== "777777") {
             const amount = Number(item.amount || 0);
             const color = isAdd ? "#16a34a" : "#dc2626";
             const sign = isAdd ? "+" : "-";
-            const note = item.note || "Giao dịch Xu";
+            const note = item.note || "Giao dịch Tiền";
 
             return `
               <div style="padding:10px 0;border-bottom:1px solid #ddd">
                 <div style="display:flex;justify-content:space-between;gap:8px">
                   <span>${note}</span>
                   <strong style="color:${color};white-space:nowrap">
-                    ${sign}${amount.toLocaleString("vi-VN")} Xu
+                    ${sign}${amount.toLocaleString("vi-VN")} VNĐ
                   </strong>
                 </div>
                 <small style="color:#888">
-                  Số dư sau giao dịch: ${Number(item.balanceAfter || 0).toLocaleString("vi-VN")} Xu
+                  Số dư sau giao dịch: ${Number(item.balanceAfter || 0).toLocaleString("vi-VN")} VNĐ
                 </small>
               </div>
             `;
@@ -3317,20 +3317,20 @@ window.loadTransferHistory = async function() {
       );
 
     if (items.length === 0) {
-      historyEl.textContent = "Chưa có lịch sử nạp Xu.";
+      historyEl.textContent = "Chưa có lịch sử nạp Tiền.";
       return;
     }
 
     historyEl.innerHTML = items.map(item => `
       <div style="padding:10px 0;border-bottom:1px solid #ddd">
         <div style="display:flex;justify-content:space-between;gap:8px">
-          <span>${item.note || "Nạp Xu"}</span>
+          <span>${item.note || "Nạp Tiền"}</span>
           <strong style="color:#16a34a;white-space:nowrap">
-            +${Number(item.amount || 0).toLocaleString("vi-VN")} Xu
+            +${Number(item.amount || 0).toLocaleString("vi-VN")} VNĐ
           </strong>
         </div>
                 <small style="color:#888;display:block">
-          Số dư sau nạp: ${Number(item.balanceAfter || 0).toLocaleString("vi-VN")} Xu
+          Số dư sau nạp: ${Number(item.balanceAfter || 0).toLocaleString("vi-VN")} VNĐ
         </small>
         <small style="color:#888;display:block;margin-top:5px">
           <i class="fa fa-clock"></i>
@@ -3808,7 +3808,7 @@ body.dark .vkl-notice-button {
     </div>
 
     <div class="vkl-notice-content">
-      <strong>SỐ DƯ XU</strong>
+      <strong>SỐ DƯ</strong>
       NẾU HIỂN THỊ LÀ "ĐANG TẢI..." THÌ LOAD WEB LẠI VÀI LẦN LÀ HẾT NHÉ !
       <br><br>
       Gặp lỗi hoặc sự cố gì thì liên hệ Admin ❤️
