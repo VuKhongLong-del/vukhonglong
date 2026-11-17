@@ -1835,7 +1835,7 @@ window.customerRegister = async function() {
   try {
     await auth.createUserWithEmailAndPassword(email, password);
     alert("Đăng ký thành công!");
-    document.getElementById("vkl-customer-auth").remove();
+    closeModal();
   } catch(error) {
     document.getElementById("vkl-auth-message").textContent =
       "Lỗi: " + error.message;
