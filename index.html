@@ -2705,10 +2705,11 @@ window.auth.onAuthStateChanged(user => {
 });
 
   }catch(error){
-    console.error(error);
-    document.getElementById("vkl-status").textContent =
-      "Lỗi kết nối Firebase. Vui lòng kiểm tra cấu hình.";
-  }
+  console.error(error);
+  alert("LỖI FIREBASE: " + error.message);
+  document.getElementById("vkl-status").textContent =
+    "Lỗi kết nối Firebase.";
+}
 })();
 window.openCustomerAuth = function() {
   alert(
