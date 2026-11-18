@@ -4125,6 +4125,20 @@ window.customerLogin = async function() {
     message.textContent = "Lỗi: " + error.message;
   }
 };
+window.showAccountTab = function(tab) {
+  const tabs = ["info", "security", "intro"];
+
+  tabs.forEach(name => {
+    const panel = document.getElementById("vkl-tab-" + name);
+    if (panel) {
+      panel.style.display = name === tab ? "block" : "none";
+    }
+  });
+
+  document.querySelectorAll(".vkl-account-tab").forEach((button, index) => {
+    button.classList.toggle("active", tabs[index] === tab);
+  });
+};
 window.showChangePassword = function() {
   const box = document.getElementById("vkl-change-password-box");
   if (box) {
