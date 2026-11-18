@@ -2598,7 +2598,7 @@ window.showForgotPasswordById = function() {
     box.style.display = box.style.display === "none" ? "block" : "none";
   }
 };
-window.sendRecoveryRequest = function() {
+window.sendRecoveryRequest = async function() {
   const username = document.getElementById("vkl-recovery-username").value.trim();
   const id = document.getElementById("vkl-recovery-id").value.trim();
   const contact = document.getElementById("vkl-recovery-contact").value.trim();
@@ -2609,17 +2609,27 @@ window.sendRecoveryRequest = function() {
     return;
   }
 
-  const subject = "Yêu cầu khôi phục tài khoản: " + username;
-  const body =
-    "YÊU CẦU KHÔI PHỤC TÀI KHOẢN\n\n" +
-    "Tên tài khoản: " + username + "\n" +
-    "ID: " + (id || "Không cung cấp") + "\n" +
-    "SĐT hoặc email liên kết: " + (contact || "Không cung cấp");
+  message.textContent = "Đang gửi yêu cầu...";
 
-  window.location.href =
-    "mailto:haphamngu123@gmail.com?subject=" +
-    encodeURIComponent(subject) +
-    "&body=" + encodeURIComponent(body);
+  try {
+    await emailjs.send(
+      "service_zta7ls2",
+      "template_doutpc9",
+      {
+        username: username,
+        account_id: id || "Không cung cấp",
+        contact: contact || "Không cung cấp"
+      },
+      {
+        publicKey: "aWRDUtsq1sqapgcZJ"
+      }
+    );
+
+    message.textContent = "Đã gửi yêu cầu thành công! Vui lòng chờ admin xem xét.";
+  } catch (error) {
+    console.error(error);
+    message.textContent = "Gửi thất bại. Vui lòng thử lại!";
+  }
 };
 window.findForgotAccountById = async function() {
   const id = document.getElementById("vkl-forgot-account-id")?.value.trim();
