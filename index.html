@@ -2638,18 +2638,25 @@ window.loadCustomerContact = async function() {
   }
 };
 
-window.saveCustomerContact = async function() {
+
+window.saveCustomerContact = async function(type) {
   const user = window.auth?.currentUser;
-  const message = document.getElementById("vkl-contact-message");
-  const phone = document.getElementById("vkl-contact-phone")?.value.trim() || "";
-  const email = document.getElementById("vkl-contact-email")?.value.trim() || "";
+  const message = document.getElementById(
+    type === "phone" ? "vkl-phone-message" : "vkl-email-message"
+  );
 
   if (!user) {
     if (message) message.textContent = "Vui lòng đăng nhập!";
     return;
   }
 
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  const isPhone = type === "phone";
+  const value = document.getElementById(
+    isPhone ? "vkl-contact-phone" : "vkl-contact-email"
+  )?.value.trim() || "";
+
+  if (!isPhone && value &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
     if (message) message.textContent = "Email không hợp lệ!";
     return;
   }
@@ -2657,13 +2664,16 @@ window.saveCustomerContact = async function() {
   try {
     if (message) message.textContent = "Đang lưu...";
 
-    await db.collection("wallets").doc(user.uid).set({
-      contactPhone: phone,
-      contactEmail: email,
-      contactUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    const data = isPhone
+      ? { contactPhone: value }
+      : { contactEmail: value };
 
-    if (message) message.textContent = "Đã lưu thông tin thành công ❤️";
+    data.contactUpdatedAt =
+      firebase.firestore.FieldValue.serverTimestamp();
+
+    await db.collection("wallets").doc(user.uid).set(data, { merge: true });
+
+    if (message) message.textContent = "Đã lưu thành công ❤️";
   } catch (error) {
     console.error(error);
     if (message) message.textContent = "Lưu thất bại, vui lòng thử lại!";
