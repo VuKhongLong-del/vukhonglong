@@ -3052,6 +3052,68 @@ window.changeWalletCoins = async function(type) {
     alert("Không thể thay đổi Xu: " + error.message);
   }
 };
+// CHỨC NĂNG CHỈNH SỬA ID TÀI KHOẢN
+window.editAccountId = async function(uid, oldId) {
+  if (!window.auth?.currentUser ||
+      window.auth.currentUser.email.toLowerCase() !== "haphamngu123@gmail.com") {
+    alert("Bạn không có quyền chỉnh sửa!");
+    return;
+  }
+
+  const newId = prompt("Nhập ID mới (6 chữ số):", oldId);
+
+  if (newId === null) return;
+
+  const id = newId.trim();
+
+  if (!/^\d{6}$/.test(id)) {
+    alert("ID phải gồm đúng 6 chữ số!");
+    return;
+  }
+
+  if (id === "777777") {
+    alert("ID này dành riêng cho Admin!");
+    return;
+  }
+
+  if (id === oldId) {
+    alert("ID không có thay đổi!");
+    return;
+  }
+
+  try {
+    const db = firebase.firestore();
+
+    const duplicate = await db.collection("wallets")
+      .where("userId", "==", id)
+      .limit(1)
+      .get();
+
+    if (!duplicate.empty) {
+      alert("ID này đã được tài khoản khác sử dụng!");
+      return;
+    }
+
+    const confirmed = confirm(
+      "Bạn có chắc muốn đổi ID " + oldId + " thành " + id + " không?"
+    );
+
+    if (!confirmed) return;
+
+    await db.collection("wallets").doc(uid).update({
+      userId: id,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("Đổi ID thành công!");
+
+    window.loadAccountAdminList();
+
+  } catch (error) {
+    console.error(error);
+    alert("Không thể đổi ID: " + error.message);
+  }
+};
 // QUẢN LÝ DANH SÁCH TÀI KHOẢN
 window.loadAccountAdminList = async function() {
   const list = document.getElementById("vkl-account-admin-list");
