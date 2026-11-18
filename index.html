@@ -1484,6 +1484,59 @@ body.dark .admin-dark-panel textarea {
           ID tài khoản: <span class="rainbow-id">${userId}</span>
         </p>
         <p class="muted">Bạn đã đăng nhập thành công</p>
+        <style>
+body:not(.dark) #vkl-change-password-box {
+  background: #cfd3dc !important;
+  border: 1px solid #aeb5c1;
+  color: #222936;
+}
+
+body.dark #vkl-change-password-box {
+  background: #202b3d !important;
+  border: 1px solid #40516b;
+  color: #f1f5f9;
+}
+
+body:not(.dark) #vkl-change-password-box label {
+  color: #222936;
+}
+
+body.dark #vkl-change-password-box label {
+  color: #f1f5f9;
+}
+
+body:not(.dark) #vkl-change-password-box input {
+  background: #f8fafc !important;
+  color: #222936 !important;
+  border: 1px solid #aeb5c1 !important;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+body.dark #vkl-change-password-box input {
+  background: #111827 !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #40516b !important;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+body:not(.dark) button[onclick="window.showChangePassword()"] {
+  background: #16a36a !important;
+}
+
+body.dark button[onclick="window.showChangePassword()"] {
+  background: #6650ed !important;
+}
+
+body:not(.dark) #vkl-change-password-box button {
+  background: #16a36a !important;
+}
+
+body.dark #vkl-change-password-box button {
+  background: #6650ed !important;
+}
+</style>
 <button onclick="window.showChangePassword()"
   style="width:100%;padding:13px;margin-top:15px;border:0;border-radius:10px;background:#6650ed;color:white;font-weight:bold">
   🔐 ĐỔI MẬT KHẨU
