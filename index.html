@@ -1432,12 +1432,7 @@ body.dark .admin-dark-panel textarea {
  
       </div>
     `;
-body.insertAdjacentHTML("beforeend", `
-  <button onclick="window.customerLogout()"
-    style="width:100%;padding:14px;margin-top:20px;background:#e53935;color:white;border:0;border-radius:10px;font-weight:bold">
-    ĐĂNG XUẤT
-  </button>
-`);
+
 if (window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com") {
   body.insertAdjacentHTML("beforeend", `
      <div class="admin-dark-panel">     
