@@ -4017,6 +4017,60 @@ window.customerLogin = async function() {
     message.textContent = "Lỗi: " + error.message;
   }
 };
+window.showChangePassword = function() {
+  const box = document.getElementById("vkl-change-password-box");
+  if (box) {
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  }
+};
+
+window.changeCustomerPassword = async function() {
+  const message = document.getElementById("vkl-change-password-message");
+
+  try {
+    const user = window.auth.currentUser;
+    if (!user) throw new Error("Bạn cần đăng nhập trước!");
+
+    const oldPassword = document.getElementById("vkl-old-password").value;
+    const newPassword = document.getElementById("vkl-new-password").value;
+    const confirmPassword = document.getElementById("vkl-confirm-password").value;
+
+    if (!oldPassword || !newPassword || !confirmPassword)
+      throw new Error("Vui lòng nhập đầy đủ thông tin!");
+
+    if (newPassword.length < 6)
+      throw new Error("Mật khẩu mới phải có ít nhất 6 ký tự!");
+
+    if (newPassword !== confirmPassword)
+      throw new Error("Mật khẩu xác nhận không khớp!");
+
+    message.textContent = "Đang đổi mật khẩu...";
+
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      user.email,
+      oldPassword
+    );
+
+    await user.reauthenticateWithCredential(credential);
+    await user.updatePassword(newPassword);
+
+    message.textContent = "Đổi mật khẩu thành công! ❤️";
+
+    document.getElementById("vkl-old-password").value = "";
+    document.getElementById("vkl-new-password").value = "";
+    document.getElementById("vkl-confirm-password").value = "";
+
+  } catch(error) {
+    const errors = {
+      "auth/wrong-password": "Mật khẩu hiện tại không đúng!",
+      "auth/invalid-credential": "Mật khẩu hiện tại không đúng!",
+      "auth/weak-password": "Mật khẩu mới quá yếu!",
+      "auth/requires-recent-login": "Vui lòng đăng nhập lại rồi thử!",
+    };
+
+    message.textContent = errors[error.code] || error.message;
+  }
+};
 window.customerLogout = async function() {
   try {
     if (!window.auth) {
