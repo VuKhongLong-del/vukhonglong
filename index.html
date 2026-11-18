@@ -1576,6 +1576,10 @@ if(type === "contact"){
 if(type === "transfer"){
             const transferUser = window.auth && window.auth.currentUser;
 
+let transferContent = transferUser
+  ? "Đang tải ID..."
+  : "Vui lòng đăng nhập";
+
 const transferId = transferUser
   ? (
       transferUser.email === "haphamngu123@gmail.com"
