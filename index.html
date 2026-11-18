@@ -1457,7 +1457,12 @@ if (window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com") {
 </div>
   `);
 }
-
+body.insertAdjacentHTML("beforeend", `
+  <button onclick="window.customerLogout()"
+    style="width:100%;padding:13px;margin-top:20px;border:0;border-radius:10px;background:#e53935;color:white;font-weight:bold">
+    🚪 ĐĂNG XUẤT
+  </button>
+`);
     if (typeof window.loadCustomerWallet === "function") {
   window.loadCustomerWallet(
     window.auth.currentUser.uid,
