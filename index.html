@@ -2575,6 +2575,58 @@ if (accountIdEl) {
     balanceEl.textContent = "Chưa tải được";
   }
 };
+
+window.loadCustomerContact = async function() {
+  const user = window.auth?.currentUser;
+  if (!user) return;
+
+  try {
+    const snap = await db.collection("wallets").doc(user.uid).get();
+    if (!snap.exists) return;
+
+    const data = snap.data();
+    const phone = document.getElementById("vkl-contact-phone");
+    const email = document.getElementById("vkl-contact-email");
+
+    if (phone) phone.value = data.contactPhone || "";
+    if (email) email.value = data.contactEmail || "";
+  } catch (error) {
+    console.error("Lỗi tải thông tin liên kết:", error);
+  }
+};
+
+window.saveCustomerContact = async function() {
+  const user = window.auth?.currentUser;
+  const message = document.getElementById("vkl-contact-message");
+  const phone = document.getElementById("vkl-contact-phone")?.value.trim() || "";
+  const email = document.getElementById("vkl-contact-email")?.value.trim() || "";
+
+  if (!user) {
+    if (message) message.textContent = "Vui lòng đăng nhập!";
+    return;
+  }
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (message) message.textContent = "Email không hợp lệ!";
+    return;
+  }
+
+  try {
+    if (message) message.textContent = "Đang lưu...";
+
+    await db.collection("wallets").doc(user.uid).set({
+      contactPhone: phone,
+      contactEmail: email,
+      contactUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    if (message) message.textContent = "Đã lưu thông tin thành công ❤️";
+  } catch (error) {
+    console.error(error);
+    if (message) message.textContent = "Lưu thất bại, vui lòng thử lại!";
+  }
+};
+
 // TRẠNG THÁI TIẾN ĐỘ
 let progressData = null;
 let currentManager = null;
