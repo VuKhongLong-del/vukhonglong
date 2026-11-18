@@ -3052,6 +3052,64 @@ window.changeWalletCoins = async function(type) {
     alert("Không thể thay đổi Xu: " + error.message);
   }
 };
+// QUẢN LÝ DANH SÁCH TÀI KHOẢN
+window.loadAccountAdminList = async function() {
+  const list = document.getElementById("vkl-account-admin-list");
+  const search = document.getElementById("vkl-account-search");
+
+  if (!list) return;
+
+  if (!window.auth?.currentUser ||
+      window.auth.currentUser.email.toLowerCase() !== "haphamngu123@gmail.com") {
+    list.textContent = "Bạn không có quyền quản lý!";
+    return;
+  }
+
+  list.textContent = "Đang tải danh sách tài khoản...";
+
+  try {
+    const snapshot = await firebase.firestore()
+      .collection("wallets")
+      .get();
+
+    const keyword = (search?.value || "").trim().toLowerCase();
+
+    const accounts = snapshot.docs
+      .map(doc => ({
+        uid: doc.id,
+        ...doc.data()
+      }))
+      .filter(account =>
+        String(account.userId || "").toLowerCase().includes(keyword) ||
+        String(account.username || "").toLowerCase().includes(keyword)
+      );
+
+    if (!accounts.length) {
+      list.textContent = "Không tìm thấy tài khoản nào.";
+      return;
+    }
+
+    list.innerHTML = accounts.map(account => `
+      <div style="padding:12px 0;border-bottom:1px solid #52617f">
+        <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
+        <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
+        <p style="margin:6px 0">Số dư: ${Number(account.coins || 0).toLocaleString("vi-VN")} VNĐ</p>
+        <button
+          onclick="window.editAccountId('${account.uid}','${String(account.userId || "").replace(/[^0-9]/g, "")}')"
+          style="width:100%;padding:10px;border:0;border-radius:8px;background:#6650ed;color:white;font-weight:bold">
+          ✏️ CHỈNH SỬA ID
+        </button>
+      </div>
+    `).join("");
+
+    list.insertAdjacentHTML("afterbegin",
+      `<p>Đã tìm thấy ${accounts.length} tài khoản.</p>`);
+
+  } catch (error) {
+    console.error(error);
+    list.textContent = "Lỗi tải tài khoản: " + error.message;
+  }
+};
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
 
 window.renderOrderAdmin = async function() {
