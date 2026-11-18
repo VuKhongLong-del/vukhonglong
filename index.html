@@ -583,19 +583,18 @@ body.dark .nav button.active {
     background: #303b59;
     box-shadow: 0 3px 12px #00000055;
 }
-/* Dịch vụ được chọn ở nền sáng */
-.service.selected {
-    border: 2px solid #5271ff !important;
-    box-shadow: 0 0 12px #5271ff66 !important;
+/* Nền sáng - viền xanh dương */
+body:not(.dark) .service.selected {
+    border: 2px solid #2563eb !important;
+    box-shadow: 0 0 8px #2563eb,
+                0 0 20px #2563eb88 !important;
 }
 
-/* Nền sáng - viền xanh lá */
+/* Nền tối - viền tím */
 body.dark .service.selected {
-    border: 2px solid #00eaff !important;
-    box-shadow:
-        0 0 8px #00eaff,
-        0 0 20px #00eaff88,
-        0 0 30px #00eaff44 !important;
+    border: 2px solid #a855f7 !important;
+    box-shadow: 0 0 8px #a855f7,
+                0 0 20px #a855f788 !important;
     background: #252d40 !important;
 }
 
