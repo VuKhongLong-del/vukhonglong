@@ -1676,7 +1676,18 @@ body.dark .vkl-contact-card button {
   border-radius: 9px;
   font-weight: bold;
 }
+/* Ô nhập liệu màu xám */
+body:not(.dark) #vkl-tab-security input {
+  background: #cfd3dc !important;
+  color: #222936 !important;
+  border: 1px solid #aeb5c1 !important;
+}
 
+body.dark #vkl-tab-security input {
+  background: #303b4d !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #40516b !important;
+}
 </style>
 
 <div id="vkl-change-password-box" style="display:block;margin-top:15px;padding:15px;background:#cfd3dc;border-radius:12px;text-align:left">
