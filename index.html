@@ -4021,9 +4021,16 @@ try {
 
       alert("Đăng nhập thành công!");
       closeModal();
-    } catch(error) {
-      message.textContent = "Lỗi: " + error.message;
-    }
+   } catch(error) {
+  const errors = {
+    "auth/invalid-credential": "Tên tài khoản hoặc mật khẩu không chính xác!",
+    "auth/user-not-found": "Không tìm thấy tài khoản này!",
+    "auth/wrong-password": "Mật khẩu không chính xác!",
+    "auth/too-many-requests": "Bạn đã thử quá nhiều lần. Vui lòng thử lại sau!"
+  };
+
+  message.textContent = errors[error.code] || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!";
+}
   };
 
 } catch(error) {
