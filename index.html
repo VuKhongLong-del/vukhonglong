@@ -3995,8 +3995,14 @@ try {
       alert("Đăng ký thành công!");
       closeModal();
     } catch(error) {
-      message.textContent = "Lỗi: " + error.message;
-    }
+  const errors = {
+    "auth/email-already-in-use": "Tên tài khoản này đã tồn tại! Vui lòng chọn tên khác.",
+    "auth/invalid-email": "Thông tin tài khoản không hợp lệ!",
+    "auth/weak-password": "Mật khẩu phải có ít nhất 6 ký tự!"
+  };
+
+  message.textContent = errors[error.code] || "Đăng ký thất bại. Vui lòng thử lại!";
+}
   };
 
   window.customerLogin = async function() {
