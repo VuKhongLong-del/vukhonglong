@@ -1476,6 +1476,41 @@ body.dark .admin-dark-panel textarea {
   border-color: #52617f !important;
 }
 </style>
+<style>
+.vkl-account-tab {
+  flex: 1;
+  padding: 12px 4px;
+  border: 1px solid #aeb5c1;
+  border-radius: 12px;
+  background: #cfd3dc;
+  color: #273244;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.vkl-account-tab span {
+  font-size: 23px;
+}
+
+.vkl-account-tab.active {
+  background: #16a36a;
+  color: white;
+  border-color: #16a36a;
+}
+
+body.dark .vkl-account-tab {
+  background: #202b3d;
+  color: #e5e7eb;
+  border-color: #40516b;
+}
+
+body.dark .vkl-account-tab.active {
+  background: #6650ed;
+  color: white;
+  border-color: #6650ed;
+}
+</style>
 <div id="vkl-account-tabs" style="display:flex;gap:8px;margin:15px 0;text-align:center">
   <button onclick="window.showAccountTab('info')" class="vkl-account-tab active"> 
     <span>👤</span><br>Thông Tin
