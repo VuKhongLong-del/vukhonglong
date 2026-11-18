@@ -1230,7 +1230,7 @@ async function submitConfirmedOrder(){
   await window.saveOrderToFirebase(order);
  } catch(error) {
   console.error("Lỗi lưu đơn Firebase:", error);
-  alert("Không thể lưu đơn hàng lên hệ thống. Vui lòng thử lại.");
+  alert("Không đủ tiền để đặt đơn.Vui lòng nạp thêm và thử lại!");
   return;
  }
 
