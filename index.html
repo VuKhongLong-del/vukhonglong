@@ -2576,7 +2576,12 @@ function getCustomerLoginEmail() {
 
   return username.toLowerCase() + "@login.vukhongglong.com";
 }
-
+window.showForgotPasswordById = function() {
+  const box = document.getElementById("vkl-forgot-id-box");
+  if (box) {
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  }
+};
 window.customerRegister = async function() {
   const message = document.getElementById("vkl-auth-message");
   const password = document.getElementById("vkl-auth-password").value;
