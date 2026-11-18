@@ -1476,7 +1476,17 @@ body.dark .admin-dark-panel textarea {
   border-color: #52617f !important;
 }
 </style>
-
+<div id="vkl-account-tabs" style="display:flex;gap:8px;margin:15px 0;text-align:center">
+  <button onclick="window.showAccountTab('info')" class="vkl-account-tab active"> 
+    <span>👤</span><br>Thông Tin
+  </button>
+  <button onclick="window.showAccountTab('security')" class="vkl-account-tab">
+    <span>🔐</span><br>Bảo Mật
+  </button>
+  <button onclick="window.showAccountTab('intro')" class="vkl-account-tab">
+    <span>🎁</span><br>Giới Thiệu
+  </button>
+</div>
 <p class="vkl-rainbow-name">
   ${username}
 </p>
