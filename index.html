@@ -2598,6 +2598,29 @@ window.showForgotPasswordById = function() {
     box.style.display = box.style.display === "none" ? "block" : "none";
   }
 };
+window.sendRecoveryRequest = function() {
+  const username = document.getElementById("vkl-recovery-username").value.trim();
+  const id = document.getElementById("vkl-recovery-id").value.trim();
+  const contact = document.getElementById("vkl-recovery-contact").value.trim();
+  const message = document.getElementById("vkl-forgot-id-message");
+
+  if (!username) {
+    message.textContent = "Vui lòng nhập tên tài khoản!";
+    return;
+  }
+
+  const subject = "Yêu cầu khôi phục tài khoản: " + username;
+  const body =
+    "YÊU CẦU KHÔI PHỤC TÀI KHOẢN\n\n" +
+    "Tên tài khoản: " + username + "\n" +
+    "ID: " + (id || "Không cung cấp") + "\n" +
+    "SĐT hoặc email liên kết: " + (contact || "Không cung cấp");
+
+  window.location.href =
+    "mailto:haphamngu123@gmail.com?subject=" +
+    encodeURIComponent(subject) +
+    "&body=" + encodeURIComponent(body);
+};
 window.findForgotAccountById = async function() {
   const id = document.getElementById("vkl-forgot-account-id")?.value.trim();
   const message = document.getElementById("vkl-forgot-id-message");
