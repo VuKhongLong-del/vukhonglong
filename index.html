@@ -963,12 +963,12 @@ body.dark .progress-lookup-box {
   <label for="codes">Danh sách mã sự kiện</label>
   <textarea id="codes" placeholder="Nhập mã 1&#10;Nhập mã 2&#10;Nhập mã 3"></textarea>
 <style>
-#codes {
+body:not(.dark) #codes {
   background: #cfd3dc !important;
   color: #222936 !important;
   border: 1px solid #aeb5c1 !important;
 }
-#codes::placeholder {
+body:not(.dark) #codes::placeholder {
   color: #626b7a !important;
 }
 </style>
