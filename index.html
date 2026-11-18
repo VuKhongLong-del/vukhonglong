@@ -5068,9 +5068,10 @@ body.dark .services .service.selected {
           });
 
           batch.set(db.collection("referralCodes").doc(code), {
-            uid: user.uid,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+  uid: user.uid,
+  code: code,
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
 
           try {
             await batch.commit();
