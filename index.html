@@ -4241,12 +4241,24 @@ body:not(.dark) #vkl-reviews .vkl-review-item {
     color: #222936 !important;
     border-color: #aeb5c1 !important;
 }
-/* VIỀN HỒNG DỊCH VỤ ĐƯỢC CHỌN - NỀN SÁNG */
+/* VIỀN HỒNG NHẤP NHÁY DỊCH VỤ ĐƯỢC CHỌN */
 body:not(.dark) .services .service.selected {
     border: 2px solid #e879f9 !important;
     border-radius: 18px !important;
-    box-shadow: 0 0 6px #e879f955 !important;
     overflow: hidden !important;
+    animation: servicePinkGlow 1.3s ease-in-out infinite !important;
+}
+
+@keyframes servicePinkGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px #e879f955 !important;
+    }
+    50% {
+        box-shadow:
+            0 0 8px #e879f9,
+            0 0 16px #e879f9bb,
+            0 0 24px #d946ef88 !important;
+    }
 }
 /* CHỮ TRA CỨU TIẾN ĐỘ - NỀN SÁNG */
 body:not(.dark) .progress-lookup-box > p {
