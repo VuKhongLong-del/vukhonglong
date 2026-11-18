@@ -5029,5 +5029,285 @@ body.dark .services .service.selected {
 })();
 </script>
 
+<script>
+// ===== HỆ THỐNG MÃ GIỚI THIỆU =====
+(function () {
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+  const reward = 5000;
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+  function randomCode() {
+    const bytes = new Uint8Array(7);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, b => chars[b % chars.length]).join("");
+  }
+
+  window.loadReferralPanel = async function () {
+    const user = auth.currentUser;
+    const display = document.getElementById("referral-my-code");
+    if (!user || !display) return;
+
+    display.textContent = "Đang tải...";
+
+    try {
+      const profileRef = db.collection("referralProfiles").doc(user.uid);
+      let profile = await profileRef.get();
+
+      if (!profile.exists) {
+        let created = false;
+
+        for (let i = 0; i < 10 && !created; i++) {
+          const code = randomCode();
+          const batch = db.batch();
+
+          batch.set(profileRef, {
+            uid: user.uid,
+            code: code,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          batch.set(db.collection("referralCodes").doc(code), {
+            uid: user.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          try {
+            await batch.commit();
+            created = true;
+          } catch (e) {
+            if (e.code !== "already-exists") throw e;
+          }
+        }
+
+        if (!created) throw new Error("Không tạo được mã, vui lòng thử lại.");
+        profile = await profileRef.get();
+      }
+
+      display.textContent = profile.data().code;
+
+      const request = await db.collection("referralRequests")
+        .doc(user.uid).get();
+
+      const status = document.getElementById("referral-status");
+      if (status && request.exists) {
+        const state = request.data().status;
+        status.textContent = state === "pending"
+          ? "Mã đang chờ quản lý duyệt."
+          : state === "approved"
+          ? "Mã đã được duyệt."
+          : "Yêu cầu trước đó đã bị từ chối.";
+      }
+
+      if (user.email &&
+          user.email.toLowerCase() === "haphamngu123@gmail.com") {
+        const panel = document.getElementById("referral-admin-panel");
+        if (panel) panel.style.display = "block";
+        window.loadReferralAdminList();
+      }
+    } catch (e) {
+      console.error(e);
+      display.textContent = "Lỗi tải mã";
+    }
+  };
+
+  window.copyReferralCode = async function () {
+    const code = document.getElementById("referral-my-code")?.textContent;
+    if (!code || code === "Đang tải..." || code === "Lỗi tải mã") return;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      alert("Đã sao chép mã giới thiệu!");
+    } catch (e) {
+      alert("Không sao chép được. Bạn hãy ghi lại mã: " + code);
+    }
+  };
+
+  window.submitReferralCode = async function () {
+    const user = auth.currentUser;
+    const input = document.getElementById("referral-input");
+    const status = document.getElementById("referral-status");
+    const code = (input?.value || "").trim();
+
+    if (!user) {
+      status.textContent = "Vui lòng đăng nhập!";
+      return;
+    }
+
+    if (!/^[A-Za-z]{7}$/.test(code)) {
+      status.textContent = "Mã phải gồm đúng 7 chữ cái.";
+      return;
+    }
+
+    status.textContent = "Đang gửi yêu cầu...";
+
+    try {
+      const codeSnap = await db.collection("referralCodes").doc(code).get();
+
+      if (!codeSnap.exists) throw new Error("Mã giới thiệu không tồn tại.");
+
+      const inviterUid = codeSnap.data().uid;
+      if (inviterUid === user.uid) {
+        throw new Error("Bạn không thể nhập mã của chính mình.");
+      }
+
+      const requestRef = db.collection("referralRequests").doc(user.uid);
+
+      await db.runTransaction(async tx => {
+        const oldRequest = await tx.get(requestRef);
+        if (oldRequest.exists) {
+          throw new Error("Bạn đã gửi mã giới thiệu trước đó.");
+        }
+
+        tx.set(requestRef, {
+          referredUid: user.uid,
+          inviterUid: inviterUid,
+          referralCode: code,
+          status: "pending",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+
+      input.value = "";
+      status.textContent = "Đã gửi mã! Vui lòng chờ quản lý duyệt.";
+    } catch (e) {
+      console.error(e);
+      status.textContent = e.message || "Gửi mã thất bại.";
+    }
+  };
+
+  window.loadReferralAdminList = async function () {
+    const user = auth.currentUser;
+    const list = document.getElementById("referral-admin-list");
+    if (!list || !user ||
+        user.email?.toLowerCase() !== "haphamngu123@gmail.com") return;
+
+    list.textContent = "Đang tải yêu cầu...";
+
+    try {
+      const snap = await db.collection("referralRequests")
+        .where("status", "==", "pending").get();
+
+      if (snap.empty) {
+        list.textContent = "Không có yêu cầu đang chờ.";
+        return;
+      }
+
+      list.innerHTML = "";
+
+      snap.forEach(doc => {
+        const data = doc.data();
+        const item = document.createElement("div");
+        item.style.cssText =
+          "padding:12px;margin:10px 0;border:1px solid #888;border-radius:10px";
+
+        const info = document.createElement("p");
+        info.textContent = "Tài khoản nhập mã: " + data.referredUid +
+          " | Người giới thiệu: " + data.inviterUid +
+          " | Mã: " + data.referralCode;
+
+        const approve = document.createElement("button");
+        approve.textContent = "DUYỆT +5.000";
+        approve.onclick = () => window.reviewReferralRequest(doc.id, "approve");
+
+        const reject = document.createElement("button");
+        reject.textContent = "TỪ CHỐI";
+        reject.style.marginLeft = "8px";
+        reject.onclick = () => window.reviewReferralRequest(doc.id, "reject");
+
+        item.append(info, approve, reject);
+        list.appendChild(item);
+      });
+    } catch (e) {
+      console.error(e);
+      list.textContent = "Lỗi tải danh sách: " + e.message;
+    }
+  };
+
+  window.reviewReferralRequest = async function (referredUid, action) {
+    const user = auth.currentUser;
+    if (!user ||
+        user.email?.toLowerCase() !== "haphamngu123@gmail.com") {
+      alert("Bạn không có quyền quản lý!");
+      return;
+    }
+
+    if (!["approve", "reject"].includes(action)) return;
+
+    try {
+      const requestRef = db.collection("referralRequests").doc(referredUid);
+
+      await db.runTransaction(async tx => {
+        const requestSnap = await tx.get(requestRef);
+        if (!requestSnap.exists ||
+            requestSnap.data().status !== "pending") {
+          throw new Error("Yêu cầu không còn ở trạng thái chờ.");
+        }
+
+        const data = requestSnap.data();
+
+        if (action === "reject") {
+          tx.update(requestRef, {
+            status: "rejected",
+            reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          return;
+        }
+
+        const walletRef = db.collection("wallets").doc(data.inviterUid);
+        const historyRef = db.collection("coinTransactions")
+          .doc("referral_" + referredUid);
+
+        const walletSnap = await tx.get(walletRef);
+        const historySnap = await tx.get(historyRef);
+
+        if (!walletSnap.exists) throw new Error("Không tìm thấy ví người giới thiệu.");
+        if (historySnap.exists) throw new Error("Giao dịch thưởng đã tồn tại.");
+
+        const wallet = walletSnap.data();
+        const oldBalance = Number(wallet.coins || 0);
+        const newBalance = oldBalance + reward;
+
+        if (!Number.isSafeInteger(newBalance)) {
+          throw new Error("Số dư không hợp lệ.");
+        }
+
+        tx.update(walletRef, {
+          coins: newBalance,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        tx.set(historyRef, {
+          uid: data.inviterUid,
+          userId: String(wallet.userId),
+          type: "add",
+          amount: reward,
+          balanceAfter: newBalance,
+          note: "Thưởng giới thiệu",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        tx.update(requestRef, {
+          status: "approved",
+          reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+
+      alert(action === "approve" ? "Đã duyệt thưởng 5.000 Xu!" : "Đã từ chối yêu cầu.");
+      window.loadReferralAdminList();
+    } catch (e) {
+      console.error(e);
+      alert("Không xử lý được: " + e.message);
+    }
+  };
+
+  const originalShowTab = window.showAccountTab;
+  window.showAccountTab = function (tab) {
+    if (typeof originalShowTab === "function") originalShowTab(tab);
+    if (tab === "intro") window.loadReferralPanel();
+  };
+})();
+</script>
+
 </body>
 </html>
