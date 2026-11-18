@@ -2349,7 +2349,12 @@ if (isAdmin && walletSnap.exists && walletSnap.data().userId !== "777777") {
 
       walletSnap = await walletRef.get();
     }
+// CẬP NHẬT ID TÀI KHOẢN TỪ FIRESTORE
+const accountIdEl = document.querySelector(".rainbow-id");
 
+if (accountIdEl) {
+  accountIdEl.textContent = walletSnap.data().userId || "Chưa có ID";
+}
     const coins = Number(walletSnap.data().coins || 0);
     balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
 
