@@ -1638,22 +1638,29 @@ body.dark #vkl-contact-link-box input {
   </button>
     <p id="vkl-change-password-message"></p>
 </div>
-<div id="vkl-contact-link-box" style="margin-top:18px;padding:15px;border-radius:12px;background:#cfd3dc;text-align:left">
+<
+<div id="vkl-contact-link-box" style="margin-top:18px;text-align:left">
   <h3>🔗 LIÊN KẾT THÔNG TIN</h3>
 
-  <label>📱 Số điện thoại</label>
-  <input id="vkl-contact-phone" type="tel" placeholder="Nhập số điện thoại"
-    style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #aeb5c1;border-radius:9px;margin:8px 0">
+  <div class="vkl-contact-card" id="vkl-phone-card">
+    <h4>📱 LIÊN KẾT SỐ ĐIỆN THOẠI</h4>
+    <input id="vkl-contact-phone" type="tel"
+      placeholder="Nhập số điện thoại">
+    <button onclick="window.saveCustomerContact('phone')">
+      LƯU SỐ ĐIỆN THOẠI
+    </button>
+    <p id="vkl-phone-message"></p>
+  </div>
 
-  <label>📧 Email</label>
-  <input id="vkl-contact-email" type="email" placeholder="Nhập địa chỉ email"
-    style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #aeb5c1;border-radius:9px;margin:8px 0">
-
-  <button onclick="window.saveCustomerContact()" style="width:100%;padding:13px;margin-top:12px;border:0;border-radius:10px;background:#16a36a;color:white;font-weight:bold">
-    LƯU THÔNG TIN LIÊN KẾT
-  </button>
-  <p id="vkl-contact-message"></p>
-</div>
+  <div class="vkl-contact-card" id="vkl-email-card">
+    <h4>📧 LIÊN KẾT EMAIL</h4>
+    <input id="vkl-contact-email" type="email"
+      placeholder="Nhập địa chỉ email">
+    <button onclick="window.saveCustomerContact('email')">
+      LƯU EMAIL
+    </button>
+    <p id="vkl-email-message"></p>
+  </div>
 </div>
 
 <div id="vkl-tab-intro" style="display:none;text-align:center;padding:20px">
