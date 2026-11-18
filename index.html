@@ -3059,8 +3059,10 @@ window.loadCustomerContact = async function() {
 
 window.saveCustomerContact = async function(type) {
   const user = window.auth?.currentUser;
+  const isPhone = type === "phone";
+
   const message = document.getElementById(
-    type === "phone" ? "vkl-phone-message" : "vkl-email-message"
+    isPhone ? "vkl-phone-message" : "vkl-email-message"
   );
 
   if (!user) {
@@ -3068,33 +3070,91 @@ window.saveCustomerContact = async function(type) {
     return;
   }
 
-  const isPhone = type === "phone";
   const value = document.getElementById(
     isPhone ? "vkl-contact-phone" : "vkl-contact-email"
   )?.value.trim() || "";
 
-  if (!isPhone && value &&
+  if (!value) {
+    if (message) message.textContent = "Vui lòng nhập thông tin!";
+    return;
+  }
+
+  if (!isPhone &&
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
     if (message) message.textContent = "Email không hợp lệ!";
     return;
   }
 
   try {
+    if (message) message.textContent = "Đang kiểm tra...";
+
+    const ref = db.collection("wallets").doc(user.uid);
+    const snap = await ref.get();
+
+    if (!snap.exists) {
+      if (message) message.textContent = "Không tìm thấy ví!";
+      return;
+    }
+
+    const data = snap.data();
+
+    const field = isPhone ? "contactPhone" : "contactEmail";
+    const timeField = isPhone
+      ? "contactPhoneUpdatedAt"
+      : "contactEmailUpdatedAt";
+
+    if (data[field] === value) {
+      if (message) message.textContent = "Thông tin này đã được liên kết!";
+      return;
+    }
+
+    if (data[field]) {
+      const lastTime =
+        data[timeField] || data.contactUpdatedAt;
+
+      if (lastTime) {
+        const lastDate = lastTime.toDate
+          ? lastTime.toDate()
+          : new Date(lastTime);
+
+        const remaining =
+          7 * 24 * 60 * 60 * 1000 -
+          (Date.now() - lastDate.getTime());
+
+        if (remaining > 0) {
+          const days = Math.ceil(
+            remaining / (24 * 60 * 60 * 1000)
+          );
+
+          if (message) {
+            message.textContent =
+              `Bạn còn phải chờ ${days} ngày mới được đổi!`;
+          }
+          return;
+        }
+      }
+    }
+
     if (message) message.textContent = "Đang lưu...";
 
-    const data = isPhone
-      ? { contactPhone: value }
-      : { contactEmail: value };
+    const updateData = {
+      [field]: value,
+      [timeField]:
+        firebase.firestore.FieldValue.serverTimestamp()
+    };
 
-    data.contactUpdatedAt =
-      firebase.firestore.FieldValue.serverTimestamp();
+    await ref.set(updateData, { merge: true });
 
-    await db.collection("wallets").doc(user.uid).set(data, { merge: true });
+    if (message) {
+      message.textContent = "Đã lưu thành công ❤️";
+    }
 
-    if (message) message.textContent = "Đã lưu thành công ❤️";
   } catch (error) {
-    console.error(error);
-    if (message) message.textContent = "Lưu thất bại, vui lòng thử lại!";
+    console.error("Lỗi lưu thông tin liên kết:", error);
+
+    if (message) {
+      message.textContent = "Lưu thất bại, vui lòng thử lại!";
+    }
   }
 };
 
