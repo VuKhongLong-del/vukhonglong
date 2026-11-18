@@ -1464,6 +1464,24 @@ if (window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com") {
       style="margin-top:12px;padding:12px;background:#293650;border-radius:10px">
       Chưa tìm tài khoản
     </div>
+<hr style="margin:18px 0;border-color:#52617f">
+
+<h3>👥 QUẢN LÝ TÀI KHOẢN</h3>
+
+<input id="vkl-account-search"
+  type="text"
+  placeholder="Tìm theo ID hoặc tên tài khoản"
+  style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border-radius:8px">
+
+<button onclick="window.loadAccountAdminList()"
+  style="width:100%;padding:12px;border:0;border-radius:9px;background:#6650ed;color:white;font-weight:bold">
+  🔍 XEM DANH SÁCH TÀI KHOẢN
+</button>
+
+<div id="vkl-account-admin-list"
+  style="margin-top:12px;padding:12px;background:#293650;border-radius:10px">
+  Chưa tải danh sách tài khoản
+</div>
 </div>
   `);
 }
