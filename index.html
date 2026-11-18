@@ -1306,7 +1306,9 @@ if(type === "account"){
   if(window.auth && window.auth.currentUser){
     const username = window.auth.currentUser.email.split("@")[0];
 const isOwnerAccount = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com";
-const userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com"
+let userId = window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com"
+  ? "777777"
+  : "Đang tải...";
   ? "777777"
   : String(
       100000 + Array.from(window.auth.currentUser.uid)
