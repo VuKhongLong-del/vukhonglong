@@ -3527,9 +3527,11 @@ window.loadAccountAdminList = async function() {
         uid: doc.id,
         ...doc.data()
       }))
-      .filter(account =>
+           .filter(account =>
         String(account.userId || "").toLowerCase().includes(keyword) ||
-        String(account.username || "").toLowerCase().includes(keyword)
+        String(account.username || "").toLowerCase().includes(keyword) ||
+        String(account.contactPhone || "").toLowerCase().includes(keyword) ||
+        String(account.contactEmail || "").toLowerCase().includes(keyword)
       );
 
     if (!accounts.length) {
