@@ -4930,6 +4930,40 @@ body:not(.dark) #vkl-recovery-contact {
   color: #222936 !important;
   border: 1px solid #dddddd !important;
 }
+/* TĂNG ĐỘ LÓE VIỀN DỊCH VỤ CẢ HAI CHẾ ĐỘ */
+body:not(.dark) .services .service.selected {
+    animation: serviceBlueGlow 1.3s ease-in-out infinite !important;
+}
+
+@keyframes serviceBlueGlow {
+    0%, 100% {
+        box-shadow: 0 0 8px #2563eb88,
+                    0 0 16px #2563eb99 !important;
+    }
+    50% {
+        box-shadow: 0 0 12px #2563eb,
+                    0 0 24px #2563eb,
+                    0 0 38px #1d4ed8cc,
+                    0 0 48px #3b82f655 !important;
+    }
+}
+
+body.dark .services .service.selected {
+    animation: servicePurpleGlow 1.3s ease-in-out infinite !important;
+}
+
+@keyframes servicePurpleGlow {
+    0%, 100% {
+        box-shadow: 0 0 8px #a855f788,
+                    0 0 16px #a855f799 !important;
+    }
+    50% {
+        box-shadow: 0 0 12px #a855f7,
+                    0 0 24px #a855f7,
+                    0 0 38px #9333eacc,
+                    0 0 48px #c084fc66 !important;
+    }
+}
 </style>
 
 <div id="vkl-notice-overlay">
