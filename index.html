@@ -3542,6 +3542,7 @@ window.loadAccountAdminList = async function() {
     list.innerHTML = accounts.map(account => `
       <div style="padding:12px 0;border-bottom:1px solid #52617f">
         <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
+                <p style="margin:6px 0">Email đăng nhập: ${escapeOrderText(account.username ? account.username.toLowerCase() + "@login.vukhongglong.com" : "Không có")}</p>
                 <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
         <p style="margin:6px 0">SĐT liên kết: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
         <p style="margin:6px 0">Email liên kết: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
