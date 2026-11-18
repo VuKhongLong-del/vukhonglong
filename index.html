@@ -2582,6 +2582,36 @@ window.showForgotPasswordById = function() {
     box.style.display = box.style.display === "none" ? "block" : "none";
   }
 };
+window.findForgotAccountById = async function() {
+  const id = document.getElementById("vkl-forgot-account-id")?.value.trim();
+  const message = document.getElementById("vkl-forgot-id-message");
+
+  if (!/^\d{6}$/.test(id || "")) {
+    message.textContent = "Vui lòng nhập ID gồm 6 chữ số!";
+    return;
+  }
+
+  message.textContent = "Đang tìm tài khoản...";
+
+  try {
+    const snapshot = await db.collection("wallets")
+      .where("userId", "==", id)
+      .get();
+
+    if (snapshot.empty) {
+      message.textContent = "Không tìm thấy tài khoản!";
+      return;
+    }
+
+    const account = snapshot.docs[0].data();
+    message.textContent = "Đã tìm thấy tài khoản: " +
+      (account.username || "Chưa có tên") +
+      ". Vui lòng xác minh quyền sở hữu để khôi phục đăng nhập.";
+  } catch (error) {
+    message.textContent = "Không thể tìm tài khoản. Vui lòng thử lại.";
+    console.error(error);
+  }
+};
 window.customerRegister = async function() {
   const message = document.getElementById("vkl-auth-message");
   const password = document.getElementById("vkl-auth-password").value;
