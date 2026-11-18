@@ -1685,6 +1685,9 @@ body.insertAdjacentHTML("beforeend", `
     window.auth.currentUser.uid,
     username
   );
+  if (typeof window.loadCustomerContact === "function") {
+  window.loadCustomerContact();
+}
 } else {
   document.getElementById("vkl-coin-balance").textContent =
     "Hàm tải ví chưa khởi tạo";
