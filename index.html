@@ -1696,6 +1696,36 @@ let transferContent = transferUser
    </div>
   `;
 if (transferUser) {
+  (async () => {
+    try {
+      const snap = await firebase.firestore()
+        .collection("wallets")
+        .doc(transferUser.uid)
+        .get();
+
+      const id = snap.exists ? snap.data().userId : "";
+
+      transferContent = id
+        ? "chuyentien " + id
+        : "Chưa có ID";
+
+      document.querySelectorAll(".payment-box strong").forEach(el => {
+        if (el.textContent === "Đang tải ID...") {
+          el.textContent = transferContent;
+        }
+      });
+
+      document.querySelectorAll(".payment-box button").forEach(btn => {
+        if (btn.textContent.includes("Sao chép nội dung")) {
+          btn.onclick = () => copyPayment(transferContent);
+        }
+      });
+    } catch (error) {
+      console.error("Lỗi tải ID chuyển khoản:", error);
+    }
+  })();
+}
+if (transferUser) {
   setTimeout(() => {
     if (typeof window.loadTransferHistory === "function") {
       window.loadTransferHistory();
