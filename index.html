@@ -1775,30 +1775,36 @@ body.dark #vkl-tab-security input {
   </div>
 </div>
 </div>
-<div id="vkl-tab-intro" style="display:none;padding:20px">
-  <div style="text-align:center">
-    <div style="font-size:40px">🎁</div>
-    <h3>GIỚI THIỆU BẠN BÈ</h3>
-    <p>Chia sẻ mã giới thiệu để nhận thưởng 5.000 Xu.</p>
-  </div>
+<div id="vkl-tab-intro" class="vkl-referral-wrap" style="display:none">
+  <div class="vkl-referral-shell">
+    <div class="vkl-referral-heading">
+      <div style="font-size:42px">🎁</div>
+      <h3>GIỚI THIỆU BẠN BÈ</h3>
+      <p>Chia sẻ mã của bạn và nhận thưởng <strong>5.000 Xu</strong> khi lời mời được duyệt.</p>
+    </div>
 
-  <div class="vkl-card" style="padding:18px;text-align:center">
-    <p>MÃ GIỚI THIỆU CỦA BẠN</p>
-    <h2 id="referral-my-code">Đang tải...</h2>
-    <button onclick="copyReferralCode()">Sao chép mã</button>
-  </div>
+    <div class="vkl-referral-card vkl-referral-code-card">
+      <p class="vkl-referral-label">MÃ GIỚI THIỆU CỦA BẠN</p>
+      <h2 id="referral-my-code">Đang tải...</h2>
+      <button class="vkl-referral-btn vkl-referral-copy"
+        onclick="copyReferralCode()">⧉ SAO CHÉP MÃ</button>
+    </div>
 
-  <div class="vkl-card" style="padding:18px;margin-top:15px">
-    <h3>Nhập mã giới thiệu</h3>
-    <input id="referral-input" type="text"
-      maxlength="7" placeholder="Nhập mã 7 ký tự">
-    <button onclick="submitReferralCode()">Gửi mã</button>
-    <p id="referral-status"></p>
-  </div>
+    <div class="vkl-referral-card vkl-referral-submit-card">
+      <h3>Nhập mã giới thiệu</h3>
+      <p>Nhập mã 7 ký tự của người đã giới thiệu bạn.</p>
+      <input id="referral-input" type="text"
+        maxlength="7" placeholder="NHẬP MÃ 7 KÝ TỰ"
+        autocomplete="off">
+      <button class="vkl-referral-btn vkl-referral-send"
+        onclick="submitReferralCode()">GỬI MÃ GIỚI THIỆU</button>
+      <p id="referral-status"></p>
+    </div>
 
-  <div id="referral-admin-panel" style="display:none">
-    <h3>DUYỆT MÃ GIỚI THIỆU</h3>
-    <div id="referral-admin-list"></div>
+    <div id="referral-admin-panel" class="vkl-referral-card" style="display:none">
+      <h3>DUYỆT MÃ GIỚI THIỆU</h3>
+      <div id="referral-admin-list"></div>
+    </div>
   </div>
 </div>
     `;
