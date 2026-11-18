@@ -5107,7 +5107,7 @@ body.dark .services .service.selected {
       }
     } catch (e) {
       console.error(e);
-      display.textContent = "Lỗi tải mã";
+      display.textContent = "Lỗi: " + (e.code || "") + " - " + (e.message || e);
     }
   };
 
