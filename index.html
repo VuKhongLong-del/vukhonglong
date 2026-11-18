@@ -1580,20 +1580,6 @@ let transferContent = transferUser
   ? "Đang tải ID..."
   : "Vui lòng đăng nhập";
 
-const transferId = transferUser
-  ? (
-      transferUser.email === "haphamngu123@gmail.com"
-        ? "777777"
-        : String(
-            100000 + Array.from(transferUser.uid)
-              .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 900000, 0)
-          )
-    )
-  : "";
-
-const transferContent = transferId
-  ? "chuyentien " + transferId
-  : "Vui lòng đăng nhập";
   body.innerHTML = `
    <h2 style="text-align:center">💳 THÔNG TIN THANH TOÁN</h2>
    <div class="payment-box" style="
