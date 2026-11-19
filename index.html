@@ -7017,6 +7017,43 @@ window.closeRankProgress = function() {
   }, true);
 })();
 </script>
+<script>
+window.vklToggleChat = function() {
+  const panel = document.getElementById("vkl-chat-panel");
+  if (panel) panel.classList.toggle("show");
+};
+
+window.vklChatChoose = function(topic) {
+  const messages = document.getElementById("vkl-chat-messages");
+  if (!messages) return;
+
+  const replies = {
+    "Nạp tiền": "💰 Để nạp tiền, bạn hãy vào mục Chuyển Khoản, nhập đúng số tiền và làm theo hướng dẫn QR/ tài khoản ngân hàng. Nếu đã chuyển mà số dư chưa cập nhật, hãy liên hệ Admin kèm mã giao dịch nhé.",
+    "Đơn hàng": "📦 Bạn hãy mở mục Lịch sử để kiểm tra đơn hàng và trạng thái xử lý. Nếu đơn bị lỗi hoặc chưa cập nhật, hãy gửi mã đơn cho Admin để được kiểm tra.",
+    "Tài khoản": "👤 Bạn hãy kiểm tra lại thông tin đăng nhập và ID tài khoản. Nếu không đăng nhập được hoặc thông tin bị sai, hãy liên hệ Admin để được hỗ trợ.",
+    "Gặp Admin": "☎️ Mình sẽ mở các kênh liên hệ để bạn chọn Zalo, Facebook, Discord hoặc TikTok nhé."
+  };
+
+  const user = document.createElement("div");
+  user.className = "vkl-chat-user";
+  user.textContent = topic;
+  messages.appendChild(user);
+
+  const bot = document.createElement("div");
+  bot.className = "vkl-chat-bot";
+  bot.textContent = replies[topic] || "Mình chưa có câu trả lời cho vấn đề này. Bạn hãy chọn Gặp Admin để được hỗ trợ nhé.";
+  messages.appendChild(bot);
+
+  messages.scrollTop = messages.scrollHeight;
+
+  if (topic === "Gặp Admin") {
+    const menu = document.getElementById("contactMenu");
+    if (menu && !menu.classList.contains("show")) {
+      window.toggleContactMenu?.();
+    }
+  }
+};
+</script>
 
 </body>
 </html>
