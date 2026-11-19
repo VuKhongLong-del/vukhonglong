@@ -1193,7 +1193,7 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
 ">
   <img id="home-rank-image" src="rank-dong.png"
   style="width:65px;height:65px;object-fit:contain;">
-<strong id="home-info-rank" style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;letter-spacing:1px;">🥉 Đồng</strong>
+<strong id="home-info-rank" style="font-family:'Marcellus',serif;font-size:20px;font-weight:700;letter-spacing:1px;">Đồng</strong>
 <button onclick="openRankProgress()" style="
   border:0;
   background:transparent;
@@ -5023,7 +5023,7 @@ if (homeBalance) {
 }
 const rankEl = document.getElementById("home-info-rank");
 if (rankEl) {
-  rankEl.textContent = walletSnap.data().rank || "🥉 Đồng";
+  rankEl.textContent = (walletSnap.data().rank || "Đồng").replace(/^[^\p{L}\p{N}]+/u, "").trim();
   window.currentRankData = walletSnap.data();
 }
 const rankImage = document.getElementById("home-rank-image");
