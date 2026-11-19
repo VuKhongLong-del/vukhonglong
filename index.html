@@ -5643,7 +5643,16 @@ body.dark #vkl-change-password-box button[onclick="window.changeCustomerPassword
       }
 
       display.textContent = profile.data().code;
+const usedLine = document.getElementById("referral-used-line");
+const codeDoc = await db.collection("referralCodes")
+  .doc(profile.data().code).get();
 
+if (usedLine) {
+  usedLine.classList.toggle(
+    "active",
+    codeDoc.exists && !!codeDoc.data().usedBy
+  );
+}
       const request = await db.collection("referralRequests")
         .doc(user.uid).get();
 
