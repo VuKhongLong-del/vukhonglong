@@ -5471,58 +5471,74 @@ button[onclick="window.showForgotPasswordById()"]:active {
     }
   };
 
-  window.submitReferralCode = async function () {
-    const user = auth.currentUser;
-    const input = document.getElementById("referral-input");
-    const status = document.getElementById("referral-status");
-    const code = (input?.value || "").trim();
+  
+window.submitReferralCode = async function () {
+  const user = auth.currentUser;
+  const input = document.getElementById("referral-input");
+  const status = document.getElementById("referral-status");
+  const code = (input?.value || "").trim();
 
-    if (!user) {
-      status.textContent = "Vui lòng đăng nhập!";
-      return;
-    }
+  if (!user) {
+    status.textContent = "Vui lòng đăng nhập!";
+    return;
+  }
 
-    if (!/^[A-Za-z]{7}$/.test(code)) {
-      status.textContent = "Mã phải gồm đúng 7 chữ cái.";
-      return;
-    }
+  if (!/^[A-Za-z]{7}$/.test(code)) {
+    status.textContent = "Mã phải gồm đúng 7 chữ cái.";
+    return;
+  }
 
-    status.textContent = "Đang gửi yêu cầu...";
+  status.textContent = "Đang gửi yêu cầu...";
 
-    try {
-      const codeSnap = await db.collection("referralCodes").doc(code).get();
+  try {
+    const codeRef = db.collection("referralCodes").doc(code);
+    const requestRef = db.collection("referralRequests").doc(user.uid);
 
-      if (!codeSnap.exists) throw new Error("Mã giới thiệu không tồn tại.");
+    await db.runTransaction(async tx => {
+      const codeSnap = await tx.get(codeRef);
+      const requestSnap = await tx.get(requestRef);
 
-      const inviterUid = codeSnap.data().uid;
+      if (!codeSnap.exists) {
+        throw new Error("Mã giới thiệu không tồn tại.");
+      }
+
+      const codeData = codeSnap.data();
+      const inviterUid = codeData.uid;
+
       if (inviterUid === user.uid) {
         throw new Error("Bạn không thể nhập mã của chính mình.");
       }
 
-      const requestRef = db.collection("referralRequests").doc(user.uid);
+      if (codeData.usedBy) {
+        throw new Error("Mã giới thiệu này đã được người khác sử dụng.");
+      }
 
-      await db.runTransaction(async tx => {
-        const oldRequest = await tx.get(requestRef);
-        if (oldRequest.exists) {
-          throw new Error("Bạn đã gửi mã giới thiệu trước đó.");
-        }
+      if (requestSnap.exists) {
+        throw new Error("Bạn đã gửi mã giới thiệu trước đó.");
+      }
 
-        tx.set(requestRef, {
-          referredUid: user.uid,
-          inviterUid: inviterUid,
-          referralCode: code,
-          status: "pending",
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+      tx.update(codeRef, {
+        usedBy: user.uid,
+        usedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      input.value = "";
-      status.textContent = "Đã gửi mã! Vui lòng chờ quản lý duyệt.";
-    } catch (e) {
-      console.error(e);
-      status.textContent = e.message || "Gửi mã thất bại.";
-    }
-  };
+      tx.set(requestRef, {
+        referredUid: user.uid,
+        inviterUid: inviterUid,
+        referralCode: code,
+        status: "pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+
+    input.value = "";
+    status.textContent = "Đã gửi mã! Mã đã được khóa, vui lòng chờ quản lý duyệt.";
+
+  } catch (e) {
+    console.error(e);
+    status.textContent = e.message || "Gửi mã thất bại.";
+  }
+};
 
   window.loadReferralAdminList = async function () {
     const user = auth.currentUser;
