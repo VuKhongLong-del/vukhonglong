@@ -4106,7 +4106,7 @@ window.restoreAccountToAdminList = function(uid) {
     alert("Không thể hiện lại tài khoản: " + error.message);
   }
 };
-// XÓA KHỎI DANH SÁCH ẨN NGAY
+// XÓA KHỎI DANH SÁCH QUẢN LÝ NGAY
 window.removeHiddenAccountNow = function(uid) {
   if (!window.auth?.currentUser ||
       window.auth.currentUser.email.toLowerCase() !== "haphamngu123@gmail.com") {
@@ -4114,23 +4114,27 @@ window.removeHiddenAccountNow = function(uid) {
     return;
   }
 
-  if (!confirm("Xóa tài khoản này khỏi danh sách ẩn ngay? Tài khoản và toàn bộ dữ liệu Firebase vẫn được giữ nguyên.")) return;
+  if (!confirm("Loại tài khoản này khỏi cả danh sách chính và danh sách ẩn? Dữ liệu Firebase vẫn được giữ nguyên.")) return;
 
   try {
     const hidden = JSON.parse(
       localStorage.getItem("vklHiddenAccountUids") || "{}"
     );
 
-    delete hidden[uid];
-
-    localStorage.setItem(
-      "vklHiddenAccountUids",
-      JSON.stringify(hidden)
+    // Ghi nhớ UID trong danh sách loại trừ vĩnh viễn trên thiết bị này
+    const removed = new Set(
+      JSON.parse(localStorage.getItem("vklRemovedAccountUids") || "[]")
     );
+
+    delete hidden[uid];
+    removed.add(uid);
+
+    localStorage.setItem("vklHiddenAccountUids", JSON.stringify(hidden));
+    localStorage.setItem("vklRemovedAccountUids", JSON.stringify([...removed]));
 
     window.loadAccountAdminList();
   } catch (error) {
-    alert("Không thể xóa khỏi danh sách ẩn: " + error.message);
+    alert("Không thể thực hiện: " + error.message);
   }
 };
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
