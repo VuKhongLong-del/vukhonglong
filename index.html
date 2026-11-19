@@ -4547,7 +4547,9 @@ window.loadCustomerWallet = async function(uid, username) {
   const homeBalanceEl = document.getElementById("home-info-balance");
 if (!balanceEl && !homeBalanceEl) return;
 
+  if (balanceEl) {
   balanceEl.textContent = "Đang tải...";
+}
 
   try {
     const db = firebase.firestore();
