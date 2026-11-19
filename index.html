@@ -3093,6 +3093,94 @@ list.textContent = "Đang tải thư...";
     list.textContent = "Không tải được hộp thư. Vui lòng thử lại.";
   }
 };
+// GỬI THƯ RIÊNG HOẶC THÔNG BÁO TẤT CẢ
+window.sendMailboxMessage = async function(){
+  const user = window.auth.currentUser;
+
+  if(!user || user.email?.toLowerCase() !== "haphamngu123@gmail.com"){
+    alert("Bạn không có quyền gửi thư!");
+    return;
+  }
+
+  const recipientType = document.getElementById("vkl-mail-recipient").value;
+  const userId = document.getElementById("vkl-mail-userid").value.trim();
+  const title = document.getElementById("vkl-mail-title").value.trim();
+  const body = document.getElementById("vkl-mail-body").value.trim();
+
+  if(!title || !body){
+    alert("Vui lòng nhập tiêu đề và nội dung!");
+    return;
+  }
+
+  if(title.length > 150 || body.length > 5000){
+    alert("Tiêu đề tối đa 150 ký tự, nội dung tối đa 5000 ký tự!");
+    return;
+  }
+
+  try{
+    let recipients = [];
+
+    if(recipientType === "private"){
+      if(!userId){
+        alert("Vui lòng nhập ID người nhận!");
+        return;
+      }
+
+      const result = await db.collection("wallets")
+        .where("userId", "==", userId)
+        .limit(1)
+        .get();
+
+      if(result.empty){
+        alert("Không tìm thấy người dùng có ID này!");
+        return;
+      }
+
+      recipients.push(result.docs[0].id);
+
+    }else{
+      const result = await db.collection("wallets").get();
+
+      result.forEach(doc => {
+        recipients.push(doc.id);
+      });
+    }
+
+    if(recipients.length === 0){
+      alert("Không tìm thấy người nhận!");
+      return;
+    }
+
+    for(let i = 0; i < recipients.length; i += 450){
+      const batch = db.batch();
+
+      recipients.slice(i, i + 450).forEach(uid => {
+        const ref = db.collection("mailboxMessages").doc();
+
+        batch.set(ref, {
+          recipientUid: uid,
+          title: title,
+          body: body,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          isRead: false,
+          senderUid: user.uid
+        });
+      });
+
+      await batch.commit();
+    }
+
+    alert("Đã gửi thư thành công đến " + recipients.length + " người dùng!");
+
+    document.getElementById("vkl-mail-title").value = "";
+    document.getElementById("vkl-mail-body").value = "";
+    document.getElementById("vkl-mail-userid").value = "";
+
+  }catch(error){
+    console.error("Lỗi gửi thư:", error);
+    alert("Không gửi được thư: " + error.message);
+  }
+};
 // KẾT NỐI ĐĂNG NHẬP GOOGLE
 window.auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
