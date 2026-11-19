@@ -5585,14 +5585,33 @@ info.textContent =
   " | Người giới thiệu: " + inviterName +
   " | Mã: " + data.referralCode;
 
-        const approve = document.createElement("button");
-        approve.textContent = "DUYỆT +5.000";
-        approve.onclick = () => window.reviewReferralRequest(doc.id, "approve");
+        
+const approve = document.createElement("button");
+approve.textContent = "DUYỆT +5.000";
+approve.style.cssText = `
+  background: linear-gradient(100deg,#08a879,#087fbd);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+`;
+approve.onclick = () => window.reviewReferralRequest(doc.id, "approve");
 
-        const reject = document.createElement("button");
-        reject.textContent = "TỪ CHỐI";
-        reject.style.marginLeft = "8px";
-        reject.onclick = () => window.reviewReferralRequest(doc.id, "reject");
+const reject = document.createElement("button");
+reject.textContent = "TỪ CHỐI";
+reject.style.cssText = `
+  background: linear-gradient(100deg,#EF4444,#BE185D);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-left: 8px;
+  font-weight: 700;
+  cursor: pointer;
+`;
+reject.onclick = () => window.reviewReferralRequest(doc.id, "reject");
 
         item.append(info, approve, reject);
         list.appendChild(item);
