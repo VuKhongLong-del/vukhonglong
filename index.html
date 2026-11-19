@@ -4588,7 +4588,19 @@ if (accountIdEl) {
   accountIdEl.textContent = walletSnap.data().userId || "Chưa có ID";
 }
     const coins = Number(walletSnap.data().coins || 0);
-    balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
+    if (balanceEl) {
+  balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
+}
+
+const homeName = document.getElementById("home-info-name");
+const homeId = document.getElementById("home-info-id");
+const homeBalance = document.getElementById("home-info-balance");
+
+if (homeName) homeName.textContent = username || "Chưa có tên";
+if (homeId) homeId.textContent = walletSnap.data().userId || "Chưa có ID";
+if (homeBalance) {
+  homeBalance.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
+}
 
     // TẢI LỊCH SỬ GIAO DỊCH XU
     const historyEl = document.getElementById("vkl-coin-history");
