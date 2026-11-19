@@ -3055,7 +3055,9 @@ if (accountIdEl) {
   accountIdEl.textContent = walletSnap.data().userId || "Chưa có ID";
 }
     const coins = Number(walletSnap.data().coins || 0);
-    balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
+    if (balanceEl) {
+  balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
+}
 const homeName = document.getElementById("home-info-name");
 const homeId = document.getElementById("home-info-id");
 const homeBalance = document.getElementById("home-info-balance");
