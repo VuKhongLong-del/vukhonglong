@@ -3931,30 +3931,56 @@ window.loadAccountAdminList = async function() {
       .collection("wallets")
       .get();
 
-    const hidden = new Set(
-      JSON.parse(localStorage.getItem("vklHiddenAccountUids") || "[]")
-    );
+    const storedHidden = JSON.parse(
+  localStorage.getItem("vklHiddenAccountUids") || "[]"
+);
 
-    const keyword = (search?.value || "").trim().toLowerCase();
+const hidden = {};
 
-    const allAccounts = snapshot.docs.map(doc => ({
-      uid: doc.id,
-      ...doc.data()
-    }));
+if (Array.isArray(storedHidden)) {
+  // Chuyển danh sách ẩn cũ sang định dạng có thời gian
+  storedHidden.forEach(uid => {
+    hidden[uid] = Date.now();
+  });
+} else {
+  Object.assign(hidden, storedHidden);
+}
 
-    const accounts = allAccounts.filter(account =>
-      !hidden.has(account.uid) &&
-      (
-        String(account.userId || "").toLowerCase().includes(keyword) ||
-        String(account.username || "").toLowerCase().includes(keyword) ||
-        String(account.contactPhone || "").toLowerCase().includes(keyword) ||
-        String(account.contactEmail || "").toLowerCase().includes(keyword)
-      )
-    );
+// Tự loại khỏi danh sách ẩn sau 3 ngày
+const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+const now = Date.now();
 
-    const hiddenAccounts = allAccounts.filter(account =>
-      hidden.has(account.uid)
-    );
+Object.keys(hidden).forEach(uid => {
+  if (now - hidden[uid] >= THREE_DAYS) {
+    delete hidden[uid];
+  }
+});
+
+localStorage.setItem(
+  "vklHiddenAccountUids",
+  JSON.stringify(hidden)
+);
+
+const keyword = (search?.value || "").trim().toLowerCase();
+
+const allAccounts = snapshot.docs.map(doc => ({
+  uid: doc.id,
+  ...doc.data()
+}));
+
+const accounts = allAccounts.filter(account =>
+  !hidden[account.uid] &&
+  (
+    String(account.userId || "").toLowerCase().includes(keyword) ||
+    String(account.username || "").toLowerCase().includes(keyword) ||
+    String(account.contactPhone || "").toLowerCase().includes(keyword) ||
+    String(account.contactEmail || "").toLowerCase().includes(keyword)
+  )
+);
+
+const hiddenAccounts = allAccounts.filter(account =>
+  hidden[account.uid]
+);
 
     let html = `
   <div style="padding:12px 0;border-bottom:1px solid #52617f">
