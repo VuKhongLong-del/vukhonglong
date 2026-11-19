@@ -3078,7 +3078,25 @@ if (homeBalance) {
     }
   }
 };
+// Tự tải thông tin ví lên trang chủ sau khi đăng nhập
+window.auth.onAuthStateChanged(user => {
+  const homeName = document.getElementById("home-info-name");
+  const homeId = document.getElementById("home-info-id");
+  const homeBalance = document.getElementById("home-info-balance");
 
+  if (!user) {
+    if (homeName) homeName.textContent = "Vui lòng đăng nhập";
+    if (homeId) homeId.textContent = "—";
+    if (homeBalance) homeBalance.textContent = "—";
+    return;
+  }
+
+  const username = user.email ? user.email.split("@")[0] : "Chưa có tên";
+
+  if (typeof window.loadCustomerWallet === "function") {
+    window.loadCustomerWallet(user.uid, username);
+  }
+});
 window.loadCustomerContact = async function() {
   const user = window.auth?.currentUser;
   if (!user) return;
