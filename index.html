@@ -5549,10 +5549,25 @@ button[onclick="window.showForgotPasswordById()"]:active {
         item.style.cssText =
           "padding:12px;margin:10px 0;border:1px solid #888;border-radius:10px";
 
-        const info = document.createElement("p");
-        info.textContent = "Tài khoản nhập mã: " + data.referredUid +
-          " | Người giới thiệu: " + data.inviterUid +
-          " | Mã: " + data.referralCode;
+        const referredWallet = await db.collection("wallets")
+  .doc(data.referredUid).get();
+
+const inviterWallet = await db.collection("wallets")
+  .doc(data.inviterUid).get();
+
+const referredName = referredWallet.exists
+  ? referredWallet.data().username || "Chưa có tên"
+  : "Không tìm thấy";
+
+const inviterName = inviterWallet.exists
+  ? inviterWallet.data().username || "Chưa có tên"
+  : "Không tìm thấy";
+
+const info = document.createElement("p");
+info.textContent =
+  "Tài khoản nhập mã: " + referredName +
+  " | Người giới thiệu: " + inviterName +
+  " | Mã: " + data.referralCode;
 
         const approve = document.createElement("button");
         approve.textContent = "DUYỆT +5.000";
