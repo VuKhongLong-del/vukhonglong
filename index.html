@@ -4627,7 +4627,10 @@ if (homeId) homeId.textContent = walletSnap.data().userId || "Chưa có ID";
 if (homeBalance) {
   homeBalance.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
 }
-
+const rankEl = document.getElementById("home-info-rank");
+if (rankEl) {
+  rankEl.textContent = walletSnap.data().rank || "🥉 Đồng";
+}
     // TẢI LỊCH SỬ GIAO DỊCH XU
     const historyEl = document.getElementById("vkl-coin-history");
 
