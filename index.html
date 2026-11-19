@@ -3002,7 +3002,15 @@ if(adminBox){
       ? "block"
       : "none";
 }
+const recipientSelect = document.getElementById("vkl-mail-recipient");
+const userIdInput = document.getElementById("vkl-mail-userid");
 
+if(recipientSelect && userIdInput){
+  recipientSelect.onchange = function(){
+    userIdInput.style.display =
+      this.value === "private" ? "block" : "none";
+  };
+}
 list.textContent = "Đang tải thư...";
 
   try{
