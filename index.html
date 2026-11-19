@@ -5532,7 +5532,7 @@ window.submitReferralCode = async function () {
     });
 
     input.value = "";
-    status.textContent = "Đã gửi mã! Mã đã được khóa, vui lòng chờ quản lý duyệt.";
+    status.textContent = "Đã gửi mã! Bạn vui lòng đợi duyệt nhé.";
 
   } catch (e) {
     console.error(e);
@@ -5691,7 +5691,7 @@ reject.onclick = () => window.reviewReferralRequest(doc.id, "reject");
         });
       });
 
-      alert(action === "approve" ? "Đã duyệt thưởng 5.000 Xu!" : "Đã từ chối yêu cầu.");
+      alert(action === "approve" ? "Đã duyệt +5.000 VNĐ!" : "Đã từ chối yêu cầu.");
       window.loadReferralAdminList();
     } catch (e) {
       console.error(e);
