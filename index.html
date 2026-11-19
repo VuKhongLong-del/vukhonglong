@@ -2994,7 +2994,16 @@ window.loadMailboxMessages = async function(){
     return;
   }
 
-  list.textContent = "Đang tải thư...";
+  const adminBox = document.getElementById("vkl-mailbox-admin");
+
+if(adminBox){
+  adminBox.style.display =
+    user.email?.toLowerCase() === "haphamngu123@gmail.com"
+      ? "block"
+      : "none";
+}
+
+list.textContent = "Đang tải thư...";
 
   try{
     const snapshot = await db.collection("mailboxMessages")
