@@ -1151,6 +1151,24 @@ body:not(.dark) #referral-input::placeholder {
 #home-rank-image {
   animation: rankAura 2.2s ease-in-out infinite;
 }
+@keyframes homeInfoRainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+#home-info-name,
+#home-info-id {
+  display: inline-block;
+  font-weight: 900;
+  background: linear-gradient(90deg,
+    #ff1744, #ff9100, #ffee00, #00e676,
+    #00b0ff, #7c4dff, #ff1744);
+  background-size: 200% auto;
+  color: transparent !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: homeInfoRainbow 3s linear infinite;
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
