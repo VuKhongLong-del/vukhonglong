@@ -1149,8 +1149,28 @@ body:not(.dark) #referral-input::placeholder {
   }
 }
 
+@keyframes challengerFire {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 5px #ff2500)
+      drop-shadow(0 0 12px #ff4500);
+    transform: scale(1);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 12px #ff0000)
+      drop-shadow(0 0 25px #ff6500)
+      drop-shadow(0 0 35px #ffae00);
+    transform: scale(1.06);
+  }
+}
+
 #home-rank-image {
   animation: rankAura 2.2s ease-in-out infinite;
+}
+
+#home-rank-image.challenger-rank {
+  animation: challengerFire 0.8s ease-in-out infinite;
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
