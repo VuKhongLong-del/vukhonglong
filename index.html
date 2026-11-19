@@ -3968,8 +3968,13 @@ const allAccounts = snapshot.docs.map(doc => ({
   ...doc.data()
 }));
 
+const removed = new Set(
+  JSON.parse(localStorage.getItem("vklRemovedAccountUids") || "[]")
+);
+
 const accounts = allAccounts.filter(account =>
   !hidden[account.uid] &&
+  !removed.has(account.uid) &&
   (
     String(account.userId || "").toLowerCase().includes(keyword) ||
     String(account.username || "").toLowerCase().includes(keyword) ||
