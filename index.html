@@ -5095,8 +5095,20 @@ if (rankImage) {
   "rank-thach-dau.PNG"
 ];
 
-  const index = Number(walletSnap.data().rankIndex || 0);
-  rankImage.src = rankImages[index] || rankImages[0];
+  const index = Math.min(6, Math.max(0, Number(walletSnap.data().rankIndex || 0)));
+rankImage.src = rankImages[index] || rankImages[0];
+
+const glowColors = [
+  "#d99a62",
+  "#dce5f5",
+  "#ffd84d",
+  "#62e8d5",
+  "#438cff",
+  "#bd69ff",
+  "#ff6848"
+];
+
+rankImage.style.setProperty("--rank-glow", glowColors[index]);
 }
     // TẢI LỊCH SỬ GIAO DỊCH XU
     const historyEl = document.getElementById("vkl-coin-history");
