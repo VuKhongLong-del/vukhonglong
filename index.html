@@ -4713,6 +4713,7 @@ if (homeBalance) {
 const rankEl = document.getElementById("home-info-rank");
 if (rankEl) {
   rankEl.textContent = walletSnap.data().rank || "🥉 Đồng";
+  window.currentRankData = walletSnap.data();
 }
 window.currentRankData = walletSnap.data();
     // TẢI LỊCH SỬ GIAO DỊCH XU
