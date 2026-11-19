@@ -3903,7 +3903,34 @@ window.changeWalletCoins = async function(type) {
       const newBalance = type === "add"
         ? oldBalance + amount
         : oldBalance - amount;
+let rankIndex = Number(wallet.rankIndex || 0);
+let rankProgress = Number(wallet.rankProgress || 0);
 
+const rankNames = [
+  "🥉 Đồng",
+  "🥈 Bạc",
+  "🥇 Vàng",
+  "💎 Bạch Kim",
+  "💠 Kim Cương",
+  "⭐ Tinh Anh",
+  "👑 Thách Đấu"
+];
+
+const rankNeeds = [20000, 70000, 200000, 500000, 700000, 3000000];
+
+if (type === "add") {
+  rankProgress += amount;
+
+  while (
+    rankIndex < rankNeeds.length &&
+    rankProgress >= rankNeeds[rankIndex]
+  ) {
+    rankProgress -= rankNeeds[rankIndex];
+    rankIndex++;
+  }
+}
+
+const rankName = rankNames[rankIndex];
       if (!Number.isSafeInteger(newBalance) || newBalance < 0) {
         throw new Error("Số dư không đủ để trừ!");
       }
