@@ -3957,60 +3957,63 @@ window.loadAccountAdminList = async function() {
     );
 
     let html = `
-      <div style="padding:12px;margin-bottom:15px;border-radius:10px;background:#64748b18">
-        <b>🙈 TÀI KHOẢN ĐÃ ẨN (${hiddenAccounts.length})</b>
-      </div>
-    `;
+  <div style="padding:12px 0;border-bottom:1px solid #52617f">
+    <b>👥 DANH SÁCH TÀI KHOẢN (${accounts.length})</b>
+  </div>
+`;
 
-    if (hiddenAccounts.length) {
-      html += hiddenAccounts.map(account => `
-        <div style="padding:12px;margin-bottom:10px;border:1px solid #64748b;border-radius:10px">
-          <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
-          <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
-          <p style="margin:6px 0">SĐT: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
-          <p style="margin:6px 0">Email: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
-          <button
-            onclick="window.restoreAccountToAdminList('${account.uid}')"
-            style="width:100%;padding:10px;border:0;border-radius:8px;background:linear-gradient(100deg,#08a879,#087fbd);color:white;font-weight:bold">
-            ↩️ HIỆN LẠI TÀI KHOẢN
-          </button>
-        </div>
-      `).join("");
-    } else {
-      html += `<p>Chưa có tài khoản nào bị ẩn.</p>`;
-    }
+if (accounts.length) {
+  html += accounts.map(account => `
+    <div style="padding:12px 0;border-bottom:1px solid #52617f">
+      <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
+      <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
+      <p style="margin:6px 0">SĐT liên kết: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
+      <p style="margin:6px 0">Email liên kết: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
+      <p style="margin:6px 0">Số dư: ${Number(account.coins || 0).toLocaleString("vi-VN")} VNĐ</p>
+      <button
+        onclick="window.editAccountId('${account.uid}','${String(account.userId || "").replace(/[^0-9]/g, "")}')"
+        style="width:100%;padding:10px;border:0;border-radius:8px;background:#6650ed;color:white;font-weight:bold">
+        ✏️ CHỈNH SỬA ID
+      </button>
+      <button
+        onclick="window.hideAccountFromAdminList('${account.uid}')"
+        style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#64748b;color:white;font-weight:bold">
+        🙈 ẨN KHỎI DANH SÁCH
+      </button>
+    </div>
+  `).join("");
+} else {
+  html += `<p>Không tìm thấy tài khoản nào.</p>`;
+}
 
-    html += `
-      <div style="padding:12px;margin:18px 0 10px;border-radius:10px;background:#64748b18">
-        <b>👥 DANH SÁCH TÀI KHOẢN (${accounts.length})</b>
-      </div>
-    `;
+html += `
+  <details style="margin-top:18px;padding:12px;border:1px solid #64748b;border-radius:10px">
+    <summary style="cursor:pointer;font-weight:bold">
+      🙈 TÀI KHOẢN ĐÃ ẨN (${hiddenAccounts.length})
+    </summary>
+    <div style="margin-top:12px">
+      ${
+        hiddenAccounts.length
+          ? hiddenAccounts.map(account => `
+            <div style="padding:12px 0;border-top:1px solid #64748b">
+              <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
+              <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
+              <p style="margin:6px 0">SĐT: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
+              <p style="margin:6px 0">Email: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
+              <button
+                onclick="window.restoreAccountToAdminList('${account.uid}')"
+                style="width:100%;padding:10px;border:0;border-radius:8px;background:linear-gradient(100deg,#08a879,#087fbd);color:white;font-weight:bold">
+                ↩️ HIỆN LẠI TÀI KHOẢN
+              </button>
+            </div>
+          `).join("")
+          : `<p>Chưa có tài khoản nào bị ẩn.</p>`
+      }
+    </div>
+  </details>
+`;
 
-    if (accounts.length) {
-      html += accounts.map(account => `
-        <div style="padding:12px 0;border-bottom:1px solid #52617f">
-          <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
-          <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
-          <p style="margin:6px 0">SĐT liên kết: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
-          <p style="margin:6px 0">Email liên kết: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
-          <p style="margin:6px 0">Số dư: ${Number(account.coins || 0).toLocaleString("vi-VN")} VNĐ</p>
-          <button
-            onclick="window.editAccountId('${account.uid}','${String(account.userId || "").replace(/[^0-9]/g, "")}')"
-            style="width:100%;padding:10px;border:0;border-radius:8px;background:#6650ed;color:white;font-weight:bold">
-            ✏️ CHỈNH SỬA ID
-          </button>
-          <button
-            onclick="window.hideAccountFromAdminList('${account.uid}')"
-            style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#64748b;color:white;font-weight:bold">
-            🙈 ẨN KHỎI DANH SÁCH
-          </button>
-        </div>
-      `).join("");
-    } else {
-      html += `<p>Không tìm thấy tài khoản nào.</p>`;
-    }
-
-    list.innerHTML = html;
+list.innerHTML = html;
 
   } catch (error) {
     console.error(error);
