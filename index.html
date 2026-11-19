@@ -1118,6 +1118,19 @@ body:not(.dark) #referral-input {
 body:not(.dark) #referral-input::placeholder {
   color: #7b8493 !important;
 }
+@keyframes rankShine {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+#home-info-rank {
+  background-size: 200% auto !important;
+  animation: rankShine 3s linear infinite;
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
