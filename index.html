@@ -1195,7 +1195,36 @@ body:not(.dark) #referral-input::placeholder {
 
 </section>
 
- <section class="section">
+<div id="rank-progress-page" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(0,0,0,.88);
+  padding:25px 16px;
+  overflow-y:auto;
+">
+  <div style="
+    max-width:500px;
+    margin:35px auto;
+    padding:22px;
+    border-radius:18px;
+    background:var(--card-bg,#222);
+    color:var(--text-color,white);
+    border:1px solid rgba(255,255,255,.2);
+  ">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h2 style="margin:0;">🏆 Tiến Độ Cấp Bậc</h2>
+      <button onclick="closeRankProgress()" style="font-size:22px;background:none;border:0;color:inherit;">✕</button>
+    </div>
+
+    <div id="rank-progress-content" style="margin-top:25px;">
+      Đang tải...
+    </div>
+  </div>
+</div>
+
+<section class="section">
   <div class="section-head">
    <h2>⚡ Dịch vụ sự kiện</h2>
    <span class="muted">Chọn một gói</span>
