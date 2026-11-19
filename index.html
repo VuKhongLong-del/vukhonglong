@@ -1138,15 +1138,13 @@ body:not(.dark) #referral-input::placeholder {
 }
 @keyframes rankAura {
   0%, 100% {
-    filter:
-      drop-shadow(0 0 4px rgba(100, 170, 255, 0.6))
-      drop-shadow(0 0 9px rgba(100, 120, 255, 0.3));
+    filter: drop-shadow(0 0 4px var(--rank-glow))
+            drop-shadow(0 0 9px var(--rank-glow));
     transform: scale(1);
   }
   50% {
-    filter:
-      drop-shadow(0 0 9px rgba(100, 190, 255, 0.95))
-      drop-shadow(0 0 18px rgba(120, 100, 255, 0.65));
+    filter: drop-shadow(0 0 9px var(--rank-glow))
+            drop-shadow(0 0 18px var(--rank-glow));
     transform: scale(1.04);
   }
 }
