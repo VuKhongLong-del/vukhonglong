@@ -3089,9 +3089,10 @@ list.textContent = "Đang tải thư...";
     messages.forEach(message => {
       const item = document.createElement("div");
       item.style.cssText =
-        "text-align:left;padding:14px;margin:12px 0;" +
-        "border:1px solid #8885;border-radius:13px;" +
-        "background:var(--card-bg,#fff);";
+  "text-align:left;padding:14px;margin:12px 0;" +
+  "border:1px solid #8885;border-radius:13px;" +
+  "background:" + (document.body.classList.contains("dark") ? "#172033" : "#f1f3f8") + ";" +
+  "color:" + (document.body.classList.contains("dark") ? "#ffffff" : "#222222") + ";";
 
       const title = document.createElement("b");
       title.textContent =
