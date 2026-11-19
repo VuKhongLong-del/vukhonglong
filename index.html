@@ -1165,6 +1165,18 @@ body:not(.dark) #referral-input::placeholder {
     #00b0ff, #7c4dff, #ff1744);
   background-size: 200% auto;
   color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  animation: homeInfoRainbow 3s linear infinite;
+}
+  display: inline-block;
+  font-weight: 900;
+  background: linear-gradient(90deg,
+    #ff1744, #ff9100, #ffee00, #00e676,
+    #00b0ff, #7c4dff, #ff1744);
+  background-size: 200% auto;
+  color: transparent !important;
   -webkit-background-clip: text;
   background-clip: text;
   animation: homeInfoRainbow 3s linear infinite;
