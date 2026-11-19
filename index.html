@@ -3912,7 +3912,6 @@ window.editAccountId = async function(uid, oldId) {
   }
 };
 // QUẢN LÝ DANH SÁCH TÀI KHOẢN
-// QUẢN LÝ DANH SÁCH TÀI KHOẢN
 window.loadAccountAdminList = async function() {
   const list = document.getElementById("vkl-account-admin-list");
   const search = document.getElementById("vkl-account-search");
@@ -3982,6 +3981,29 @@ window.loadAccountAdminList = async function() {
   } catch (error) {
     console.error(error);
     list.textContent = "Lỗi tải tài khoản: " + error.message;
+  }
+};
+// ẨN TÀI KHOẢN KHỎI DANH SÁCH
+window.hideAccountFromAdminList = function(uid) {
+  if (!window.auth?.currentUser ||
+      window.auth.currentUser.email.toLowerCase() !== "haphamngu123@gmail.com") {
+    alert("Bạn không có quyền thực hiện!");
+    return;
+  }
+
+  if (!confirm("Ẩn tài khoản này khỏi danh sách? Tài khoản và dữ liệu vẫn được giữ nguyên.")) return;
+
+  try {
+    const hidden = new Set(
+      JSON.parse(localStorage.getItem("vklHiddenAccountUids") || "[]")
+    );
+
+    hidden.add(uid);
+    localStorage.setItem("vklHiddenAccountUids", JSON.stringify([...hidden]));
+
+    window.loadAccountAdminList();
+  } catch (error) {
+    alert("Không thể ẩn tài khoản: " + error.message);
   }
 };
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
