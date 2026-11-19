@@ -5041,24 +5041,27 @@ if (rankEl) {
   rankEl.textContent = (walletSnap.data().rank || "Đồng").replace(/^[^\p{L}\p{N}]+/u, "").trim();
   window.currentRankData = walletSnap.data();
 
-  const rankColors = [
-    ["#d99a62", "#8b542d"],
-    ["#f2f5ff", "#8996ad"],
-    ["#ffe66b", "#c58a12"],
-    ["#b8fff4", "#4aa99c"],
-    ["#8be7ff", "#426bff"],
-    ["#e5a0ff", "#8144e8"],
-    ["#ffcf72", "#ff4545"]
-  ];
+ const rankColors = [
+  ["#d99a62", "#8b542d"],
+  ["#f2f5ff", "#8996ad"],
+  ["#ffe66b", "#c58a12"],
+  ["#b8fff4", "#4aa99c"],
+  ["#8be7ff", "#426bff"],
+  ["#e5a0ff", "#8144e8"],
+  ["#ffcf72", "#ff4545"]
+];
 
-  const colors = rankColors[Math.min(6, Math.max(0, Number(walletSnap.data().rankIndex || 0)))];
+const colors = rankColors[Math.min(6, Math.max(0, Number(walletSnap.data().rankIndex || 0)))];
 
-  rankEl.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]}, ${colors[0]})`;
-  rankEl.style.backgroundClip = "text";
-  rankEl.style.webkitBackgroundClip = "text";
-  rankEl.style.color = "transparent";
-  rankEl.style.webkitTextFillColor = "transparent";
-  rankEl.style.filter = `drop-shadow(0 0 5px ${colors[0]}88)`;
+rankEl.style.background = `linear-gradient(90deg, ${colors[0]} 30%, #ffffff 50%, ${colors[1]} 70%)`;
+rankEl.style.backgroundSize = "200% auto";
+rankEl.style.backgroundClip = "text";
+rankEl.style.webkitBackgroundClip = "text";
+rankEl.style.color = "transparent";
+rankEl.style.webkitTextFillColor = "transparent";
+rankEl.style.textShadow = `0 0 5px ${colors[0]}`;
+rankEl.style.animation = "rankShine 3s linear infinite";
+rankEl.style.filter = "none";
 }
 const rankImage = document.getElementById("home-rank-image");
 if (rankImage) {
