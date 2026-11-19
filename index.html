@@ -4544,7 +4544,8 @@ window.openCustomerAuth = function() {
 };
 window.loadCustomerWallet = async function(uid, username) {
   const balanceEl = document.getElementById("vkl-coin-balance");
-  if (!balanceEl) return;
+  const homeBalanceEl = document.getElementById("home-info-balance");
+if (!balanceEl && !homeBalanceEl) return;
 
   balanceEl.textContent = "Đang tải...";
 
