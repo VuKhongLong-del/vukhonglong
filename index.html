@@ -4770,6 +4770,7 @@ if (rankEl) {
     balanceEl.textContent = "Lỗi ví: " + (error.code || error.message);
   }
 };
+window.currentRankData = walletSnap.data();
 // TỰ ĐỘNG TẢI THÔNG TIN TRANG CHỦ
 window.auth.onAuthStateChanged(user => {
   if (!user) return;
@@ -6110,6 +6111,94 @@ reject.onclick = () => window.reviewReferralRequest(doc.id, "reject");
     if (tab === "intro") window.loadReferralPanel();
   };
 })();
+</script>
+<script>
+window.openRankProgress = function() {
+  const page = document.getElementById("rank-progress-page");
+  const content = document.getElementById("rank-progress-content");
+
+  if (!page || !content) return;
+
+  const wallet = window.currentRankData || {};
+  const names = [
+    "🥉 Đồng",
+    "🥈 Bạc",
+    "🥇 Vàng",
+    "💎 Bạch Kim",
+    "💠 Kim Cương",
+    "⭐ Tinh Anh",
+    "👑 Thách Đấu"
+  ];
+
+  const needs = [20000, 70000, 200000, 500000, 700000, 3000000];
+
+  const index = Math.min(Number(wallet.rankIndex || 0), 6);
+  const progress = Math.max(0, Number(wallet.rankProgress || 0));
+
+  if (index >= 6) {
+    content.innerHTML = `
+      <h2 style="text-align:center;">👑 Thách Đấu</h2>
+      <p style="text-align:center;">Bạn đã đạt cấp bậc cao nhất!</p>
+    `;
+  } else {
+    const target = needs[index];
+    const percent = Math.min(100, progress / target * 100);
+    const remaining = Math.max(0, target - progress);
+
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:22px;">
+        <div style="font-size:27px;font-weight:bold;">${names[index]}</div>
+        <div style="opacity:.75;margin-top:6px;">Cấp bậc hiện tại</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:9px;">
+        <b>Tiến độ lên ${names[index + 1]}</b>
+        <b>${percent.toFixed(1)}%</b>
+      </div>
+
+      <div style="height:13px;background:#555;border-radius:20px;overflow:hidden;">
+        <div style="
+          width:${percent}%;
+          height:100%;
+          background:linear-gradient(90deg,#ff8a00,#ff3d8b);
+          border-radius:20px;
+        "></div>
+      </div>
+
+      <div style="text-align:center;margin-top:18px;font-size:17px;">
+        Đã nạp: <b>${progress.toLocaleString("vi-VN")}đ</b>
+        <br><br>
+        Cần nạp thêm:
+        <div style="font-size:25px;font-weight:bold;color:#ff6688;margin-top:5px;">
+          ${remaining.toLocaleString("vi-VN")}đ
+        </div>
+      </div>
+
+      <hr style="opacity:.2;margin:25px 0;">
+
+      <h3>Các mốc cấp bậc</h3>
+      ${names.map((name, i) => `
+        <div style="
+          padding:12px;
+          margin:8px 0;
+          border-radius:10px;
+          background:${i === index ? "rgba(255,100,140,.2)" : "rgba(128,128,128,.12)"};
+          display:flex;
+          justify-content:space-between;
+        ">
+          <b>${name}</b>
+          <span>${i < index ? "Đã đạt" : i === index ? "Hiện tại" : "Chưa đạt"}</span>
+        </div>
+      `).join("")}
+    `;
+  }
+
+  page.style.display = "block";
+};
+
+window.closeRankProgress = function() {
+  document.getElementById("rank-progress-page").style.display = "none";
+};
 </script>
 
 </body>
