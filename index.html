@@ -1698,6 +1698,22 @@ function toggleContactMenu(){
 function openModal(type){
  const body = document.getElementById("modalBody");
 
+if(type === "mailbox"){
+  body.innerHTML = `
+    <div style="text-align:center">
+      <div style="font-size:48px">📬</div>
+      <h2>HỘP THƯ CỦA BẠN</h2>
+      <p class="muted">Thông báo và tin nhắn dành riêng cho bạn</p>
+      <div id="vkl-mailbox-list">
+        Đang tải thư...
+      </div>
+    </div>
+  `;
+  if(window.loadMailboxMessages){
+    window.loadMailboxMessages();
+  }
+}
+
 if(type === "account"){
   if(window.auth && window.auth.currentUser){
     const username = window.auth.currentUser.email.split("@")[0];
