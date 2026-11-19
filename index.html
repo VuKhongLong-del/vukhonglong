@@ -5149,6 +5149,8 @@ if (rankImage) {
   const index = Math.min(6, Math.max(0, Number(walletSnap.data().rankIndex || 0)));
 rankImage.src = rankImages[index] || rankImages[0];
 rankImage.classList.toggle("challenger-rank", index === 6);
+document.getElementById("rank-display")
+  ?.classList.toggle("challenger-rank", index === 6);
 const glowColors = [
   "#d99a62",
   "#dce5f5",
