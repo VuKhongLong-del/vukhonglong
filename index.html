@@ -5580,10 +5580,10 @@ const inviterName = inviterWallet.exists
   : "Không tìm thấy";
 
 const info = document.createElement("p");
-info.textContent =
-  "Tài khoản nhập mã: " + referredName +
-  " | Người giới thiệu: " + inviterName +
-  " | Mã: " + data.referralCode;
+info.innerHTML =
+  "Tài khoản nhập mã: " + referredName + "<br>" +
+  "Người giới thiệu: " + inviterName + "<br>" +
+  "Mã: " + data.referralCode;
 
         
 const approve = document.createElement("button");
