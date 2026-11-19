@@ -4031,6 +4031,11 @@ html += `
                 style="width:100%;padding:10px;border:0;border-radius:8px;background:linear-gradient(100deg,#08a879,#087fbd);color:white;font-weight:bold">
                 ↩️ HIỆN LẠI TÀI KHOẢN
               </button>
+              <button
+  onclick="window.removeHiddenAccountNow('${account.uid}')"
+  style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#dc3545;color:white;font-weight:bold">
+  🗑️ XÓA KHỎI DANH SÁCH ẨN NGAY
+</button>
             </div>
           `).join("")
           : `<p>Chưa có tài khoản nào bị ẩn.</p>`
