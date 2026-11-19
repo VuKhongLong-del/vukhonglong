@@ -1124,26 +1124,38 @@ body:not(.dark) #referral-input::placeholder {
 <body>
 
 <header class="header">
- <div class="logo">
-  <svg class="logo-bolt" viewBox="0 0 75 42">
-    <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
-  </svg>
+  <div class="logo" style="gap:3px;min-width:0">
+    <svg class="logo-bolt" viewBox="0 0 75 42">
+      <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
+    </svg>
 
-  <span class="logo-text">VUKHONGLONG</span>
+    <span class="logo-text" style="font-size:18px;letter-spacing:0.5px">
+      VUKHONGLONG
+    </span>
 
-  <svg class="logo-bolt" viewBox="0 0 75 42">
-    <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
-  </svg>
- </div>
+    <svg class="logo-bolt" viewBox="0 0 75 42">
+      <path d="M2 20 L22 20 L30 5 L35 25 L45 12 L52 20 L73 20"/>
+    </svg>
+  </div>
 
-<button
- class="theme-toggle"
- id="themeToggle"
- onclick="toggleTheme()"
- title="Đổi giao diện"
->
- 🌙
-</button>
+  <div style="display:flex;align-items:center;gap:9px">
+    <button onclick="openModal('mailbox')" style="
+      width:42px;height:42px;border:1px solid #c0c4ce;
+      border-radius:13px;background:#eef0f5;
+      font-size:21px;position:relative">
+      📬
+      <span id="mail-unread-dot" style="
+        display:none;position:absolute;right:3px;top:3px;
+        width:9px;height:9px;border-radius:50%;
+        background:#ff263f;border:1px solid white">
+      </span>
+    </button>
+
+    <button class="theme-toggle" id="themeToggle"
+      onclick="toggleTheme()" title="Đổi giao diện">
+      🌙
+    </button>
+  </div>
 </header>
 
 <main class="container">
