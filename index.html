@@ -1128,12 +1128,24 @@ body:not(.dark) #referral-input::placeholder {
 
 <main class="container">
 
- <section class="hero">
-  <small>CHUNG SỨC LIÊN QUÂN</small>
-  <h1>SỰ KIỆN CHUNG SỨC</h1>
-  <p>Chào mừng bạn đến với VUKHONGLONG.
-  Chọn dịch vụ và nhập mã sự kiện để tạo đơn.</p>
- </section>
+ <section class="hero vkl-home-info">
+  <h1>👤 THÔNG TIN CỦA BẠN</h1>
+
+  <div class="home-info-row">
+    <span>Tên</span>
+    <strong id="home-info-name">Đang tải...</strong>
+  </div>
+
+  <div class="home-info-row">
+    <span>ID</span>
+    <strong id="home-info-id">Đang tải...</strong>
+  </div>
+
+  <div class="home-info-row">
+    <span>Số Dư</span>
+    <strong id="home-info-balance">Đang tải...</strong>
+  </div>
+</section>
 
  <section class="section">
   <div class="section-head">
@@ -3043,7 +3055,15 @@ if (accountIdEl) {
 }
     const coins = Number(walletSnap.data().coins || 0);
     balanceEl.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
+const homeName = document.getElementById("home-info-name");
+const homeId = document.getElementById("home-info-id");
+const homeBalance = document.getElementById("home-info-balance");
 
+if (homeName) homeName.textContent = username;
+if (homeId) homeId.textContent = walletSnap.data().userId || "Chưa có ID";
+if (homeBalance) {
+  homeBalance.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
+}
   } catch (error) {
     console.error("Lỗi tải ví:", error);
     balanceEl.textContent = "Chưa tải được";
