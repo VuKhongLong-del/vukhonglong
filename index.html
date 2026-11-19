@@ -2329,7 +2329,8 @@ if (window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com") {
   Chưa tải danh sách tài khoản
 </div>
 </div>
-  `);
+    `);
+  applyTheme(localStorage.getItem("vkl_theme") || "light");
 }
 body.insertAdjacentHTML("beforeend", `
   <button onclick="window.customerLogout()"
