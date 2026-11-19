@@ -5543,7 +5543,7 @@ button[onclick="window.showForgotPasswordById()"]:active {
 
       list.innerHTML = "";
 
-      snap.forEach(doc => {
+      snap.forEach(async doc => {
         const data = doc.data();
         const item = document.createElement("div");
         item.style.cssText =
