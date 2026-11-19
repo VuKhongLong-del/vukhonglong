@@ -3937,73 +3937,111 @@ window.loadAccountAdminList = async function() {
 
     const keyword = (search?.value || "").trim().toLowerCase();
 
-    const accounts = snapshot.docs
-      .map(doc => ({
-        uid: doc.id,
-        ...doc.data()
-      }))
-      .filter(account => !hidden.has(account.uid))
-      .filter(account =>
+    const allAccounts = snapshot.docs.map(doc => ({
+      uid: doc.id,
+      ...doc.data()
+    }));
+
+    const accounts = allAccounts.filter(account =>
+      !hidden.has(account.uid) &&
+      (
         String(account.userId || "").toLowerCase().includes(keyword) ||
         String(account.username || "").toLowerCase().includes(keyword) ||
         String(account.contactPhone || "").toLowerCase().includes(keyword) ||
         String(account.contactEmail || "").toLowerCase().includes(keyword)
-      );
+      )
+    );
 
-    if (!accounts.length) {
-      list.textContent = "Không tìm thấy tài khoản nào.";
-      return;
+    const hiddenAccounts = allAccounts.filter(account =>
+      hidden.has(account.uid)
+    );
+
+    let html = `
+      <div style="padding:12px;margin-bottom:15px;border-radius:10px;background:#64748b18">
+        <b>🙈 TÀI KHOẢN ĐÃ ẨN (${hiddenAccounts.length})</b>
+      </div>
+    `;
+
+    if (hiddenAccounts.length) {
+      html += hiddenAccounts.map(account => `
+        <div style="padding:12px;margin-bottom:10px;border:1px solid #64748b;border-radius:10px">
+          <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
+          <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
+          <p style="margin:6px 0">SĐT: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
+          <p style="margin:6px 0">Email: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
+          <button
+            onclick="window.restoreAccountToAdminList('${account.uid}')"
+            style="width:100%;padding:10px;border:0;border-radius:8px;background:linear-gradient(100deg,#08a879,#087fbd);color:white;font-weight:bold">
+            ↩️ HIỆN LẠI TÀI KHOẢN
+          </button>
+        </div>
+      `).join("");
+    } else {
+      html += `<p>Chưa có tài khoản nào bị ẩn.</p>`;
     }
 
-    list.innerHTML = accounts.map(account => `
-      <div style="padding:12px 0;border-bottom:1px solid #52617f">
-        <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
-        <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
-        <p style="margin:6px 0">SĐT liên kết: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
-        <p style="margin:6px 0">Email liên kết: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
-        <p style="margin:6px 0">Số dư: ${Number(account.coins || 0).toLocaleString("vi-VN")} VNĐ</p>
-        <button
-          onclick="window.editAccountId('${account.uid}','${String(account.userId || "").replace(/[^0-9]/g, "")}')"
-          style="width:100%;padding:10px;border:0;border-radius:8px;background:#6650ed;color:white;font-weight:bold">
-          ✏️ CHỈNH SỬA ID
-        </button>
-        <button
-          onclick="window.hideAccountFromAdminList('${account.uid}')"
-          style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#64748b;color:white;font-weight:bold">
-          🙈 ẨN KHỎI DANH SÁCH
-        </button>
+    html += `
+      <div style="padding:12px;margin:18px 0 10px;border-radius:10px;background:#64748b18">
+        <b>👥 DANH SÁCH TÀI KHOẢN (${accounts.length})</b>
       </div>
-    `).join("");
+    `;
 
-    list.insertAdjacentHTML("afterbegin",
-      `<p>Đã tìm thấy ${accounts.length} tài khoản.</p>`);
+    if (accounts.length) {
+      html += accounts.map(account => `
+        <div style="padding:12px 0;border-bottom:1px solid #52617f">
+          <b>👤 ${escapeOrderText(account.username || "Chưa có tên")}</b>
+          <p style="margin:6px 0">ID: ${escapeOrderText(account.userId || "Chưa có ID")}</p>
+          <p style="margin:6px 0">SĐT liên kết: ${escapeOrderText(account.contactPhone || "Chưa liên kết")}</p>
+          <p style="margin:6px 0">Email liên kết: ${escapeOrderText(account.contactEmail || "Chưa liên kết")}</p>
+          <p style="margin:6px 0">Số dư: ${Number(account.coins || 0).toLocaleString("vi-VN")} VNĐ</p>
+          <button
+            onclick="window.editAccountId('${account.uid}','${String(account.userId || "").replace(/[^0-9]/g, "")}')"
+            style="width:100%;padding:10px;border:0;border-radius:8px;background:#6650ed;color:white;font-weight:bold">
+            ✏️ CHỈNH SỬA ID
+          </button>
+          <button
+            onclick="window.hideAccountFromAdminList('${account.uid}')"
+            style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#64748b;color:white;font-weight:bold">
+            🙈 ẨN KHỎI DANH SÁCH
+          </button>
+        </div>
+      `).join("");
+    } else {
+      html += `<p>Không tìm thấy tài khoản nào.</p>`;
+    }
+
+    list.innerHTML = html;
 
   } catch (error) {
     console.error(error);
     list.textContent = "Lỗi tải tài khoản: " + error.message;
   }
 };
-// ẨN TÀI KHOẢN KHỎI DANH SÁCH
-window.hideAccountFromAdminList = function(uid) {
+// HIỆN LẠI TÀI KHOẢN ĐÃ ẨN
+window.restoreAccountToAdminList = function(uid) {
   if (!window.auth?.currentUser ||
       window.auth.currentUser.email.toLowerCase() !== "haphamngu123@gmail.com") {
     alert("Bạn không có quyền thực hiện!");
     return;
   }
 
-  if (!confirm("Ẩn tài khoản này khỏi danh sách? Tài khoản và dữ liệu vẫn được giữ nguyên.")) return;
+  if (!confirm("Bạn muốn hiện lại tài khoản này trong danh sách?")) return;
 
   try {
     const hidden = new Set(
       JSON.parse(localStorage.getItem("vklHiddenAccountUids") || "[]")
     );
 
-    hidden.add(uid);
-    localStorage.setItem("vklHiddenAccountUids", JSON.stringify([...hidden]));
+    hidden.delete(uid);
+
+    localStorage.setItem(
+      "vklHiddenAccountUids",
+      JSON.stringify([...hidden])
+    );
 
     window.loadAccountAdminList();
   } catch (error) {
-    alert("Không thể ẩn tài khoản: " + error.message);
+    alert("Không thể hiện lại tài khoản: " + error.message);
   }
 };
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
