@@ -1136,6 +1136,24 @@ body:not(.dark) #referral-input::placeholder {
   background-size: 200% auto !important;
   animation: rankShine 3s linear infinite;
 }
+@keyframes rankAura {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 4px rgba(100, 170, 255, 0.6))
+      drop-shadow(0 0 9px rgba(100, 120, 255, 0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 9px rgba(100, 190, 255, 0.95))
+      drop-shadow(0 0 18px rgba(120, 100, 255, 0.65));
+    transform: scale(1.04);
+  }
+}
+
+#home-rank-image {
+  animation: rankAura 2.2s ease-in-out infinite;
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
