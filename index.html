@@ -4658,6 +4658,18 @@ if (homeBalance) {
     balanceEl.textContent = "Lỗi ví: " + (error.code || error.message);
   }
 };
+// TỰ ĐỘNG TẢI THÔNG TIN TRANG CHỦ
+window.auth.onAuthStateChanged(user => {
+  if (!user) return;
+
+  const username = user.email
+    ? user.email.split("@")[0]
+    : "Chưa có tên";
+
+  if (typeof window.loadCustomerWallet === "function") {
+    window.loadCustomerWallet(user.uid, username);
+  }
+});
 window.loadTransferHistory = async function() {
   const historyEl = document.getElementById("vkl-transfer-history");
   const user = window.auth.currentUser;
