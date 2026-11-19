@@ -4046,6 +4046,34 @@ list.innerHTML = html;
     list.textContent = "Lỗi tải tài khoản: " + error.message;
   }
 };
+// ẨN TÀI KHOẢN TRONG 3 NGÀY
+window.hideAccountFromAdminList = function(uid) {
+  if (!window.auth?.currentUser ||
+      window.auth.currentUser.email.toLowerCase() !== "haphamngu123@gmail.com") {
+    alert("Bạn không có quyền thực hiện!");
+    return;
+  }
+
+  if (!confirm("Ẩn tài khoản này trong 3 ngày? Sau 3 ngày tài khoản sẽ biến mất khỏi danh sách ẩn. Dữ liệu Firebase vẫn được giữ nguyên.")) return;
+
+  try {
+    const hidden = JSON.parse(
+      localStorage.getItem("vklHiddenAccountUids") || "{}"
+    );
+
+    hidden[uid] = Date.now();
+
+    localStorage.setItem(
+      "vklHiddenAccountUids",
+      JSON.stringify(hidden)
+    );
+
+    window.loadAccountAdminList();
+  } catch (error) {
+    alert("Không thể ẩn tài khoản: " + error.message);
+  }
+};
+
 // HIỆN LẠI TÀI KHOẢN ĐÃ ẨN
 window.restoreAccountToAdminList = function(uid) {
   if (!window.auth?.currentUser ||
@@ -4057,15 +4085,15 @@ window.restoreAccountToAdminList = function(uid) {
   if (!confirm("Bạn muốn hiện lại tài khoản này trong danh sách?")) return;
 
   try {
-    const hidden = new Set(
-      JSON.parse(localStorage.getItem("vklHiddenAccountUids") || "[]")
+    const hidden = JSON.parse(
+      localStorage.getItem("vklHiddenAccountUids") || "{}"
     );
 
-    hidden.delete(uid);
+    delete hidden[uid];
 
     localStorage.setItem(
       "vklHiddenAccountUids",
-      JSON.stringify([...hidden])
+      JSON.stringify(hidden)
     );
 
     window.loadAccountAdminList();
