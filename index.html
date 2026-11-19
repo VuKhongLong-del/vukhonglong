@@ -1705,8 +1705,33 @@ if(type === "mailbox"){
       <h2>HỘP THƯ CỦA BẠN</h2>
       <p class="muted">Thông báo và tin nhắn dành riêng cho bạn</p>
       <div id="vkl-mailbox-list">
-        Đang tải thư...
-      </div>
+  Đang tải thư...
+</div>
+
+<div id="vkl-mailbox-admin" style="display:none;text-align:left;margin-top:25px">
+  <hr>
+  <h3>✉️ GỬI THÔNG BÁO</h3>
+
+  <label>Người nhận</label>
+  <select id="vkl-mail-recipient" style="width:100%;padding:12px;border-radius:9px;margin:8px 0">
+    <option value="all">Tất cả người dùng</option>
+    <option value="private">Một người dùng</option>
+  </select>
+
+  <input id="vkl-mail-userid" placeholder="ID người nhận (nếu gửi riêng)"
+    style="display:none;width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border-radius:9px">
+
+  <input id="vkl-mail-title" placeholder="Tiêu đề thư"
+    style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border-radius:9px">
+
+  <textarea id="vkl-mail-body" placeholder="Nội dung thông báo"
+    style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border-radius:9px;min-height:110px"></textarea>
+
+  <button onclick="window.sendMailboxMessage()"
+    style="width:100%;padding:13px;border:0;border-radius:10px;background:#16a36a;color:white;font-weight:bold">
+    GỬI THÔNG BÁO
+  </button>
+</div>
     </div>
   `;
   if(window.loadMailboxMessages){
