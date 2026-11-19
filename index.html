@@ -6646,6 +6646,32 @@ window.closeRankProgress = function() {
   document.getElementById("rank-progress-page").style.display = "none";
 };
 </script>
+<!-- KHUNG CHAT HỖ TRỢ KHÁCH HÀNG -->
+<div id="vkl-chat-widget">
+  <button id="vkl-chat-toggle" onclick="vklToggleChat()">💬</button>
 
+  <div id="vkl-chat-panel">
+    <div id="vkl-chat-header">
+      <div>
+        <strong>HỖ TRỢ KHÁCH HÀNG</strong>
+        <small>VUKHONGLONG • Trả lời tự động</small>
+      </div>
+      <button onclick="vklToggleChat()">×</button>
+    </div>
+
+    <div id="vkl-chat-messages">
+      <div class="vkl-chat-bot">
+        Xin chào! 👋 Bạn cần hỗ trợ vấn đề gì?
+      </div>
+    </div>
+
+    <div id="vkl-chat-options">
+      <button onclick="vklChatChoose('Nạp tiền')">💰 Nạp tiền</button>
+      <button onclick="vklChatChoose('Đơn hàng')">📦 Đơn hàng</button>
+      <button onclick="vklChatChoose('Tài khoản')">👤 Tài khoản</button>
+      <button onclick="vklChatChoose('Gặp Admin')">☎️ Gặp Admin</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
