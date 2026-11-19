@@ -2955,6 +2955,102 @@ select {
     }
 
     const db = firebase.firestore();
+    // HỘP THƯ KHÁCH HÀNG
+window.loadMailboxMessages = async function(){
+  const list = document.getElementById("vkl-mailbox-list");
+  const dot = document.getElementById("mail-unread-dot");
+
+  if(!list) return;
+
+  const user = window.auth.currentUser;
+
+  if(!user){
+    list.textContent = "Vui lòng đăng nhập để xem hộp thư.";
+    return;
+  }
+
+  list.textContent = "Đang tải thư...";
+
+  try{
+    const snapshot = await db.collection("mailboxMessages")
+      .where("recipientUid", "==", user.uid)
+      .get();
+
+    const messages = [];
+
+    snapshot.forEach(doc => {
+      messages.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    messages.sort((a,b) => {
+      const timeA = a.createdAt?.toMillis?.() || 0;
+      const timeB = b.createdAt?.toMillis?.() || 0;
+      return timeB - timeA;
+    });
+
+    const unread = messages.some(m => m.isRead === false);
+
+    if(dot) dot.style.display = unread ? "block" : "none";
+
+    list.innerHTML = "";
+
+    if(messages.length === 0){
+      list.textContent = "Bạn chưa có thư nào.";
+      return;
+    }
+
+    messages.forEach(message => {
+      const item = document.createElement("div");
+      item.style.cssText =
+        "text-align:left;padding:14px;margin:12px 0;" +
+        "border:1px solid #8885;border-radius:13px;" +
+        "background:var(--card-bg,#fff);";
+
+      const title = document.createElement("b");
+      title.textContent =
+        (message.isRead ? "✉️ " : "🔴 ") + message.title;
+
+      const content = document.createElement("p");
+      content.textContent = message.body;
+      content.style.cssText = "white-space:pre-wrap;margin-bottom:0";
+
+      const status = document.createElement("small");
+      status.textContent = message.isRead ? "Đã đọc" : "Chưa đọc";
+
+      item.append(title, content, status);
+      list.appendChild(item);
+
+      if(message.isRead === false){
+        item.style.cursor = "pointer";
+
+        item.onclick = async () => {
+          try{
+            await db.collection("mailboxMessages")
+              .doc(message.id)
+              .update({isRead:true});
+
+            message.isRead = true;
+            title.textContent = "✉️ " + message.title;
+            status.textContent = "Đã đọc";
+
+            if(dot && !messages.some(m => m.isRead === false)){
+              dot.style.display = "none";
+            }
+          }catch(error){
+            console.error("Lỗi đánh dấu thư:", error);
+          }
+        };
+      }
+    });
+
+  }catch(error){
+    console.error("Lỗi tải hộp thư:", error);
+    list.textContent = "Không tải được hộp thư. Vui lòng thử lại.";
+  }
+};
 // KẾT NỐI ĐĂNG NHẬP GOOGLE
 window.auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
