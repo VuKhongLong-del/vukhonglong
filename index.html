@@ -4714,6 +4714,7 @@ const rankEl = document.getElementById("home-info-rank");
 if (rankEl) {
   rankEl.textContent = walletSnap.data().rank || "🥉 Đồng";
 }
+window.currentRankData = walletSnap.data();
     // TẢI LỊCH SỬ GIAO DỊCH XU
     const historyEl = document.getElementById("vkl-coin-history");
 
@@ -4770,7 +4771,7 @@ if (rankEl) {
     balanceEl.textContent = "Lỗi ví: " + (error.code || error.message);
   }
 };
-window.currentRankData = walletSnap.data();
+
 // TỰ ĐỘNG TẢI THÔNG TIN TRANG CHỦ
 window.auth.onAuthStateChanged(user => {
   if (!user) return;
