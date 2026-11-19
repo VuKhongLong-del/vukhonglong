@@ -4106,6 +4106,33 @@ window.restoreAccountToAdminList = function(uid) {
     alert("Không thể hiện lại tài khoản: " + error.message);
   }
 };
+// XÓA KHỎI DANH SÁCH ẨN NGAY
+window.removeHiddenAccountNow = function(uid) {
+  if (!window.auth?.currentUser ||
+      window.auth.currentUser.email.toLowerCase() !== "haphamngu123@gmail.com") {
+    alert("Bạn không có quyền thực hiện!");
+    return;
+  }
+
+  if (!confirm("Xóa tài khoản này khỏi danh sách ẩn ngay? Tài khoản và toàn bộ dữ liệu Firebase vẫn được giữ nguyên.")) return;
+
+  try {
+    const hidden = JSON.parse(
+      localStorage.getItem("vklHiddenAccountUids") || "{}"
+    );
+
+    delete hidden[uid];
+
+    localStorage.setItem(
+      "vklHiddenAccountUids",
+      JSON.stringify(hidden)
+    );
+
+    window.loadAccountAdminList();
+  } catch (error) {
+    alert("Không thể xóa khỏi danh sách ẩn: " + error.message);
+  }
+};
 // HIỂN THỊ DANH SÁCH ĐƠN CHO QUẢN TRỊ
 
 window.renderOrderAdmin = async function() {
