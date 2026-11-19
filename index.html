@@ -4054,7 +4054,7 @@ window.hideAccountFromAdminList = function(uid) {
     return;
   }
 
-  if (!confirm("Ẩn tài khoản này trong 3 ngày? Sau 3 ngày tài khoản sẽ biến mất khỏi danh sách ẩn. Dữ liệu Firebase vẫn được giữ nguyên.")) return;
+  if (!confirm("Ẩn tài khoản này trong 3 ngày? Sau 3 ngày tài khoản sẽ bị xoá khỏi danh sách ẩn.")) return;
 
   try {
     const hidden = JSON.parse(
