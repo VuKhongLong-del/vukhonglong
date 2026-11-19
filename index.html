@@ -3065,9 +3065,17 @@ if (homeId) homeId.textContent = walletSnap.data().userId || "Chưa có ID";
 if (homeBalance) {
   homeBalance.textContent = coins.toLocaleString("vi-VN") + " VNĐ";
 }
-  } catch (error) {
+    } catch (error) {
     console.error("Lỗi tải ví:", error);
-    balanceEl.textContent = "Chưa tải được";
+
+    if (balanceEl) {
+      balanceEl.textContent = "Chưa tải được";
+    }
+
+    const homeBalance = document.getElementById("home-info-balance");
+    if (homeBalance) {
+      homeBalance.textContent = "Chưa tải được";
+    }
   }
 };
 
