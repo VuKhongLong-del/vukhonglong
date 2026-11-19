@@ -1149,59 +1149,6 @@ body:not(.dark) #referral-input::placeholder {
   }
 }
 
-@keyframes challengerFire {
-  0%, 100% {
-    filter:
-      drop-shadow(0 0 5px #ff2500)
-      drop-shadow(0 0 12px #ff4500);
-    transform: scale(1);
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 12px #ff0000)
-      drop-shadow(0 0 25px #ff6500)
-      drop-shadow(0 0 35px #ffae00);
-    transform: scale(1.06);
-  }
-}
-
-#home-rank-image {
-  animation: rankAura 2.2s ease-in-out infinite;
-}
-
-#home-rank-image.challenger-rank {
-  animation: challengerFire 0.8s ease-in-out infinite;
-}
-#rank-display.challenger-rank::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  left: 15%;
-  top: -18px;
-  width: 70%;
-  height: 85px;
-  background:
-    radial-gradient(ellipse at 50% 85%, #fff36b 0%, #ff6a00 25%, #ed1600 55%, transparent 75%);
-  filter: blur(7px);
-  opacity: 0.9;
-  animation: realFire 0.55s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes realFire {
-  from {
-    transform: scaleY(0.85) skewX(-5deg);
-    opacity: 0.65;
-  }
-  to {
-    transform: scaleY(1.2) skewX(5deg);
-    opacity: 1;
-  }
-}
-
-#home-rank-image {
-  animation: rankAura 2.2s ease-in-out infinite;
-}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
