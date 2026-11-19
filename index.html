@@ -1172,6 +1172,37 @@ body:not(.dark) #referral-input::placeholder {
 #home-rank-image.challenger-rank {
   animation: challengerFire 0.8s ease-in-out infinite;
 }
+#rank-display.challenger-rank::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 15%;
+  top: -18px;
+  width: 70%;
+  height: 85px;
+  background:
+    radial-gradient(ellipse at 50% 85%, #fff36b 0%, #ff6a00 25%, #ed1600 55%, transparent 75%);
+  filter: blur(7px);
+  opacity: 0.9;
+  animation: realFire 0.55s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes realFire {
+  from {
+    transform: scaleY(0.85) skewX(-5deg);
+    opacity: 0.65;
+  }
+  to {
+    transform: scaleY(1.2) skewX(5deg);
+    opacity: 1;
+  }
+}
+
+#rank-display.challenger-rank > * {
+  position: relative;
+  z-index: 1;
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
