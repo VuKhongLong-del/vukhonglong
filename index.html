@@ -4984,7 +4984,7 @@ window.hideAllOrderAdmin = async function() {
     alert("Bạn không có quyền thực hiện.");
     return;
   }
-  if (!confirm("Ẩn toàn bộ đơn hàng đang hiển thị? Dữ liệu đơn hàng vẫn được giữ nguyên.")) return;
+  if (!confirm("Ẩn toàn bộ đơn hàng?")) return;
   try {
     const snapshot = await db.collection("orders")
       .orderBy("createdAt", "desc")
