@@ -7216,10 +7216,13 @@ window.vklChatChoose = function(topic) {
     status.textContent = "Đang gửi yêu cầu nạp tiền...";
 
     try {
+      const walletSnap = await db.collection("wallets").doc(user.uid).get();
+      const accountId = walletSnap.exists ? String(walletSnap.data().userId || "") : "";
+
       await db.collection("topupRequests").add({
         uid: user.uid,
         username: String(user.displayName || (user.email || "").split("@")[0] || "Khách hàng").slice(0, 60),
-        userId: String(user.uid || ""),
+        userId: accountId,
         email: String(user.email || "").slice(0, 120),
         amount: amount,
         transferNote: note.slice(0, 120),
@@ -7259,11 +7262,22 @@ window.vklChatChoose = function(topic) {
         const card = document.createElement("div");
         card.style.cssText = "padding:12px;margin:10px 0;border:1px solid #52617f;border-radius:10px;background:#202b40";
         const date = request.createdAt?.toDate ? request.createdAt.toDate().toLocaleString("vi-VN") : "Vừa gửi";
+        let accountId = request.userId || "";
+        if(request.uid){
+          try {
+            const walletSnap = await db.collection("wallets").doc(request.uid).get();
+            if(walletSnap.exists && walletSnap.data().userId){
+              accountId = String(walletSnap.data().userId);
+            }
+          } catch(idError) {
+            console.error("Lỗi lấy ID tài khoản nạp tiền:", idError);
+          }
+        }
         const heading = document.createElement("b");
         heading.textContent = (request.username || "Khách") + " • " + Number(request.amount || 0).toLocaleString("vi-VN") + " VNĐ";
         const details = document.createElement("p");
         details.style.cssText = "font-size:12px;line-height:1.6;overflow-wrap:anywhere";
-        details.textContent = "ID: " + (request.userId || "—") + "\nNội dung: " + (request.transferNote || "Không ghi") + "\nThời gian: " + date + "\nTrạng thái: " + (request.status || "pending");
+        details.textContent = "ID tài khoản: " + (accountId || "Chưa tìm thấy ID") + "\nNội dung: " + (request.transferNote || "Không ghi") + "\nThời gian: " + date + "\nTrạng thái: " + (request.status || "pending");
         card.append(heading, details);
 
         if (request.status === "pending") {
