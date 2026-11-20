@@ -7356,16 +7356,13 @@ window.vklChatChoose = function(topic) {
   }
 
   const replies = {
-    "Nạp tiền": "💰 Để nạp tiền, bạn hãy vào mục Chuyển Khoản, nhập đúng số tiền và làm theo hướng dẫn QR/tài khoản ngân hàng. Nếu đã chuyển mà số dư chưa cập nhật, hãy liên hệ Admin kèm mã giao dịch nhé.",
-    "Đơn hàng": "📦 Bạn hãy mở mục Lịch sử để kiểm tra đơn hàng và trạng thái xử lý. Nếu đơn bị lỗi hoặc chưa cập nhật, hãy gửi mã đơn cho Admin để được kiểm tra.",
-    "Tài khoản": "👤 Bạn hãy kiểm tra lại thông tin đăng nhập và ID tài khoản. Nếu không đăng nhập được hoặc thông tin bị sai, hãy liên hệ Admin để được hỗ trợ.",
-    "Gặp Admin": "☎️ Bạn có thể chuyển sang tab Liên hệ để chọn Zalo, Facebook, Discord hoặc TikTok.",
-    "Nạp sai nội dung": "✍️ Nếu bạn nhập sai nội dung chuyển khoản, hãy gửi số tiền, thời gian chuyển và nội dung đã nhập để admin kiểm tra thủ công.",
-    "Đơn chạy chậm": "🐢 Bạn hãy gửi mã đơn và thời điểm đặt đơn để admin kiểm tra tiến độ xử lý.",
-    "Đơn bị lỗi / sai mã": "⚠️ Vui lòng gửi mã đơn cùng mô tả lỗi hoặc mã đã nhập để admin kiểm tra.",
-    "Muốn huỷ đơn": "🚫 Hãy gửi mã đơn và lý do muốn huỷ. Admin sẽ kiểm tra trạng thái đơn trước khi xác nhận.",
-    "Acc clone lỗi": "🎮 Hãy gửi mã đơn hoặc thông tin gói acc và mô tả lỗi gặp phải để admin hỗ trợ.",
-    "Đơn hàng": "📦 Bạn hãy mở mục Lịch sử để kiểm tra đơn hàng và trạng thái xử lý. Nếu đơn bị lỗi hoặc chưa cập nhật, hãy gửi mã đơn cho Admin để được kiểm tra."
+    "Nạp tiền": "💳 HƯỚNG DẪN NẠP TIỀN\n\n1. Mở mục Nạp tiền / Chuyển khoản trên website.\n2. Quét đúng mã QR hoặc chuyển đúng số tài khoản được hiển thị.\n3. Nhập chính xác nội dung chuyển khoản, không tự ý thêm hoặc bỏ ký tự.\n4. Chờ hệ thống cập nhật số dư.\n\nNếu đã chuyển nhưng chưa nhận Xu, hãy gửi số tiền, thời gian chuyển và mã giao dịch để Admin kiểm tra. Tuyệt đối không gửi mật khẩu hoặc mã OTP.",
+    "Nạp sai nội dung": "✍️ NẠP TIỀN SAI NỘI DUNG\n\nĐừng chuyển thêm tiền ngay nhé. Hãy gửi cho Admin các thông tin sau:\n• Số tiền đã chuyển.\n• Thời gian chuyển khoản.\n• Nội dung bạn đã nhập thực tế.\n• Mã giao dịch hoặc ảnh biên lai (che thông tin nhạy cảm).\n\nAdmin sẽ đối chiếu giao dịch và hỗ trợ kiểm tra thủ công. Không gửi mật khẩu hoặc OTP.",
+    "Đơn chạy chậm": "🐢 ĐƠN HÀNG ĐANG XỬ LÝ CHẬM\n\nMột số đơn cần thời gian để hệ thống hoặc nhà cung cấp xử lý. Bạn hãy kiểm tra trạng thái trong mục Lịch sử đơn hàng.\n\nNếu đơn lâu hơn thời gian dự kiến, hãy gửi MÃ ĐƠN và thời điểm đặt hàng để Admin kiểm tra. Vui lòng không tạo đơn trùng khi đơn cũ vẫn đang xử lý.",
+    "Đơn bị lỗi / sai mã": "⚠️ ĐƠN HÀNG BỊ LỖI / SAI MÃ\n\nĐể Admin kiểm tra chính xác, vui lòng cung cấp:\n• Mã đơn hàng.\n• Mã hoặc thông tin bạn đã nhập (không gửi mật khẩu).\n• Mô tả lỗi đang hiển thị.\n• Ảnh chụp màn hình nếu có.\n\nKhông gửi lại yêu cầu nhiều lần trước khi đơn hiện tại được kiểm tra.",
+    "Muốn huỷ đơn": "🚫 YÊU CẦU HUỶ ĐƠN\n\nBạn hãy gửi MÃ ĐƠN và lý do muốn huỷ. Admin sẽ kiểm tra trạng thái đơn trước khi xác nhận.\n\nLưu ý: đơn đã hoàn tất hoặc đã được nhà cung cấp xử lý có thể không huỷ được. Đừng tự tạo đơn mới thay thế khi chưa có kết quả kiểm tra.",
+    "Acc clone lỗi": "🎮 TÀI KHOẢN / ACC CLONE GẶP LỖI\n\nVui lòng gửi MÃ ĐƠN, thời điểm nhận tài khoản và mô tả lỗi cụ thể (không đăng nhập được, sai thông tin hay lỗi trong game).\n\nBạn có thể đính kèm ảnh chụp màn hình. Không gửi công khai mật khẩu, mã OTP hoặc thông tin bảo mật; Admin sẽ hướng dẫn cách cung cấp thông tin cần thiết an toàn.",
+    "Đơn hàng": "📦 KIỂM TRA ĐƠN HÀNG\n\nMở mục Lịch sử đơn hàng để xem trạng thái mới nhất. Nếu cần Admin kiểm tra, hãy gửi mã đơn và mô tả vấn đề đang gặp. Không gửi mật khẩu hoặc mã OTP."
   };
 
   if (!document.getElementById("vkl-typing-style")) {
@@ -7416,7 +7413,9 @@ window.vklChatChoose = function(topic) {
 
     const bot = document.createElement("div");
     bot.className = "vkl-chat-bot";
-    bot.textContent = replies[topic] || "Mình chưa có câu trả lời cho vấn đề này. Bạn hãy chọn Gặp Admin để được hỗ trợ nhé.";
+    bot.textContent = replies[topic] || "Mình chưa có hướng dẫn cho vấn đề này. Bạn hãy chuyển sang tab Liên hệ để gặp Admin nhé.";
+    bot.style.whiteSpace = "pre-line";
+    bot.style.lineHeight = "1.55";
     messages.appendChild(bot);
     messages.scrollTop = messages.scrollHeight;
 
