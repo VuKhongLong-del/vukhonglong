@@ -1729,7 +1729,7 @@ function choose(type){
  document.getElementById("cloneQuantitySection").style.display = cloneMode ? "block" : "none";
  document.getElementById("selectedText").textContent =
   "Đã chọn: " + pack.name + " - " + money(pack.price) + (cloneMode ? "/1" : "/gói");
- document.getElementById("quantityLabel").textContent = cloneMode ? "Số tài khoản" : pack.label;
+ document.getElementById("quantityLabel").textContent = "Trạng Thái";
  update();
 }
 
@@ -1764,7 +1764,8 @@ function update(){
  const total = pack ? count * pack.price : 0;
  document.getElementById("lines").textContent = count;
  document.getElementById("lines").previousElementSibling.textContent = cloneMode ? "Số Lượng " : "Số dòng mã";
- document.getElementById("quantity").textContent = numberFormat(quantity);
+ document.getElementById("quantityLabel").textContent = "Trạng Thái";
+ document.getElementById("quantity").textContent = selected ? (cloneMode ? "Còn Acc" : "hoạt động") : "--";
  document.getElementById("total").textContent = money(total);
 }
 
