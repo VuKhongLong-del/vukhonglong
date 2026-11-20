@@ -1842,14 +1842,54 @@ async function submitConfirmedOrder(){
 
  const order = pendingOrder;
 
- // LƯU ĐƠN LÊN FIREBASE
+ // ACC CLONE LV0: Worker kiểm tra kho, trừ Xu và giao tài khoản.
  try {
-  await window.saveOrderToFirebase(order);
+  if(order.service === "ACC CLONE LV0"){
+   const user = window.auth && window.auth.currentUser;
+   if(!user) throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+
+   const idToken = await user.getIdToken();
+   const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/", {
+    method: "POST",
+    headers: {
+     "Content-Type": "application/json",
+     "Authorization": "Bearer " + idToken
+    },
+    body: JSON.stringify({
+     service: "cloneLv0",
+     quantity: order.count,
+     orderId: order.id
+    })
+   });
+
+   let result = {};
+   try { result = await response.json(); } catch(e) {}
+   if(!response.ok){
+    throw new Error(result.error || result.message || ("Máy chủ giao tài khoản báo lỗi (" + response.status + ")."));
+   }
+   if(!Array.isArray(result.deliveredAccounts) || result.deliveredAccounts.length !== order.count){
+    throw new Error("Máy chủ chưa trả đủ tài khoản. Hãy liên hệ hỗ trợ và cung cấp mã đơn " + order.id + ".");
+   }
+
+   order.deliveredAccounts = result.deliveredAccounts.map(item => ({
+    account: String(item.account || ""),
+    password: String(item.password || "")
+   }));
+   order.deliveryStatus = result.deliveryStatus || "Đã giao tài khoản";
+  } else {
+   await window.saveOrderToFirebase(order);
+  }
  } catch(error) {
-  console.error("Lỗi lưu đơn Firebase:", error);
-  alert("Không đủ tiền để đặt đơn.Vui lòng nạp thêm và thử lại!");
+  console.error("Lỗi xử lý đơn hàng:", error);
+  alert(error.message || "Không thể xử lý đơn hàng. Vui lòng thử lại hoặc liên hệ hỗ trợ.");
   return;
  }
+
+ const deliveryText = Array.isArray(order.deliveredAccounts) && order.deliveredAccounts.length
+  ? "\n\nTÀI KHOẢN ĐÃ GIAO:\n" + order.deliveredAccounts.map((item,i) =>
+     (i+1) + ". Tài khoản: " + item.account + " | Mật khẩu: " + item.password
+    ).join("\n")
+  : "";
 
  pendingOrder = null;
 
@@ -1889,12 +1929,15 @@ async function submitConfirmedOrder(){
    (order.codes ? "Số dòng mã: " : "Số lượng tài khoản: ") + order.count + "\n" +
    order.label + ": " + numberFormat(order.quantity) + "\n" +
    "Tổng tiền: " + money(order.total) +
+   (order.deliveredAccounts ? "\nTrạng thái: " + order.deliveryStatus : "") +
+   deliveryText +
    "\n\nĐã lưu đơn lên hệ thống và gửi email thông báo!");
  } catch(error) {
   console.error("Lỗi gửi email:", error);
 
   alert("ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
    "Mã đơn: " + order.id +
+   deliveryText +
    "\nTuy nhiên, email thông báo chưa gửi được.");
  }
 
