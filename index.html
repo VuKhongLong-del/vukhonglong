@@ -7338,6 +7338,36 @@ window.vklGetActiveSupport = function() {
   try { return JSON.parse(localStorage.getItem(window.vklSupportStorageKey()) || "null"); }
   catch (_) { return null; }
 };
+window.vklSupportMessagesKey = function() {
+  const uid = window.auth?.currentUser?.uid || "guest";
+  return "vkl_support_messages_" + uid;
+};
+window.vklSaveSupportMessages = function() {
+  const messages = document.getElementById("vkl-chat-messages");
+  if (!messages) return;
+  const saved = Array.from(messages.children)
+    .filter(el => el.classList.contains("vkl-chat-user") || el.classList.contains("vkl-chat-bot"))
+    .filter(el => !el.classList.contains("vkl-typing"))
+    .map(el => ({ type: el.classList.contains("vkl-chat-user") ? "user" : "bot", text: el.textContent, whiteSpace: el.style.whiteSpace || "" }));
+  try { localStorage.setItem(window.vklSupportMessagesKey(), JSON.stringify(saved)); } catch (_) {}
+};
+window.vklRestoreSupportMessages = function() {
+  const messages = document.getElementById("vkl-chat-messages");
+  if (!messages) return;
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(window.vklSupportMessagesKey()) || "[]"); } catch (_) {}
+  if (!Array.isArray(saved)) return;
+  messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot").forEach(el => el.remove());
+  saved.forEach(item => {
+    if (!item || (item.type !== "user" && item.type !== "bot") || typeof item.text !== "string") return;
+    const bubble = document.createElement("div");
+    bubble.className = item.type === "user" ? "vkl-chat-user" : "vkl-chat-bot";
+    bubble.textContent = item.text;
+    bubble.style.whiteSpace = item.whiteSpace || "pre-line";
+    messages.appendChild(bubble);
+  });
+  messages.scrollTop = messages.scrollHeight;
+};
 window.vklApplySupportLock = function(session) {
   const topics = document.querySelector(".vkl-support-topics");
   const activeBox = document.getElementById("vkl-support-active");
@@ -7350,6 +7380,7 @@ window.vklApplySupportLock = function(session) {
 };
 window.vklEndSupport = function() {
   localStorage.removeItem(window.vklSupportStorageKey());
+  localStorage.removeItem(window.vklSupportMessagesKey());
   window.vklPendingSupportTopic = "";
   window.vklApplySupportLock(null);
   const messages = document.getElementById("vkl-chat-messages");
@@ -7488,9 +7519,14 @@ window.vklUpdateSupportGreeting = function(user) {
   greeting.textContent = accountName ? "Xin Chào " + accountName + " 👋" : "Xin Chào! 👋";
 };
 if (window.auth && typeof window.auth.onAuthStateChanged === "function") {
-  window.auth.onAuthStateChanged(window.vklUpdateSupportGreeting);
+  window.auth.onAuthStateChanged(user => {
+    window.vklUpdateSupportGreeting(user);
+    window.vklApplySupportLock(window.vklGetActiveSupport());
+    window.vklRestoreSupportMessages();
+  });
 } else {
   window.vklUpdateSupportGreeting(window.auth && window.auth.currentUser);
+  window.vklRestoreSupportMessages();
 }
 window.vklSupportSend = function() {
   const input = document.getElementById("vkl-support-input");
@@ -7514,6 +7550,7 @@ window.vklSupportSend = function() {
   bubble.textContent = value;
   bubble.style.whiteSpace = "pre-line";
   messages.appendChild(bubble);
+  window.vklSaveSupportMessages();
 
   input.value = "";
   input.style.height = "38px";
@@ -7600,6 +7637,7 @@ window.vklSupportSend = function() {
     reply.style.whiteSpace = "pre-line";
     reply.style.lineHeight = "1.55";
     messages.appendChild(reply);
+    window.vklSaveSupportMessages();
     messages.scrollTop = messages.scrollHeight;
   }, 2000);
 };
