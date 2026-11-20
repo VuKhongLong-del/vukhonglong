@@ -2047,7 +2047,7 @@ body.dark .vkl-account-tab.active {
     <span>🎁</span><br>Giới Thiệu
   </button>
   ${isOwnerAccount ? `<button onclick="window.showAccountTab('topup')" class="vkl-account-tab">
-    <span>💰</span><br>Yêu Cầu Nạp
+    <span>⚙️</span><br>Quản Lý
   </button>` : ""}
 
 </div>
@@ -2294,53 +2294,44 @@ body.dark #vkl-tab-security input {
 </div>
     `;
 
-if (window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com") {
+if (isOwnerAccount) {
   body.insertAdjacentHTML("beforeend", `
-     <div class="admin-dark-panel">     
-    <hr style="margin:20px 0;border-color:#52617f">
-    <h3>🪙 QUẢN LÝ VÍ TIỀN</h3>
+    <div id="vkl-tab-topup" style="display:none;margin-top:18px;text-align:left">
+      <section class="admin-dark-panel">
+        <h3>📥 YÊU CẦU NẠP TIỀN</h3>
+        <div id="vkl-topup-admin-list">Đang tải...</div>
+      </section>
 
-    <label>ID tài khoản khách hàng</label>
-    <input id="vkl-wallet-admin-id"
-      type="text" inputmode="numeric" maxlength="6"
-      placeholder="Nhập ID 6 chữ số"
-      style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border:0;border-radius:8px">
+      <section class="admin-dark-panel" style="margin-top:16px">
+        <h3>🪙 QUẢN LÝ VÍ TIỀN</h3>
+        <label>ID tài khoản khách hàng</label>
+        <input id="vkl-wallet-admin-id" type="text" inputmode="numeric" maxlength="6"
+          placeholder="Nhập ID 6 chữ số"
+          style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border:0;border-radius:8px">
+        <button onclick="window.findWalletById()"
+          style="width:100%;padding:12px;margin-top:8px;border:0;border-radius:9px;background:#6650ed;color:white;font-weight:bold">
+          🔍 TÌM TÀI KHOẢN
+        </button>
+        <div id="vkl-wallet-admin-result" style="margin-top:12px;padding:12px;background:#293650;border-radius:10px">
+          Chưa tìm tài khoản
+        </div>
+      </section>
 
-    <button onclick="window.findWalletById()"
-      style="width:100%;padding:12px;margin-top:8px;border:0;border-radius:9px;background:#6650ed;color:white;font-weight:bold">
-      🔍 TÌM TÀI KHOẢN
-    </button>
-
-    <div id="vkl-wallet-admin-result"
-      style="margin-top:12px;padding:12px;background:#293650;border-radius:10px">
-      Chưa tìm tài khoản
+      <section class="admin-dark-panel" style="margin-top:16px">
+        <h3>👥 QUẢN LÝ TÀI KHOẢN</h3>
+        <input id="vkl-account-search" type="text"
+          placeholder="Tìm theo ID, tên, số điện thoại hoặc email"
+          style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border-radius:8px">
+        <button onclick="window.loadAccountAdminList()"
+          style="width:100%;padding:12px;border:0;border-radius:9px;background:#6650ed;color:white;font-weight:bold">
+          🔍 XEM DANH SÁCH TÀI KHOẢN
+        </button>
+        <div id="vkl-account-admin-list" style="margin-top:12px;padding:12px;background:#293650;border-radius:10px">
+          Chưa tải danh sách tài khoản
+        </div>
+      </section>
     </div>
-<hr style="margin:18px 0;border-color:#52617f">
-
-<h3>👥 QUẢN LÝ TÀI KHOẢN</h3>
-
-<input id="vkl-account-search"
-  type="text"
-  placeholder="Tìm theo ID, tên, số điện thoại hoặc email"
-  style="width:100%;box-sizing:border-box;padding:12px;margin:8px 0;border-radius:8px">
-
-<button onclick="window.loadAccountAdminList()"
-  style="width:100%;padding:12px;border:0;border-radius:9px;background:#6650ed;color:white;font-weight:bold">
-  🔍 XEM DANH SÁCH TÀI KHOẢN
-</button>
-
-<div id="vkl-account-admin-list"
-  style="margin-top:12px;padding:12px;background:#293650;border-radius:10px">
-  Chưa tải danh sách tài khoản
-</div>
-</div>
-<div id="vkl-tab-topup" style="display:none;margin-top:18px">
-  <section id="vkl-topup-admin-panel" class="admin-dark-panel">
-    <h3 style="margin:0 0 8px">📥 YÊU CẦU NẠP TIỀN</h3>
-    <div id="vkl-topup-admin-list">Đang tải...</div>
-  </section>
-</div>
-    `);
+  `);
   applyTheme(localStorage.getItem("vkl_theme") || "light");
 }
 body.insertAdjacentHTML("beforeend", `
@@ -7203,19 +7194,8 @@ window.vklChatChoose = function(topic) {
 
   window.renderTopupAdminList = async function () {
     if (!auth.currentUser || auth.currentUser.email?.toLowerCase() !== managerEmail) return;
-    const area = document.getElementById("vkl-order-admin");
-    if (!area) return;
-
-    let panel = document.getElementById("vkl-topup-admin-panel");
-    if (!panel) {
-      panel = document.createElement("section");
-      panel.id = "vkl-topup-admin-panel";
-      panel.style.cssText = "margin-top:18px;padding:14px;border:1px solid #16a36a;border-radius:13px;background:#293650;color:white";
-      panel.innerHTML = '<h3 style="margin:0 0 8px">📥 YÊU CẦU NẠP TIỀN</h3><div id="vkl-topup-admin-list">Đang tải...</div>';
-      area.appendChild(panel);
-    }
-
     const list = document.getElementById("vkl-topup-admin-list");
+    if (!list) return;
     if (!list) return;
     list.textContent = "Đang tải yêu cầu...";
     try {
