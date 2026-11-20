@@ -4911,7 +4911,7 @@ window.renderOrderAdmin = async function() {
           </button>
         </div>
 
-        <div style="display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;background:#293650;padding:14px;border-radius:12px;margin-top:12px;">
+        <div style="display:block;width:calc(100% + 28px);max-width:none;min-width:0;margin-left:-14px;box-sizing:border-box;background:#293650;padding:14px;border-radius:12px;margin-top:12px;">
           <b>NHẬP MÃ ĐƠN KHÁCH HÀNG</b>
           <input
             id="vkl-admin-order-code"
@@ -4927,7 +4927,7 @@ window.renderOrderAdmin = async function() {
           </button>
         </div>
 
-        <p style="color:#aab8df;text-align:center;margin-top:18px;">
+        <p style="display:block;width:calc(100% + 28px);max-width:none;min-width:0;margin-left:-14px;color:#aab8df;text-align:center;margin-top:18px;">
           50 đơn hàng gần nhất
         </p>
     `;
@@ -4940,7 +4940,7 @@ window.renderOrderAdmin = async function() {
 
     visibleOrders.forEach(({id, order}) => {
       html += `
-        <div style="display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;background:#293650;padding:13px;border-radius:12px;margin-top:12px;">
+        <div style="display:block;width:calc(100% + 28px);max-width:none;min-width:0;margin-left:-14px;box-sizing:border-box;background:#293650;padding:13px;border-radius:12px;margin-top:12px;">
           <b>${escapeOrderText(id)}</b>
           <p>Dịch vụ: ${escapeOrderText(order.service)}</p>
           <p>Số dòng mã: ${escapeOrderText(order.count)}</p>
