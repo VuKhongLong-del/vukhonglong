@@ -7563,6 +7563,7 @@ window.vklUpdateSupportGreeting = function(user) {
 };
 if (window.auth && typeof window.auth.onAuthStateChanged === "function") {
   window.auth.onAuthStateChanged(user => {
+    window.vklUpdateSupportComposerAuth(user);
     window.vklUpdateSupportGreeting(user);
     window.vklApplySupportLock(window.vklGetActiveSupport());
     window.vklRestoreSupportMessages();
@@ -7571,7 +7572,28 @@ if (window.auth && typeof window.auth.onAuthStateChanged === "function") {
   window.vklUpdateSupportGreeting(window.auth && window.auth.currentUser);
   window.vklRestoreSupportMessages();
 }
+window.vklUpdateSupportComposerAuth = function(user) {
+  const input = document.getElementById("vkl-support-input");
+  const sendButton = document.querySelector(".vkl-support-composer button");
+  const loggedIn = !!user;
+  if (input) {
+    input.disabled = !loggedIn;
+    input.placeholder = loggedIn ? "Nhập tin nhắn..." : "Đăng nhập để gửi tin nhắn";
+    input.setAttribute("aria-disabled", String(!loggedIn));
+  }
+  if (sendButton) {
+    sendButton.disabled = !loggedIn;
+    sendButton.title = loggedIn ? "Gửi tin nhắn" : "Vui lòng đăng nhập để gửi tin nhắn";
+    sendButton.style.opacity = loggedIn ? "1" : ".5";
+    sendButton.style.cursor = loggedIn ? "pointer" : "not-allowed";
+  }
+};
+window.vklUpdateSupportComposerAuth(window.auth?.currentUser || null);
 window.vklSupportSend = function() {
+  if (!window.auth?.currentUser) {
+    alert("Vui lòng đăng nhập để gửi tin nhắn hỗ trợ!");
+    return;
+  }
   const input = document.getElementById("vkl-support-input");
   const messages = document.getElementById("vkl-chat-messages");
   if (!input || !messages) return;
