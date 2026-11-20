@@ -7407,8 +7407,19 @@ window.vklChatChoose = function(topic) {
     bot.className = "vkl-chat-bot";
     const currentUser = window.auth?.currentUser;
     const accountName = currentUser?.email ? currentUser.email.split("@")[0] : "bạn";
+    let accountId = "chưa có ID";
+    if (currentUser) {
+      try {
+        const walletSnap = await firebase.firestore().collection("wallets").doc(currentUser.uid).get();
+        if (walletSnap.exists && walletSnap.data().userId) {
+          accountId = String(walletSnap.data().userId);
+        }
+      } catch (error) {
+        console.error("Không tải được ID tài khoản cho trả lời hỗ trợ:", error);
+      }
+    }
     const responseText = replies[topic] || "Mình chưa có hướng dẫn cho vấn đề này. Bạn hãy chuyển sang tab Liên hệ để gặp Admin nhé.";
-    bot.textContent = responseText.replaceAll("{username}", accountName);
+    bot.textContent = responseText.replaceAll("{username}", accountName).replaceAll("{id}", accountId);
     bot.style.whiteSpace = "pre-line";
     bot.style.lineHeight = "1.55";
     messages.appendChild(bot);
