@@ -7221,7 +7221,7 @@ window.vklChatChoose = function(topic) {
 
       await db.collection("topupRequests").add({
         uid: user.uid,
-        username: String(user.displayName || (user.email || "").split("@")[0] || "Khách hàng").slice(0, 60),
+        username: String((user.email || "").split("@")[0] || "Khách hàng").slice(0, 60),
         userId: accountId,
         email: String(user.email || "").slice(0, 120),
         amount: amount,
