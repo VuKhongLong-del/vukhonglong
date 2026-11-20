@@ -4897,10 +4897,10 @@ window.renderOrderAdmin = async function() {
     const visibleOrders = allOrders.filter(item => !hiddenIds.has(item.id));
 
     let html = `
-      <div class="admin-dark-panel">
+      <div class="admin-dark-panel" style="display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;">
         <h3 style="text-align:center;">🔐 QUẢN LÝ TIẾN ĐỘ ĐƠN HÀNG</h3>
 
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;width:100%;box-sizing:border-box;">
           <button type="button" onclick="window.hideAllOrderAdmin()"
             style="width:100%;box-sizing:border-box;padding:10px;border:0;border-radius:8px;background:#596579;color:white;font-weight:bold;">
             🙈 ẨN TOÀN BỘ ĐƠN HÀNG
@@ -4911,7 +4911,7 @@ window.renderOrderAdmin = async function() {
           </button>
         </div>
 
-        <div style="width:100%;box-sizing:border-box;background:#293650;padding:14px;border-radius:12px;margin-top:12px;">
+        <div style="display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;background:#293650;padding:14px;border-radius:12px;margin-top:12px;">
           <b>NHẬP MÃ ĐƠN KHÁCH HÀNG</b>
           <input
             id="vkl-admin-order-code"
@@ -4940,7 +4940,7 @@ window.renderOrderAdmin = async function() {
 
     visibleOrders.forEach(({id, order}) => {
       html += `
-        <div style="width:100%;box-sizing:border-box;background:#293650;padding:13px;border-radius:12px;margin-top:12px;">
+        <div style="display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;background:#293650;padding:13px;border-radius:12px;margin-top:12px;">
           <b>${escapeOrderText(id)}</b>
           <p>Dịch vụ: ${escapeOrderText(order.service)}</p>
           <p>Số dòng mã: ${escapeOrderText(order.count)}</p>
