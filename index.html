@@ -7242,7 +7242,7 @@ window.closeRankProgress = function() {
           <button onclick="vklChatChoose('Acc clone lỗi')">🎮 Acc clone lỗi</button>
         </div>
         <label class="vkl-support-related" for="vkl-support-order">Đơn liên quan (không bắt buộc)</label>
-        <select id="vkl-support-order"><option value="">Hỏi chung</option></select>
+        <select id="vkl-support-order"><option value="">Chọn đơn liên quan (không bắt buộc)</option></select>
       </div>
       <div class="vkl-support-composer">
         <label class="vkl-support-attach" for="vkl-support-file" aria-label="Đính kèm">📎</label>
@@ -7653,7 +7653,7 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
 }
 
 /* GIAO DIỆN HỖ TRỢ KHÁCH HÀNG TOÀN MÀN HÌNH */
-.vkl-support-tabs-two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.vkl-support-tabs-two { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
 
 #vkl-chat-widget { z-index:10020; }
 #vkl-chat-panel {
