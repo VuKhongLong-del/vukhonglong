@@ -7347,6 +7347,15 @@ window.vklChatChoose = function(topic) {
     }
     return;
   }
+  if (topic === "Đơn chạy chậm") {
+    const input = document.getElementById("vkl-support-input");
+    if (input) {
+      input.value = "Đơn của mình đã đặt lâu nhưng chưa được xử lý, nhờ admin kiểm tra giúp.\\nMã vận đơn :";
+      input.focus();
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    return;
+  }
 
   const replies = {
     "Nạp tiền": "💳 HƯỚNG DẪN NẠP TIỀN\n\n1. Mở mục Nạp tiền / Chuyển khoản trên website.\n2. Quét đúng mã QR hoặc chuyển đúng số tài khoản được hiển thị.\n3. Nhập chính xác nội dung chuyển khoản, không tự ý thêm hoặc bỏ ký tự.\n4. Chờ hệ thống cập nhật số dư.\n\nNếu đã chuyển nhưng chưa nhận Xu, hãy gửi số tiền, thời gian chuyển và mã giao dịch để Admin kiểm tra. Tuyệt đối không gửi mật khẩu hoặc mã OTP.",
