@@ -7405,7 +7405,10 @@ window.vklEndSupport = function() {
   window.vklApplySupportLock(null);
   const messages = document.getElementById("vkl-chat-messages");
   if (messages) {
-    messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot,.vkl-typing").forEach(el => el.remove());
+    // Giữ lại duy nhất phần chào và danh sách chủ đề; xoá toàn bộ nội dung chat cũ.
+    const welcome = messages.querySelector(".vkl-support-welcome");
+    const topics = messages.querySelector(".vkl-support-topics");
+    messages.replaceChildren(...[welcome, topics].filter(Boolean));
     messages.scrollTop = 0;
   }
   const input = document.getElementById("vkl-support-input");
