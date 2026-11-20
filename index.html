@@ -7374,7 +7374,16 @@ window.vklApplySupportLock = function(session) {
   const locked = !!(session && session.topic);
   topics.style.display = locked ? "none" : "";
   activeBox.style.display = locked ? "block" : "none";
-  
+  const welcome = document.querySelector(".vkl-support-welcome");
+  if (welcome) {
+    welcome.classList.toggle("vkl-support-pending", locked);
+    if (locked) {
+      welcome.innerHTML = '<strong class="vkl-support-pending-text">Đang chờ giải quyết...</strong>';
+    } else {
+      welcome.innerHTML = '<strong id="vkl-support-greeting">Xin Chào! 👋</strong><p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p>';
+      window.vklUpdateSupportGreeting?.(window.auth?.currentUser);
+    }
+  }
 };
 window.vklEndSupport = function() {
   localStorage.removeItem(window.vklSupportStorageKey());
@@ -7873,6 +7882,8 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
 .vkl-support-view.active { display:flex; flex-direction:column; }
 #vkl-chat-messages { flex:1; min-height:0; overflow:auto; padding:0 0 18px; background:transparent; }
 .vkl-support-welcome { padding:23px 24px; margin:0 0 20px; border:1px solid #dce3ff; border-radius:30px; background:#f2f1ff; color:#24316f; }
+.vkl-support-welcome.vkl-support-pending { display:inline-flex; align-self:flex-start; width:auto; max-width:100%; box-sizing:border-box; padding:9px 13px; margin:0 0 12px; border-radius:14px; }
+.vkl-support-welcome.vkl-support-pending .vkl-support-pending-text { display:block; font-size:13px; line-height:1.35; font-weight:700; }
 .vkl-support-welcome strong { display:block; font-size:21px; font-weight:850; }
 .vkl-support-welcome p { margin:10px 0 0; color:#4d5870; font-size:17px; line-height:1.45; }
 .vkl-support-topics { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:25px; }
