@@ -3178,8 +3178,9 @@ list.textContent = "Đang tải thư...";
     });
 
     const unread = messages.some(m => m.isRead === false);
+    window.vklMailboxUnread = unread;
 
-    if(dot) dot.style.display = unread ? "block" : "none";
+    if(dot) dot.style.display = (unread || (window.vklIsAdmin && (window.vklPendingTopupCount || 0) > 0)) ? "block" : "none";
 
     list.innerHTML = "";
 
@@ -3222,8 +3223,9 @@ list.textContent = "Đang tải thư...";
             title.textContent = "✉️ " + message.title;
             status.textContent = "Đã đọc";
 
-            if(dot && !messages.some(m => m.isRead === false)){
-              dot.style.display = "none";
+            window.vklMailboxUnread = messages.some(m => m.isRead === false);
+            if(dot){
+              dot.style.display = (window.vklMailboxUnread || (window.vklIsAdmin && (window.vklPendingTopupCount || 0) > 0)) ? "block" : "none";
             }
           }catch(error){
             console.error("Lỗi đánh dấu thư:", error);
@@ -3237,6 +3239,24 @@ list.textContent = "Đang tải thư...";
     list.textContent = "Không tải được hộp thư. Vui lòng thử lại.";
   }
 };
+
+// THEO DÕI YÊU CẦU NẠP TIỀN MỚI CHO ADMIN
+window.auth.onAuthStateChanged(user => {
+  window.vklIsAdmin = !!(user && user.email?.toLowerCase() === "haphamngu123@gmail.com");
+  if(!window.vklIsAdmin){
+    window.vklPendingTopupCount = 0;
+    return;
+  }
+
+  db.collection("topupRequests").where("status", "==", "pending").onSnapshot(snapshot => {
+    window.vklPendingTopupCount = snapshot.size;
+    const dot = document.getElementById("mail-unread-dot");
+    if(dot){
+      dot.style.display = (snapshot.size > 0 || window.vklMailboxUnread) ? "block" : "none";
+    }
+  }, error => console.error("Lỗi theo dõi yêu cầu nạp tiền:", error));
+});
+
 // GỬI THƯ RIÊNG HOẶC THÔNG BÁO TẤT CẢ
 window.sendMailboxMessage = async function(){
   const user = window.auth.currentUser;
