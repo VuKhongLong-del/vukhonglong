@@ -7243,7 +7243,7 @@ window.closeRankProgress = function() {
       </div>
       <div class="vkl-support-composer">
         <textarea id="vkl-support-input" rows="1" placeholder="Nhập tin nhắn..." maxlength="1000" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();vklSupportSend()}"></textarea>
-        <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn">➤</button>
+        <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn"><span style="display:block;line-height:1;transform:translateY(-2px)">➤</span></button>
       </div>
       <div id="vkl-support-active" style="display:none;flex:none;margin:0;padding:7px 0 0;border:0;border-top:0;border-radius:0;background:transparent!important;box-shadow:none;text-align:center;">
         <button type="button" onclick="vklEndSupport()">Kết thúc hỗ trợ</button>
@@ -7931,7 +7931,7 @@ body.dark #vkl-support-active { background:transparent!important; border-color:t
 .vkl-support-topics button { min-height:65px; padding:10px 12px; border:2px solid #dce4fa; border-radius:23px; background:#fff; color:#344054; font-size:16px; line-height:1.25; font-weight:800; text-align:left; }
 .vkl-support-composer { flex:none; display:flex; align-items:center; gap:12px; margin:0 -4px; padding:10px 8px; border:2px solid #e0e6f8; border-radius:35px; background:#f5f6fc; }
 #vkl-support-input { flex:1; min-width:0; height:38px; min-height:38px; max-height:120px; overflow-y:hidden; resize:none; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font:inherit; font-size:14px; line-height:1.4; box-shadow:none!important; }
-.vkl-support-composer button { width:54px; height:54px; flex:none; border:0; border-radius:50%; background:linear-gradient(135deg,#5688ef,#3864d9); color:#fff; font-size:24px; }
+.vkl-support-composer button { width:54px; height:54px; flex:none; display:flex; align-items:center; justify-content:center; padding:0; border:0; border-radius:50%; background:linear-gradient(135deg,#5688ef,#3864d9); color:#fff; font-size:24px; line-height:1; }
 #vkl-support-help h3,#vkl-support-contact h3 { margin:8px 0 18px; font-size:23px; color:#26366f; }
 #vkl-support-help button,#vkl-support-contact a { display:block; width:100%; box-sizing:border-box; margin:0 0 12px; padding:17px; border:2px solid #dce4fa; border-radius:18px; background:#fff; color:#344054; text-align:left; text-decoration:none; font-size:16px; font-weight:750; }
 #vkl-support-help p,#vkl-support-contact p { color:#5c667b; line-height:1.5; }
