@@ -7226,7 +7226,7 @@ window.vklChatChoose = function(topic) {
         heading.textContent = (request.username || "Khách") + " • " + Number(request.amount || 0).toLocaleString("vi-VN") + " VNĐ";
         const details = document.createElement("p");
         details.style.cssText = "font-size:12px;line-height:1.6;overflow-wrap:anywhere";
-        details.textContent = "ID: " + (request.userId || "—") + " | UID: " + request.uid + "\nNội dung: " + (request.transferNote || "Không ghi") + "\nThời gian: " + date + "\nTrạng thái: " + (request.status || "pending");
+        details.textContent = "ID: " + (request.userId || "—") + "\nNội dung: " + (request.transferNote || "Không ghi") + "\nThời gian: " + date + "\nTrạng thái: " + (request.status || "pending");
         card.append(heading, details);
 
         if (request.status === "pending") {
