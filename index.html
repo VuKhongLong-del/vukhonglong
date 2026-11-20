@@ -7443,16 +7443,31 @@ window.vklSupportSend = function() {
   if (!input || !messages) return;
   const value = input.value.trim();
   if (!value) return;
+
   const bubble = document.createElement("div");
   bubble.className = "vkl-chat-user";
   bubble.textContent = value;
   messages.appendChild(bubble);
+
   input.value = "";
-  const reply = document.createElement("div");
-  reply.className = "vkl-chat-bot";
-  reply.textContent = "Mình đã ghi nhận nội dung. Nếu cần xử lý tài khoản hoặc đơn hàng, bạn vui lòng để lại mã liên quan; admin sẽ phản hồi khi có mặt.";
-  messages.appendChild(reply);
+  input.style.height = "38px";
+
+  // Hiển thị dấu ba chấm nhảy như sóng trong 2 giây
+  const typing = document.createElement("div");
+  typing.className = "vkl-chat-bot vkl-typing";
+  typing.innerHTML = "<span></span><span></span><span></span>";
+  messages.appendChild(typing);
   messages.scrollTop = messages.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+
+    const reply = document.createElement("div");
+    reply.className = "vkl-chat-bot";
+    reply.textContent = "Mình đã ghi nhận nội dung. Nếu cần xử lý tài khoản hoặc đơn hàng, bạn vui lòng để lại mã liên quan; admin sẽ phản hồi khi có mặt.";
+    messages.appendChild(reply);
+    messages.scrollTop = messages.scrollHeight;
+  }, 2000);
 };
 
 </script>
