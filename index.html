@@ -1388,7 +1388,7 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
 
 <section class="section">
   <div class="section-head">
-   <h2>⚡ Dịch vụ sự kiện</h2>
+   <h2>⚡ Dịch Vụ & Sự Kiện ⚡</h2>
    <span class="muted">Chọn một gói</span>
   </div>
 
@@ -1504,7 +1504,7 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
     <input id="cloneQuantity" type="number" min="1" max="9999" step="1" value="1" inputmode="numeric" oninput="update()" style="flex:1;min-width:0;height:46px;text-align:center;font-size:18px;font-weight:800;border-radius:10px;border:1px solid #aeb5c1;background:var(--input-bg,#cfd3dc);color:var(--text-color,#222936);">
     <button type="button" onclick="changeCloneQuantity(1)" aria-label="Tăng số lượng" style="width:46px;height:46px;border:0;border-radius:10px;background:#6445e9;color:#fff;font-size:26px;font-weight:800;">+</button>
    </div>
-   <div class="muted" style="margin-top:8px;">Bấm − / + hoặc tự nhập số lượng tài khoản.</div>
+   <div class="muted" style="margin-top:8px;"></div>
   </div>
 
   <div class="summary">
@@ -1763,7 +1763,7 @@ function update(){
  const quantity = pack ? (cloneMode ? count : count * pack.quantity) : 0;
  const total = pack ? count * pack.price : 0;
  document.getElementById("lines").textContent = count;
- document.getElementById("lines").previousElementSibling.textContent = cloneMode ? "Số tài khoản" : "Số dòng mã";
+ document.getElementById("lines").previousElementSibling.textContent = cloneMode ? "Số Lượng " : "Số dòng mã";
  document.getElementById("quantity").textContent = numberFormat(quantity);
  document.getElementById("total").textContent = money(total);
 }
