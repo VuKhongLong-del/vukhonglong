@@ -7348,7 +7348,7 @@ window.vklChatChoose = function(topic) {
   }
 
   const replies = {
-    "Nạp tiền": "💳 HƯỚNG DẪN NẠP TIỀN\n\n1. Mở mục Nạp tiền / Chuyển khoản trên website.\n2. Quét đúng mã QR hoặc chuyển đúng số tài khoản được hiển thị.\n3. Nhập chính xác nội dung chuyển khoản, không tự ý thêm hoặc bỏ ký tự.\n4. Chờ hệ thống cập nhật số dư.\n\nNếu đã chuyển nhưng chưa nhận Xu, hãy gửi số tiền, thời gian chuyển và mã giao dịch để Admin kiểm tra. Tuyệt đối không gửi mật khẩu hoặc mã OTP.",
+    "Nạp tiền": "💳 TRẢ LỜI TỰ ĐỘNG\n\nChào {username}, nạp Xu tự động thường được cộng sau khoảng 2–5 phút.\n\n1) Kiểm tra nội dung chuyển khoản đúng dạng:\nTên + chuyen tien + {id}\n\n2) Số tiền tối thiểu mỗi lần nạp là 2.000 Xu.\n\nNếu quá 30 phút vẫn chưa được cộng Xu, hãy gửi ảnh biên lai và mã giao dịch để Admin kiểm tra, duyệt thủ công.",
     "Nạp sai nội dung": "✍️ NẠP TIỀN SAI NỘI DUNG\n\nĐừng chuyển thêm tiền ngay nhé. Hãy gửi cho Admin các thông tin sau:\n• Số tiền đã chuyển.\n• Thời gian chuyển khoản.\n• Nội dung bạn đã nhập thực tế.\n• Mã giao dịch hoặc ảnh biên lai (che thông tin nhạy cảm).\n\nAdmin sẽ đối chiếu giao dịch và hỗ trợ kiểm tra thủ công. Không gửi mật khẩu hoặc OTP.",
     "Đơn chạy chậm": "🐢 ĐƠN HÀNG ĐANG XỬ LÝ CHẬM\n\nMột số đơn cần thời gian để hệ thống hoặc nhà cung cấp xử lý. Bạn hãy kiểm tra trạng thái trong mục Lịch sử đơn hàng.\n\nNếu đơn lâu hơn thời gian dự kiến, hãy gửi MÃ ĐƠN và thời điểm đặt hàng để Admin kiểm tra. Vui lòng không tạo đơn trùng khi đơn cũ vẫn đang xử lý.",
     "Đơn bị lỗi / sai mã": "⚠️ ĐƠN HÀNG BỊ LỖI / SAI MÃ\n\nĐể Admin kiểm tra chính xác, vui lòng cung cấp:\n• Mã đơn hàng.\n• Mã hoặc thông tin bạn đã nhập (không gửi mật khẩu).\n• Mô tả lỗi đang hiển thị.\n• Ảnh chụp màn hình nếu có.\n\nKhông gửi lại yêu cầu nhiều lần trước khi đơn hiện tại được kiểm tra.",
@@ -7405,7 +7405,10 @@ window.vklChatChoose = function(topic) {
 
     const bot = document.createElement("div");
     bot.className = "vkl-chat-bot";
-    bot.textContent = replies[topic] || "Mình chưa có hướng dẫn cho vấn đề này. Bạn hãy chuyển sang tab Liên hệ để gặp Admin nhé.";
+    const currentUser = window.auth?.currentUser;
+    const accountName = currentUser?.email ? currentUser.email.split("@")[0] : "bạn";
+    const responseText = replies[topic] || "Mình chưa có hướng dẫn cho vấn đề này. Bạn hãy chuyển sang tab Liên hệ để gặp Admin nhé.";
+    bot.textContent = responseText.replaceAll("{username}", accountName);
     bot.style.whiteSpace = "pre-line";
     bot.style.lineHeight = "1.55";
     messages.appendChild(bot);
