@@ -2076,6 +2076,11 @@ body.dark .admin-dark-panel textarea {
 .vkl-admin-menu-button b {flex:1}
 .vkl-admin-menu-arrow {font-size:25px; line-height:1; opacity:.7}
 body.dark .vkl-admin-menu-button {background:#202b3d; color:#fff; border-color:#40516b}
+.vkl-admin-back.vkl-home-back {
+  width:fit-content;
+  min-width:0;
+  display:inline-flex;
+}
 .vkl-admin-back {
   width:100%; padding:10px 12px; margin-bottom:12px; border:1px solid #aeb5c1;
   border-radius:10px; background:#cfd3dc; color:#222936; font-weight:800; text-align:left;
@@ -2833,7 +2838,7 @@ if(
  modal.classList.add("page-mode");
 
  body.insertAdjacentHTML("afterbegin", `
-  <button onclick="closeModal()" class="vkl-admin-back" style="margin-bottom:18px;font-size:15px">
+  <button onclick="closeModal()" class="vkl-admin-back vkl-home-back" style="margin-bottom:18px;font-size:15px">
    ← QUAY LẠI TRANG CHỦ
   </button>
  `);
