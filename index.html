@@ -7168,12 +7168,10 @@ window.vklChatChoose = function(topic) {
     status.textContent = "Đang gửi yêu cầu nạp tiền...";
 
     try {
-      const walletSnap = await db.collection("wallets").doc(user.uid).get();
-      const wallet = walletSnap.exists ? walletSnap.data() : {};
       await db.collection("topupRequests").add({
         uid: user.uid,
-        username: String(wallet.username || (user.email || "").split("@")[0] || "Khách hàng").slice(0, 60),
-        userId: String(wallet.userId || ""),
+        username: String(user.displayName || (user.email || "").split("@")[0] || "Khách hàng").slice(0, 60),
+        userId: String(user.uid || ""),
         email: String(user.email || "").slice(0, 120),
         amount: amount,
         transferNote: note.slice(0, 120),
