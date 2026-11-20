@@ -7385,17 +7385,20 @@ window.vklApplySupportLock = function(session) {
     }
   }
 };
+window.vklSupportGeneration = window.vklSupportGeneration || 0;
 window.vklEndSupport = function() {
+  window.vklSupportGeneration++;
   localStorage.removeItem(window.vklSupportStorageKey());
   localStorage.removeItem(window.vklSupportMessagesKey());
   window.vklPendingSupportTopic = "";
   window.vklApplySupportLock(null);
   const messages = document.getElementById("vkl-chat-messages");
   if (messages) {
-    messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot").forEach(el => el.remove());
+    messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot,.vkl-typing").forEach(el => el.remove());
+    messages.scrollTop = 0;
   }
   const input = document.getElementById("vkl-support-input");
-  if (input) input.value = "";
+  if (input) { input.value = ""; input.style.height = "38px"; }
 };
 window.vklPendingSupportTopic = "";
 window.vklApplySupportLock(window.vklGetActiveSupport());
@@ -7477,8 +7480,10 @@ window.vklChatChoose = function(topic) {
   messages.appendChild(typing);
 
   messages.scrollTop = messages.scrollHeight;
+  const supportGeneration = window.vklSupportGeneration || 0;
 
   setTimeout(async () => {
+    if (supportGeneration !== (window.vklSupportGeneration || 0)) { typing.remove(); return; }
     typing.remove();
 
     const bot = document.createElement("div");
@@ -7497,6 +7502,7 @@ window.vklChatChoose = function(topic) {
       }
     }
     const responseText = replies[topic] || "Mình chưa có hướng dẫn cho vấn đề này. Bạn hãy chuyển sang tab Liên hệ để gặp Admin nhé.";
+    if (supportGeneration !== (window.vklSupportGeneration || 0)) return;
     bot.textContent = responseText.replaceAll("{username}", accountName).replaceAll("{id}", accountId);
     bot.style.whiteSpace = "pre-line";
     bot.style.lineHeight = "1.55";
@@ -7605,8 +7611,10 @@ window.vklSupportSend = function() {
   typing.innerHTML = "<span></span><span></span><span></span>";
   messages.appendChild(typing);
   messages.scrollTop = messages.scrollHeight;
+  const replyGeneration = window.vklSupportGeneration || 0;
 
   setTimeout(async () => {
+    if (replyGeneration !== (window.vklSupportGeneration || 0)) { typing.remove(); return; }
     typing.remove();
 
     const reply = document.createElement("div");
@@ -7641,6 +7649,7 @@ window.vklSupportSend = function() {
     } else {
       reply.textContent = "Mình đã ghi nhận nội dung. Nếu cần xử lý tài khoản hoặc đơn hàng, bạn vui lòng để lại mã liên quan; admin sẽ phản hồi khi có mặt.";
     }
+    if (replyGeneration !== (window.vklSupportGeneration || 0)) return;
     reply.style.whiteSpace = "pre-line";
     reply.style.lineHeight = "1.55";
     messages.appendChild(reply);
