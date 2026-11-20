@@ -7206,31 +7206,62 @@ window.closeRankProgress = function() {
   document.getElementById("rank-progress-page").style.display = "none";
 };
 </script>
-<!-- KHUNG CHAT HỖ TRỢ KHÁCH HÀNG -->
+<!-- KHUNG HỖ TRỢ KHÁCH HÀNG -->
 <div id="vkl-chat-widget">
-  <button id="vkl-chat-toggle" onclick="vklToggleChat()">💬</button>
-
-  <div id="vkl-chat-panel">
+  <button id="vkl-chat-toggle" aria-label="Mở hỗ trợ khách hàng">💬</button>
+  <div id="vkl-chat-panel" aria-label="Hỗ trợ khách hàng">
     <div id="vkl-chat-header">
-      <div>
-        <strong>HỖ TRỢ KHÁCH HÀNG</strong>
-        <small>VUKHONGLONG • Trả lời tự động</small>
+      <div class="vkl-support-grip"></div>
+      <div class="vkl-support-heading">
+        <div class="vkl-support-icon">▤<i></i></div>
+        <div><strong>Hỗ trợ khách hàng</strong><small>Chạy 24/7 · admin trả lời khi có mặt</small></div>
       </div>
-      <button onclick="vklToggleChat()">×</button>
+      <button class="vkl-support-close" onclick="vklToggleChat()" aria-label="Đóng">×</button>
     </div>
-
-    <div id="vkl-chat-messages">
-      <div class="vkl-chat-bot">
-        Xin chào! 👋 Bạn cần hỗ trợ vấn đề gì?
+    <nav class="vkl-support-tabs">
+      <button class="active" data-tab="chat" onclick="vklSupportTab('chat')">Chat</button>
+      <button data-tab="help" onclick="vklSupportTab('help')">Trợ giúp</button>
+      <button data-tab="contact" onclick="vklSupportTab('contact')">Liên hệ</button>
+    </nav>
+    <section id="vkl-support-chat" class="vkl-support-view active">
+      <div id="vkl-chat-messages">
+        <div class="vkl-support-welcome">
+          <strong>Xin chào! 👋</strong>
+          <p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p>
+        </div>
+        <div class="vkl-support-topics">
+          <button onclick="vklChatChoose('Nạp tiền')">💳 Nạp tiền chưa cộng Xu</button>
+          <button onclick="vklChatChoose('Nạp sai nội dung')">✍️ Nạp sai nội dung</button>
+          <button onclick="vklChatChoose('Đơn chạy chậm')">🐢 Đơn chạy chậm</button>
+          <button onclick="vklChatChoose('Đơn bị lỗi / sai mã')">⚠️ Đơn bị lỗi / sai mã</button>
+          <button onclick="vklChatChoose('Muốn huỷ đơn')">🚫 Muốn huỷ đơn</button>
+          <button onclick="vklChatChoose('Acc clone lỗi')">🎮 Acc clone lỗi</button>
+        </div>
+        <label class="vkl-support-related" for="vkl-support-order">Đơn liên quan (không bắt buộc)</label>
+        <select id="vkl-support-order"><option value="">Hỏi chung</option></select>
       </div>
-    </div>
-
-    <div id="vkl-chat-options">
-      <button onclick="vklChatChoose('Nạp tiền')">💰 Nạp tiền</button>
-      <button onclick="vklChatChoose('Đơn hàng')">📦 Đơn hàng</button>
-      <button onclick="vklChatChoose('Tài khoản')">👤 Tài khoản</button>
-      <button onclick="vklChatChoose('Gặp Admin')">☎️ Gặp Admin</button>
-    </div>
+      <div class="vkl-support-composer">
+        <label class="vkl-support-attach" for="vkl-support-file" aria-label="Đính kèm">📎</label>
+        <input id="vkl-support-file" type="file" accept="image/*" hidden>
+        <input id="vkl-support-input" type="text" placeholder="Nhập tin nhắn..." maxlength="1000" onkeydown="if(event.key==='Enter')vklSupportSend()">
+        <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn">➤</button>
+      </div>
+    </section>
+    <section id="vkl-support-help" class="vkl-support-view">
+      <h3>Câu hỏi thường gặp</h3>
+      <button onclick="vklChatChoose('Nạp tiền')">💳 Tôi đã chuyển khoản nhưng chưa nhận Xu</button>
+      <button onclick="vklChatChoose('Đơn hàng')">📦 Kiểm tra trạng thái đơn hàng</button>
+      <button onclick="vklChatChoose('Tài khoản')">👤 Tôi gặp vấn đề với tài khoản</button>
+      <p>Chọn câu hỏi để xem hướng dẫn nhanh hoặc chuyển sang Chat để nhắn trực tiếp.</p>
+    </section>
+    <section id="vkl-support-contact" class="vkl-support-view">
+      <h3>Liên hệ với Admin</h3>
+      <p>Nếu cần hỗ trợ trực tiếp, bạn có thể liên hệ qua các kênh sau:</p>
+      <a href="https://zalo.me/0902287225" target="_blank" rel="noopener">Zalo</a>
+      <a href="https://www.facebook.com/share/19mgeiTH7o/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://discord.gg/QUeSyr2cM" target="_blank" rel="noopener">Discord</a>
+      <a href="https://www.tiktok.com/@son.hm_7" target="_blank" rel="noopener">TikTok</a>
+    </section>
   </div>
 </div>
 <script>
@@ -7399,6 +7430,36 @@ window.vklChatChoose = function(topic) {
     }
   }, 2000);
 };
+window.vklSupportTab = function(tab) {
+  document.querySelectorAll(".vkl-support-tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  document.querySelectorAll(".vkl-support-view").forEach(v => v.classList.toggle("active", v.id === "vkl-support-" + tab));
+};
+window.vklSupportSend = function() {
+  const input = document.getElementById("vkl-support-input");
+  const messages = document.getElementById("vkl-chat-messages");
+  if (!input || !messages) return;
+  const value = input.value.trim();
+  if (!value) return;
+  const bubble = document.createElement("div");
+  bubble.className = "vkl-chat-user";
+  bubble.textContent = value;
+  messages.appendChild(bubble);
+  input.value = "";
+  const file = document.getElementById("vkl-support-file");
+  if (file?.files?.length) {
+    const note = document.createElement("div");
+    note.className = "vkl-chat-user";
+    note.textContent = "📎 " + file.files[0].name;
+    messages.appendChild(note);
+    file.value = "";
+  }
+  const reply = document.createElement("div");
+  reply.className = "vkl-chat-bot";
+  reply.textContent = "Mình đã ghi nhận nội dung. Nếu cần xử lý tài khoản hoặc đơn hàng, bạn vui lòng để lại mã liên quan; admin sẽ phản hồi khi có mặt.";
+  messages.appendChild(reply);
+  messages.scrollTop = messages.scrollHeight;
+};
+
 </script>
 
 
@@ -7594,6 +7655,75 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > .admin-dark-panel > 
 body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
   background-color: #cfd3dc !important;
   color: #222936 !important;
+}
+
+/* GIAO DIỆN HỖ TRỢ KHÁCH HÀNG TOÀN MÀN HÌNH */
+#vkl-chat-widget { z-index:10020; }
+#vkl-chat-panel {
+  display:none; position:fixed; inset:0; width:100%; height:100vh; height:100dvh;
+  max-height:none; max-width:none; left:0; bottom:auto; border-radius:0;
+  background:#fff; color:#263247; box-shadow:none; overflow:hidden;
+  flex-direction:column; padding-bottom:env(safe-area-inset-bottom);
+}
+#vkl-chat-panel.show { display:flex; }
+#vkl-chat-header {
+  position:relative; display:block; flex:none; min-height:150px; box-sizing:border-box;
+  padding:38px 28px 24px; background:linear-gradient(115deg,#5688ef,#514bd5);
+}
+.vkl-support-grip { position:absolute; top:15px; left:50%; transform:translateX(-50%); width:76px; height:7px; border-radius:9px; background:#ffffff80; }
+.vkl-support-heading { display:flex; align-items:center; gap:18px; margin-top:0; }
+.vkl-support-heading strong { display:block; font-size:25px; font-weight:850; }
+.vkl-support-heading small { display:block; margin-top:5px; font-size:16px; font-weight:600; opacity:.95; }
+.vkl-support-icon { position:relative; width:70px; height:70px; flex:none; border:2px solid #ffffff80; border-radius:24px; display:grid; place-items:center; font-size:38px; }
+.vkl-support-icon i { position:absolute; width:15px; height:15px; border:4px solid #5688ef; background:#42df78; border-radius:50%; right:-5px; bottom:-4px; }
+.vkl-support-close { position:absolute; top:28px; right:25px; width:58px; height:58px; border:0!important; border-radius:50%; background:#ffffff40!important; color:white!important; font-size:30px!important; }
+.vkl-support-tabs { flex:none; display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin:20px 26px 16px; padding:6px; border-radius:25px; background:#eef1fa; }
+.vkl-support-tabs button { border:0; border-radius:19px; padding:16px 5px; background:transparent; color:#5b6682; font-size:17px; font-weight:800; }
+.vkl-support-tabs button.active { background:#fff; color:#3157d7; box-shadow:0 5px 12px #263b7020; }
+.vkl-support-view { display:none; flex:1; min-height:0; overflow:auto; padding:12px 26px 22px; box-sizing:border-box; }
+.vkl-support-view.active { display:flex; flex-direction:column; }
+#vkl-chat-messages { flex:1; min-height:0; overflow:auto; padding:0 0 18px; background:transparent; }
+.vkl-support-welcome { padding:23px 24px; margin:0 0 20px; border:1px solid #dce3ff; border-radius:30px; background:#f2f1ff; color:#24316f; }
+.vkl-support-welcome strong { display:block; font-size:21px; font-weight:850; }
+.vkl-support-welcome p { margin:10px 0 0; color:#4d5870; font-size:17px; line-height:1.45; }
+.vkl-support-topics { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:25px; }
+.vkl-support-topics button { min-height:65px; padding:10px 12px; border:2px solid #dce4fa; border-radius:23px; background:#fff; color:#344054; font-size:16px; line-height:1.25; font-weight:800; text-align:left; }
+.vkl-support-related { display:block; margin:0 0 10px; color:#69758d; font-size:15px; font-weight:800; }
+#vkl-support-order { width:100%; min-height:62px; padding:12px 18px; border:2px solid #dce4fa; border-radius:22px; background:#fff; color:#172033; font-size:18px; font-weight:700; }
+.vkl-support-composer { flex:none; display:flex; align-items:center; gap:12px; margin:0 -4px; padding:10px 8px; border:2px solid #e0e6f8; border-radius:35px; background:#f5f6fc; }
+.vkl-support-attach { padding:0 10px; color:#66738d; font-size:26px; cursor:pointer; }
+#vkl-support-input { flex:1; min-width:0; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font-size:17px; box-shadow:none!important; }
+.vkl-support-composer button { width:54px; height:54px; flex:none; border:0; border-radius:50%; background:linear-gradient(135deg,#5688ef,#3864d9); color:#fff; font-size:24px; }
+#vkl-support-help h3,#vkl-support-contact h3 { margin:8px 0 18px; font-size:23px; color:#26366f; }
+#vkl-support-help button,#vkl-support-contact a { display:block; width:100%; box-sizing:border-box; margin:0 0 12px; padding:17px; border:2px solid #dce4fa; border-radius:18px; background:#fff; color:#344054; text-align:left; text-decoration:none; font-size:16px; font-weight:750; }
+#vkl-support-help p,#vkl-support-contact p { color:#5c667b; line-height:1.5; }
+.vkl-chat-bot,.vkl-chat-user { font-size:15px; }
+#vkl-chat-options { display:none!important; }
+#vkl-chat-toggle { z-index:1; }
+body.dark #vkl-chat-panel { background:#111827; color:#f5f7ff; }
+body.dark .vkl-support-tabs { background:#202a40; }
+body.dark .vkl-support-tabs button { color:#c1cbe0; }
+body.dark .vkl-support-tabs button.active { background:#33415f; color:#fff; }
+body.dark .vkl-support-welcome { background:#222b49; border-color:#3b4c7c; color:#e5eaff; }
+body.dark .vkl-support-welcome p,body.dark .vkl-support-related,body.dark #vkl-support-help p,body.dark #vkl-support-contact p { color:#c2cbe0; }
+body.dark .vkl-support-topics button,body.dark #vkl-support-order,body.dark #vkl-support-help button,body.dark #vkl-support-contact a { background:#202a40; border-color:#3a496b; color:#f4f6ff; }
+body.dark .vkl-support-composer { background:#202a40; border-color:#3a496b; }
+body.dark #vkl-support-input { color:#fff!important; }
+@media(max-width:480px) {
+  #vkl-chat-header { min-height:150px; padding:38px 25px 22px; }
+  .vkl-support-heading { gap:14px; padding-right:45px; }
+  .vkl-support-heading strong { font-size:21px; }
+  .vkl-support-heading small { font-size:14px; }
+  .vkl-support-icon { width:66px; height:66px; }
+  .vkl-support-close { width:54px; height:54px; top:27px; right:22px; }
+  .vkl-support-tabs { margin:18px 24px 14px; }
+  .vkl-support-tabs button { font-size:16px; padding:15px 4px; }
+  .vkl-support-view { padding:10px 26px 18px; }
+  .vkl-support-welcome { padding:20px 22px; }
+  .vkl-support-welcome strong { font-size:20px; }
+  .vkl-support-welcome p { font-size:16px; }
+  .vkl-support-topics { gap:10px; }
+  .vkl-support-topics button { min-height:62px; font-size:15px; border-radius:22px; }
 }
 </style>
 </body>
