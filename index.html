@@ -7329,37 +7329,19 @@ window.vklChatChoose = function(topic) {
   const messages = document.getElementById("vkl-chat-messages");
   if (!messages) return;
 
-  if (topic === "Nạp tiền") {
+  const templates = {
+    "Nạp tiền": "Mình đã chuyển khoản nhưng chưa được cộng Xu.\n- Số tiền: \n- Ngân hàng / thời gian chuyển: \n- Nội dung chuyển khoản: \n- Mã giao dịch (nếu có):",
+    "Nạp sai nội dung": "Mình chuyển khoản sai nội dung, nhờ admin kiểm tra và cộng giúp.\n- Số tiền: \n- Nội dung đã ghi: \n- Thời gian chuyển:",
+    "Đơn chạy chậm": "Đơn của mình đã đặt lâu nhưng chưa được xử lý, nhờ admin kiểm tra giúp.\n- Mã đơn hàng: \n- Thời điểm đặt hàng: ",
+    "Đơn bị lỗi / sai mã": "Đơn hàng của mình bị lỗi / sai mã, nhờ admin kiểm tra giúp.\n- Mã đơn hàng: \n- Mã hoặc thông tin đã nhập: \n- Lỗi đang gặp phải: ",
+    "Muốn huỷ đơn": "Mình muốn huỷ đơn này và hoàn Tiền nếu đơn chưa chạy.\n- Mã đơn hàng: \n- Lý do:",
+    "Acc clone lỗi": "Acc clone mình nhận được đang gặp lỗi, nhờ admin kiểm tra giúp.\n- Mã đơn hàng: \n- Thời điểm nhận tài khoản: \n- Mô tả lỗi: "
+  };
+
+  if (Object.prototype.hasOwnProperty.call(templates, topic)) {
     const input = document.getElementById("vkl-support-input");
     if (input) {
-      input.value = "Mình đã chuyển khoản nhưng chưa được cộng Xu.\\n- Số tiền: \\n- Ngân hàng / thời gian chuyển: \\n- Nội dung chuyển khoản: \\n- Mã giao dịch (nếu có):";
-      input.focus();
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    return;
-  }
-  if (topic === "Nạp sai nội dung") {
-    const input = document.getElementById("vkl-support-input");
-    if (input) {
-      input.value = "Mình chuyển khoản sai nội dung, nhờ admin kiểm tra và cộng giúp.\n- Số tiền: \n- Nội dung đã ghi: \n- Thời gian chuyển:";
-      input.focus();
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    return;
-  }
-  if (topic === "Đơn chạy chậm") {
-    const input = document.getElementById("vkl-support-input");
-    if (input) {
-      input.value = "Đơn của mình đã đặt lâu nhưng chưa được xử lý, nhờ admin kiểm tra giúp.\\nMã vận đơn :";
-      input.focus();
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    return;
-  }
-  if (topic === "Muốn huỷ đơn") {
-    const input = document.getElementById("vkl-support-input");
-    if (input) {
-      input.value = "Mình muốn huỷ đơn này và hoàn Tiền nếu đơn chưa chạy.\\nLý do:";
+      input.value = templates[topic];
       input.focus();
       input.dispatchEvent(new Event("input", { bubbles: true }));
     }
