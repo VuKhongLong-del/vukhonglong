@@ -1513,8 +1513,11 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
     <strong id="lines">0</strong>
    </div>
    <div>
-    <small id="quantityLabel">Tổng số acc giúp</small>
-    <strong id="quantity">0</strong>
+    <small id="quantityLabel">Trạng Thái</small>
+    <div style="display:flex;align-items:center;gap:7px;margin-top:6px;">
+     <strong id="quantity" style="margin-top:0;">0</strong>
+     <button id="serviceStatusGear" type="button" onclick="openServiceStatusSettings()" aria-label="Chỉnh sửa trạng thái" title="Chỉnh sửa trạng thái" style="display:none;width:25px;height:25px;padding:0;border:0;border-radius:7px;background:#e8eaff;color:#4e49d9;font-size:14px;line-height:25px;">⚙</button>
+    </div>
    </div>
   </div>
 
@@ -8099,6 +8102,97 @@ body.dark textarea::placeholder {
   color: #aab5cc !important;
 }
 </style>
+
+
+<style>
+/* NÚT BÁNH RĂNG CHỈNH TRẠNG THÁI DỊCH VỤ */
+#serviceStatusGear { flex:none; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+#serviceStatusGear:active { transform:scale(.92); }
+body.dark #serviceStatusGear { background:#35415d!important; color:#d9ddff!important; }
+#quantity.status-ended { color:#ff465d!important; text-shadow:0 0 5px #ff465d88!important; }
+</style>
+<script>
+(function(){
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+  const statusRef = db.collection("siteSettings").doc("serviceStatuses");
+  let serviceStatuses = {};
+  let isStatusAdmin = false;
+  let statusReady = false;
+
+  function currentServiceStatus(){
+    const key = window.selected;
+    if(!key) return "--";
+    return serviceStatuses[key] === "ended" ? "Hết" : "Hoạt động";
+  }
+
+  function renderServiceStatus(){
+    const value = document.getElementById("quantity");
+    const gear = document.getElementById("serviceStatusGear");
+    if(!value || !gear) return;
+    const key = window.selected;
+    const status = currentServiceStatus();
+    value.textContent = status;
+    value.classList.toggle("status-ended", status === "Hết");
+    value.style.color = status === "Hết" ? "#ff465d" : (key ? "#39ff75" : "");
+    value.style.textShadow = status === "Hết"
+      ? "0 0 5px rgba(255,70,93,.65), 0 0 12px rgba(255,70,93,.35)"
+      : (key ? "0 0 5px rgba(57,255,117,.75), 0 0 12px rgba(57,255,117,.45)" : "none");
+    gear.style.display = isStatusAdmin && !!key ? "inline-block" : "none";
+  }
+
+  const originalUpdate = window.update;
+  if(typeof originalUpdate === "function"){
+    window.update = function(){
+      originalUpdate.apply(this, arguments);
+      renderServiceStatus();
+    };
+  }
+
+  window.openServiceStatusSettings = async function(){
+    const user = auth.currentUser;
+    if(!user || user.email?.toLowerCase() !== "haphamngu123@gmail.com"){
+      alert("Bạn không có quyền chỉnh sửa trạng thái.");
+      return;
+    }
+    const key = window.selected;
+    if(!key) return;
+    const current = serviceStatuses[key] === "ended" ? "Hết" : "Hoạt động";
+    const choice = prompt("Trạng thái hiện tại: " + current + "\nNhập 1 để đặt Hoạt động hoặc 2 để đặt Hết:", serviceStatuses[key] === "ended" ? "2" : "1");
+    if(choice === null) return;
+    const normalized = choice.trim();
+    if(normalized !== "1" && normalized !== "2"){
+      alert("Vui lòng chỉ nhập 1 hoặc 2.");
+      return;
+    }
+    const next = normalized === "2" ? "ended" : "active";
+    try{
+      await statusRef.set({statuses:{[key]:next},updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:user.uid},{merge:true});
+      serviceStatuses[key] = next;
+      renderServiceStatus();
+    }catch(error){
+      alert("Không lưu được trạng thái: " + error.message);
+    }
+  };
+
+  auth.onAuthStateChanged(user => {
+    isStatusAdmin = !!(user && user.email?.toLowerCase() === "haphamngu123@gmail.com");
+    renderServiceStatus();
+  });
+
+  statusRef.onSnapshot(snapshot => {
+    serviceStatuses = snapshot.exists && snapshot.data().statuses ? snapshot.data().statuses : {};
+    statusReady = true;
+    renderServiceStatus();
+  }, error => {
+    console.error("Không tải được trạng thái dịch vụ:", error);
+    renderServiceStatus();
+  });
+
+  document.addEventListener("DOMContentLoaded", renderServiceStatus);
+  renderServiceStatus();
+})();
+</script>
 
 </body>
 </html>
