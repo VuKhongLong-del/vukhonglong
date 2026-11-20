@@ -7218,12 +7218,11 @@ window.closeRankProgress = function() {
       </div>
       <button class="vkl-support-close" onclick="vklToggleChat()" aria-label="Đóng">×</button>
     </div>
-    <nav class="vkl-support-tabs">
-      <button class="active" data-tab="chat" onclick="vklSupportTab('chat')">Chat</button>
-      <button data-tab="help" onclick="vklSupportTab('help')">Trợ giúp</button>
+    <nav class="vkl-support-tabs vkl-support-tabs-two">
+      <button class="active" data-tab="help" onclick="vklSupportTab('help')">Trợ giúp</button>
       <button data-tab="contact" onclick="vklSupportTab('contact')">Liên hệ</button>
     </nav>
-    <section id="vkl-support-chat" class="vkl-support-view active">
+    <section id="vkl-support-help" class="vkl-support-view active">
       <div id="vkl-chat-messages">
         <div class="vkl-support-welcome">
           <strong>Xin chào! 👋</strong>
@@ -7246,13 +7245,6 @@ window.closeRankProgress = function() {
         <input id="vkl-support-input" type="text" placeholder="Nhập tin nhắn..." maxlength="1000" onkeydown="if(event.key==='Enter')vklSupportSend()">
         <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn">➤</button>
       </div>
-    </section>
-    <section id="vkl-support-help" class="vkl-support-view">
-      <h3>Câu hỏi thường gặp</h3>
-      <button onclick="vklSupportTab('chat');vklChatChoose('Nạp tiền')">💳 Tôi đã chuyển khoản nhưng chưa nhận Xu</button>
-      <button onclick="vklSupportTab('chat');vklChatChoose('Đơn hàng')">📦 Kiểm tra trạng thái đơn hàng</button>
-      <button onclick="vklSupportTab('chat');vklChatChoose('Tài khoản')">👤 Tôi gặp vấn đề với tài khoản</button>
-      <p>Chọn câu hỏi để xem hướng dẫn nhanh hoặc chuyển sang Chat để nhắn trực tiếp.</p>
     </section>
     <section id="vkl-support-contact" class="vkl-support-view">
       <h3>Liên hệ với Admin</h3>
@@ -7664,6 +7656,8 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
 }
 
 /* GIAO DIỆN HỖ TRỢ KHÁCH HÀNG TOÀN MÀN HÌNH */
+.vkl-support-tabs-two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
 #vkl-chat-widget { z-index:10020; }
 #vkl-chat-panel {
   display:none; position:fixed; inset:0; width:100%; height:100vh; height:100dvh;
