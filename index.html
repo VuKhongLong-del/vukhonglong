@@ -2478,7 +2478,7 @@ if (isOwnerAccount) {
       <section id="vkl-admin-panel-acc-inventory" class="admin-dark-panel vkl-admin-subpanel" style="display:none;margin-top:0">
         <button type="button" class="vkl-admin-back" onclick="window.showAdminSection('')">← QUAY LẠI DANH MỤC</button>
         <h3>🗄️ KHO QUẢN LÝ ACC</h3>
-        <p style="font-size:13px;line-height:1.5">Tải file TXT riêng cho từng cấp. Mỗi dòng theo định dạng <b>tài khoản|mật khẩu</b>.</p>
+        <p style="font-size:13px;line-height:1.5">Tải file TXT riêng cho từng cấp. Mỗi dòng theo định dạng <b>tài khoản mật khẩu</b>.</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0">
           <label style="margin:0;padding:12px;border-radius:12px;background:#6650ed;color:#fff;text-align:center;cursor:pointer">
             📥 NHẬP FILE LV0
@@ -8311,17 +8311,17 @@ body.dark #serviceStatusGear {
       for(const line of lines){
         const trimmed = line.trim();
         if(!trimmed) continue;
-        const splitAt = trimmed.indexOf("|");
-        if(splitAt < 1 || splitAt === trimmed.length - 1){ invalid++; continue; }
-        const account = trimmed.slice(0,splitAt).trim();
-        const password = trimmed.slice(splitAt+1).trim();
+        const match = trimmed.match(/^(\\S+)\\s+(.+)$/);
+        if(!match){ invalid++; continue; }
+        const account = match[1].trim();
+        const password = match[2].trim();
         if(!account || !password){ invalid++; continue; }
         if(/^(tài khoản|tai khoan|account)$/i.test(account)) continue;
         map.set(account.toLowerCase(), {account,password});
       }
       const rows = Array.from(map.values());
       if(!rows.length){
-        if(status) status.textContent = "Không tìm thấy dòng hợp lệ. Định dạng cần có: tài khoản|mật khẩu";
+        if(status) status.textContent = "Không tìm thấy dòng hợp lệ. Định dạng cần có: tài khoản mật khẩu";
         return;
       }
       let written = 0;
