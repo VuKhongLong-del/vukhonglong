@@ -7517,9 +7517,10 @@ window.vklSupportSend = function() {
     const reply = document.createElement("div");
     reply.className = "vkl-chat-bot";
     const isTopupProblem = value.includes("chưa được cộng Xu") || value.includes("chưa được cộng xu");
+    const isWrongTransferNote = value.includes("chuyển khoản sai nội dung") || value.includes("chuyển khoản sai");
+    const currentUser = window.auth?.currentUser;
+    const accountName = currentUser?.email ? currentUser.email.split("@")[0] : "bạn";
     if (isTopupProblem) {
-      const currentUser = window.auth?.currentUser;
-      const accountName = currentUser?.email ? currentUser.email.split("@")[0] : "bạn";
       let accountId = "chưa có ID";
       if (currentUser) {
         try {
@@ -7529,7 +7530,9 @@ window.vklSupportSend = function() {
           console.error("Không tải được ID tài khoản hỗ trợ:", error);
         }
       }
-      reply.textContent = "TIN NHẮN TỰ ĐỘNG\n\nChào " + accountName + "! Nạp Xu tự động thường được cộng sau khoảng 2–5 phút.\n\n1) Kiểm tra nội dung chuyển khoản đúng dạng:\nTên chuyentien " + accountId + "\n\n2) Số tiền tối thiểu mỗi lần nạp là 2.000 Xu.\n\nNếu đã quá 30 phút mà vẫn chưa nhận được Xu, vui lòng gửi ảnh biên lai và mã giao dịch để Admin kiểm tra, duyệt thủ công.";
+      reply.textContent = "TIN NHẮN TỰ ĐỘNG\\n\\nChào " + accountName + "! Nạp Xu tự động thường được cộng sau khoảng 2–5 phút.\\n\\n1) Kiểm tra nội dung chuyển khoản đúng dạng:\\nTên chuyentien " + accountId + "\\n\\n2) Số tiền tối thiểu mỗi lần nạp là 2.000 Xu.\\n\\nNếu đã quá 30 phút mà vẫn chưa nhận được Xu, vui lòng gửi ảnh biên lai và mã giao dịch để Admin kiểm tra, duyệt thủ công.";
+    } else if (isWrongTransferNote) {
+      reply.textContent = "TIN NHẮN TỰ ĐỘNG\\n\\nChào " + accountName + ", nếu chuyển khoản sai nội dung thì hệ thống không tự cộng được.\\n\\nBạn gửi giúp ảnh biên lai qua phần liên hệ hoặc gửi mã giao dịch + số tiền ngay trong khung chat này, admin sẽ xét duyệt và cộng tiền thủ công cho bạn.";
     } else {
       reply.textContent = "Mình đã ghi nhận nội dung. Nếu cần xử lý tài khoản hoặc đơn hàng, bạn vui lòng để lại mã liên quan; admin sẽ phản hồi khi có mặt.";
     }
