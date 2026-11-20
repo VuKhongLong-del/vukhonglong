@@ -2352,6 +2352,11 @@ if (isOwnerAccount) {
       </section>
 
       <section class="admin-dark-panel" style="margin-top:16px">
+        <h3>📦 QUẢN LÝ TIẾN ĐỘ ĐƠN HÀNG</h3>
+        <div id="vkl-order-admin" style="margin-top:12px"></div>
+      </section>
+
+      <section class="admin-dark-panel" style="margin-top:16px">
         <h3>👥 QUẢN LÝ TÀI KHOẢN</h3>
         <input id="vkl-account-search" type="text"
           placeholder="Tìm theo ID, tên, số điện thoại hoặc email"
@@ -2746,7 +2751,7 @@ if(type === "progress"){
     </div>
 
     <div id="vkl-progress-admin" style="margin-top:18px"></div>
-<div id="vkl-order-admin" style="margin-top:18px"></div>
+
   `;
 
 if(window.renderOrderAdmin){
@@ -5760,6 +5765,7 @@ window.showAccountTab = function(tab) {
   const tabs = ["info", "security", "intro", "topup"];
 
   if (tab === "topup" && window.renderTopupAdminList) window.renderTopupAdminList();
+  if (tab === "topup" && window.renderOrderAdmin) window.renderOrderAdmin();
   tabs.forEach(name => {
     const panel = document.getElementById("vkl-tab-" + name);
     if (panel) {
