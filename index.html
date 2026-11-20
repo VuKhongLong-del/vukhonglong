@@ -1748,7 +1748,8 @@ function isCloneService(){
 function getCloneQuantity(){
  const input = document.getElementById("cloneQuantity");
  const value = Math.floor(Number(input.value));
- return Number.isFinite(value) ? Math.min(9999, Math.max(1, value || 1)) : 1;
+ const max = selected === "cloneLv0" ? 30 : 9999;
+ return Number.isFinite(value) ? Math.min(max, Math.max(1, value || 1)) : 1;
 }
 
 function changeCloneQuantity(amount){
