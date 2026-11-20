@@ -7516,9 +7516,10 @@ window.vklSupportSend = function() {
 
     const reply = document.createElement("div");
     reply.className = "vkl-chat-bot";
-    const isTopupProblem = value.includes("chưa được cộng Xu") || value.includes("chưa được cộng xu");
-    const isWrongTransferNote = value.includes("chuyển khoản sai nội dung") || value.includes("chuyển khoản sai");
-    const isSlowOrder = value.includes("đơn của mình đã đặt lâu") || value.includes("đơn chạy chậm");
+    const normalizedValue = value.toLocaleLowerCase("vi");
+    const isTopupProblem = normalizedValue.includes("chưa được cộng xu");
+    const isWrongTransferNote = normalizedValue.includes("chuyển khoản sai nội dung") || normalizedValue.includes("chuyển khoản sai");
+    const isSlowOrder = normalizedValue.includes("đơn của mình đã đặt lâu") || normalizedValue.includes("đơn chạy chậm");
     const currentUser = window.auth?.currentUser;
     const accountName = currentUser?.email ? currentUser.email.split("@")[0] : "bạn";
     if (isTopupProblem) {
