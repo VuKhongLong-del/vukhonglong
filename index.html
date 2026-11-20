@@ -7228,7 +7228,7 @@ window.closeRankProgress = function() {
     <section id="vkl-support-help" class="vkl-support-view active">
       <div id="vkl-chat-messages">
         <div class="vkl-support-welcome">
-          <strong>Xin chào! 👋</strong>
+          <strong id="vkl-support-greeting">Xin Chào! 👋</strong>
           <p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p>
         </div>
         <div class="vkl-support-topics">
@@ -7423,6 +7423,20 @@ window.vklSupportTab = function(tab) {
   document.querySelectorAll(".vkl-support-tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
   document.querySelectorAll(".vkl-support-view").forEach(v => v.classList.toggle("active", v.id === "vkl-support-" + tab));
 };
+
+// Hiển thị tên tài khoản đang đăng nhập trong lời chào hỗ trợ
+window.vklUpdateSupportGreeting = function(user) {
+  const greeting = document.getElementById("vkl-support-greeting");
+  if (!greeting) return;
+  const email = user && user.email ? user.email : "";
+  const accountName = email.includes("@") ? email.split("@")[0] : "";
+  greeting.textContent = accountName ? "Xin Chào " + accountName + " 👋" : "Xin Chào! 👋";
+};
+if (window.auth && typeof window.auth.onAuthStateChanged === "function") {
+  window.auth.onAuthStateChanged(window.vklUpdateSupportGreeting);
+} else {
+  window.vklUpdateSupportGreeting(window.auth && window.auth.currentUser);
+}
 window.vklSupportSend = function() {
   const input = document.getElementById("vkl-support-input");
   const messages = document.getElementById("vkl-chat-messages");
