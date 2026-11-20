@@ -1615,6 +1615,11 @@ function applyTheme(theme){
  const isDark = theme === "dark";
  document.body.classList.toggle("dark", isDark);
 
+ // Cập nhật màu trạng thái dịch vụ ngay khi đổi giao diện
+ if(typeof window.renderServiceStatus === "function"){
+  window.renderServiceStatus();
+ }
+
  const btn = document.getElementById("themeToggle");
  if(btn){
   btn.textContent = isDark ? "☀️" : "🌙";
@@ -8161,6 +8166,8 @@ body.dark #serviceStatusGear {
         : "0 0 5px rgba(57,255,117,.75), 0 0 12px rgba(57,255,117,.45)"));
     gear.style.display = isStatusAdmin && !!key ? "inline-block" : "none";
   }
+
+  window.renderServiceStatus = renderServiceStatus;
 
   const originalUpdate = window.update;
   if(typeof originalUpdate === "function"){
