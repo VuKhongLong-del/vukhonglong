@@ -1488,20 +1488,23 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
    Chưa chọn dịch vụ
   </div>
 
-  <label for="codes">Danh sách mã sự kiện</label>
-  <textarea id="codes" placeholder="Nhập mã 1&#10;Nhập mã 2&#10;Nhập mã 3"></textarea>
-<style>
-body:not(.dark) #codes {
-  background: #cfd3dc !important;
-  color: #222936 !important;
-  border: 1px solid #aeb5c1 !important;
-}
-body:not(.dark) #codes::placeholder {
-  color: #626b7a !important;
-}
-</style>
-  <div class="muted" style="margin-top:8px">
-   Mỗi mã một dòng. Dòng trống không tính.
+  <div id="codeInputSection">
+   <label for="codes">Danh sách mã sự kiện</label>
+   <textarea id="codes" placeholder="Nhập mã 1&#10;Nhập mã 2&#10;Nhập mã 3"></textarea>
+   <style>
+   body:not(.dark) #codes { background:#cfd3dc !important; color:#222936 !important; border:1px solid #aeb5c1 !important; }
+   body:not(.dark) #codes::placeholder { color:#626b7a !important; }
+   </style>
+   <div class="muted" style="margin-top:8px">Mỗi mã một dòng. Dòng trống không tính.</div>
+  </div>
+  <div id="cloneQuantitySection" style="display:none;margin-top:16px;">
+   <label for="cloneQuantity">Số lượng tài khoản</label>
+   <div style="display:flex;align-items:center;gap:10px;max-width:360px;">
+    <button type="button" onclick="changeCloneQuantity(-1)" aria-label="Giảm số lượng" style="width:46px;height:46px;border:0;border-radius:10px;background:#6445e9;color:#fff;font-size:26px;font-weight:800;">−</button>
+    <input id="cloneQuantity" type="number" min="1" max="9999" step="1" value="1" inputmode="numeric" oninput="update()" style="flex:1;min-width:0;height:46px;text-align:center;font-size:18px;font-weight:800;border-radius:10px;border:1px solid #aeb5c1;background:var(--input-bg,#cfd3dc);color:var(--text-color,#222936);">
+    <button type="button" onclick="changeCloneQuantity(1)" aria-label="Tăng số lượng" style="width:46px;height:46px;border:0;border-radius:10px;background:#6445e9;color:#fff;font-size:26px;font-weight:800;">+</button>
+   </div>
+   <div class="muted" style="margin-top:8px;">Bấm − / + hoặc tự nhập số lượng tài khoản.</div>
   </div>
 
   <div class="summary">
@@ -1716,23 +1719,33 @@ function numberFormat(n){
 
 function choose(type){
  if (!PACKAGES[type]) return;
-
  selected = type;
-
  Object.keys(PACKAGES).forEach(key => {
-  document.getElementById(key).classList.toggle(
-   "selected",
-   key === type
-  );
+  document.getElementById(key).classList.toggle("selected", key === type);
  });
-
  const pack = PACKAGES[type];
-
+ const cloneMode = isCloneService();
+ document.getElementById("codeInputSection").style.display = cloneMode ? "none" : "block";
+ document.getElementById("cloneQuantitySection").style.display = cloneMode ? "block" : "none";
  document.getElementById("selectedText").textContent =
-  "Đã chọn: " + pack.name + " - " + money(pack.price) + "/gói";
+  "Đã chọn: " + pack.name + " - " + money(pack.price) + (cloneMode ? "/tài khoản" : "/gói");
+ document.getElementById("quantityLabel").textContent = cloneMode ? "Số tài khoản" : pack.label;
+ update();
+}
 
- document.getElementById("quantityLabel").textContent = pack.label;
+function isCloneService(){
+ return selected === "cloneLv0" || selected === "cloneLv12";
+}
 
+function getCloneQuantity(){
+ const input = document.getElementById("cloneQuantity");
+ const value = Math.floor(Number(input.value));
+ return Number.isFinite(value) ? Math.min(9999, Math.max(1, value || 1)) : 1;
+}
+
+function changeCloneQuantity(amount){
+ const input = document.getElementById("cloneQuantity");
+ input.value = Math.min(9999, Math.max(1, getCloneQuantity() + amount));
  update();
 }
 
@@ -1744,17 +1757,14 @@ function getCodes(){
 }
 
 function update(){
- const count = getCodes().length;
+ const cloneMode = isCloneService();
+ const count = cloneMode ? getCloneQuantity() : getCodes().length;
  const pack = selected ? PACKAGES[selected] : null;
-
- const quantity = pack ? count * pack.quantity : 0;
+ const quantity = pack ? (cloneMode ? count : count * pack.quantity) : 0;
  const total = pack ? count * pack.price : 0;
-
  document.getElementById("lines").textContent = count;
-
- document.getElementById("quantity").textContent =
-  numberFormat(quantity);
-
+ document.getElementById("lines").previousElementSibling.textContent = cloneMode ? "Số tài khoản" : "Số dòng mã";
+ document.getElementById("quantity").textContent = numberFormat(quantity);
  document.getElementById("total").textContent = money(total);
 }
 
@@ -1775,41 +1785,33 @@ function createOrder(){
   return;
  }
 
- const codes = getCodes();
-
- if(codes.length === 0){
-  alert("Vui lòng nhập mã sự kiện!");
+ const cloneMode = isCloneService();
+ const codes = cloneMode ? [] : getCodes();
+ const requestedCount = cloneMode ? getCloneQuantity() : codes.length;
+ if(requestedCount <= 0){
+  alert(cloneMode ? "Vui lòng chọn số lượng tài khoản!" : "Vui lòng nhập mã sự kiện!");
   return;
  }
-
  const pack = PACKAGES[selected];
-
  pendingOrder = {
-  id: "VKL-" + Array.from(
-  crypto.getRandomValues(new Uint8Array(16)),
-  b => b.toString(16).padStart(2, "0")
-).join("").toUpperCase(),
+  id: "VKL-" + Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, "0")).join("").toUpperCase(),
   service: pack.name,
-  count: codes.length,
-  quantity: codes.length * pack.quantity,
-  total: codes.length * pack.price,
+  count: requestedCount,
+  quantity: cloneMode ? requestedCount : requestedCount * pack.quantity,
+  total: requestedCount * pack.price,
   codes: codes.join("\n"),
   date: new Date().toLocaleString("vi-VN"),
-  label: pack.label
+  label: cloneMode ? "Số lượng tài khoản" : pack.label
  };
 
  document.getElementById("confirmOrderDetails").innerHTML =
   '<div class="confirm-order-details">' +
   '<b>Dịch vụ:</b> ' + pendingOrder.service + '<br><br>' +
-  '<b>Số dòng mã:</b> ' + pendingOrder.count + '<br><br>' +
-  '<b>' + pendingOrder.label + ':</b> ' +
-  numberFormat(pendingOrder.quantity) + '<br><br>' +
+  '<b>' + (cloneMode ? "Số lượng tài khoản:" : "Số dòng mã:") + '</b> ' + pendingOrder.count + '<br><br>' +
+  '<b>' + pendingOrder.label + ':</b> ' + numberFormat(pendingOrder.quantity) + '<br><br>' +
   '<b>Tổng tiền:</b> ' + money(pendingOrder.total) +
-  '<br><br><b>Danh sách mã:</b><br>' +
-  pendingOrder.codes.replace(/&/g,"&amp;")
-   .replace(/</g,"&lt;")
-   .replace(/>/g,"&gt;")
-   .replace(/\n/g,"<br>") +
+  (cloneMode ? "" : '<br><br><b>Danh sách mã:</b><br>' +
+   pendingOrder.codes.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")) +
   '</div>';
 
  document.getElementById("confirmOrderModal").style.display =
@@ -1885,6 +1887,7 @@ async function submitConfirmedOrder(){
  }
 
  document.getElementById("codes").value = "";
+ document.getElementById("cloneQuantity").value = "1";
  update();
 }
 
@@ -5009,7 +5012,7 @@ window.renderOrderAdmin = async function() {
         <div style="display:block;width:calc(100% + 28px);max-width:none;min-width:0;margin-left:-14px;box-sizing:border-box;background:#293650;padding:13px;border-radius:12px;margin-top:12px;">
           <b>${escapeOrderText(id)}</b>
           <p>Dịch vụ: ${escapeOrderText(order.service)}</p>
-          <p>Số dòng mã: ${escapeOrderText(order.count)}</p>
+          <p>${order.codes ? "Số dòng mã" : "Số lượng tài khoản"}: ${escapeOrderText(order.count)}</p>
           <p>Số lượng: ${escapeOrderText(order.quantity)}</p>
           <p>Tổng tiền: ${escapeOrderText(order.total)}</p>
           <button onclick="window.updateOrderProgress('${id}')"
