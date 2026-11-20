@@ -1252,8 +1252,6 @@ body:not(.dark) #vkl-topup-note::placeholder {
 
 /* FIX iOS: tránh tự phóng to khi chạm ô nhập hỗ trợ */
 #vkl-support-input { font-size:16px !important; }
-#vkl-support-order { font-size:16px !important; }
-#vkl-support-input, #vkl-support-order { -webkit-text-size-adjust:100%; }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
@@ -7241,8 +7239,6 @@ window.closeRankProgress = function() {
           <button onclick="vklChatChoose('Muốn huỷ đơn')">🚫 Muốn huỷ đơn</button>
           <button onclick="vklChatChoose('Acc clone lỗi')">🎮 Acc clone lỗi</button>
         </div>
-        <label class="vkl-support-related" for="vkl-support-order">Đơn liên quan (không bắt buộc)</label>
-        <select id="vkl-support-order"><option value="">Chọn đơn liên quan (không bắt buộc)</option></select>
       </div>
       <div class="vkl-support-composer">
         <label class="vkl-support-attach" for="vkl-support-file" aria-label="Đính kèm">📎</label>
@@ -7685,8 +7681,6 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
 .vkl-support-welcome p { margin:10px 0 0; color:#4d5870; font-size:17px; line-height:1.45; }
 .vkl-support-topics { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:25px; }
 .vkl-support-topics button { min-height:65px; padding:10px 12px; border:2px solid #dce4fa; border-radius:23px; background:#fff; color:#344054; font-size:16px; line-height:1.25; font-weight:800; text-align:left; }
-.vkl-support-related { display:block; margin:0 0 10px; color:#69758d; font-size:15px; font-weight:800; }
-#vkl-support-order { width:100%; min-height:62px; padding:12px 18px; border:2px solid #dce4fa; border-radius:22px; background:#fff; color:#172033; font-size:18px; font-weight:700; }
 .vkl-support-composer { flex:none; display:flex; align-items:center; gap:12px; margin:0 -4px; padding:10px 8px; border:2px solid #e0e6f8; border-radius:35px; background:#f5f6fc; }
 .vkl-support-attach { padding:0 10px; color:#66738d; font-size:26px; cursor:pointer; }
 #vkl-support-input { flex:1; min-width:0; min-height:38px; max-height:120px; resize:vertical; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font:inherit; font-size:14px; line-height:1.4; box-shadow:none!important; }
@@ -7702,8 +7696,8 @@ body.dark .vkl-support-tabs { background:#202a40; }
 body.dark .vkl-support-tabs button { color:#c1cbe0; }
 body.dark .vkl-support-tabs button.active { background:#33415f; color:#fff; }
 body.dark .vkl-support-welcome { background:#222b49; border-color:#3b4c7c; color:#e5eaff; }
-body.dark .vkl-support-welcome p,body.dark .vkl-support-related,body.dark #vkl-support-help p,body.dark #vkl-support-contact p { color:#c2cbe0; }
-body.dark .vkl-support-topics button,body.dark #vkl-support-order,body.dark #vkl-support-help button,body.dark #vkl-support-contact a { background:#202a40; border-color:#3a496b; color:#f4f6ff; }
+body.dark .vkl-support-welcome p,body.dark #vkl-support-help p,body.dark #vkl-support-contact p { color:#c2cbe0; }
+body.dark .vkl-support-topics button,body.dark #vkl-support-help button,body.dark #vkl-support-contact a { background:#202a40; border-color:#3a496b; color:#f4f6ff; }
 body.dark .vkl-support-composer { background:#202a40; border-color:#3a496b; }
 body.dark #vkl-support-input { color:#fff!important; }
 @media(max-width:480px) {
@@ -7741,8 +7735,6 @@ body.dark #vkl-support-input { color:#fff!important; }
 .vkl-support-welcome p { margin-top:6px; font-size:13px; line-height:1.4; }
 .vkl-support-topics { gap:8px; margin-bottom:15px; }
 .vkl-support-topics button { min-height:48px; padding:8px 9px; border-width:1.5px; border-radius:16px; font-size:12px; line-height:1.2; }
-.vkl-support-related { margin-bottom:6px; font-size:12px; }
-#vkl-support-order { min-height:46px; padding:8px 12px; border-width:1.5px; border-radius:15px; font-size:14px; }
 .vkl-support-composer { display:grid; grid-template-columns:32px minmax(0,1fr) 42px; gap:7px; margin:8px 0 0; padding:6px 7px; border-width:1.5px; border-radius:25px; min-height:54px; box-sizing:border-box; }
 .vkl-support-attach { display:flex; justify-content:center; padding:0; font-size:20px; }
 #vkl-support-input { display:block!important; width:100%!important; min-width:0!important; max-width:100%!important; min-height:58px!important; max-height:120px!important; box-sizing:border-box!important; margin:0!important; padding:5px!important; font-size:13px!important; }
