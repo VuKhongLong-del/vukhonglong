@@ -7452,6 +7452,43 @@ window.vklSupportSend = function() {
   input.value = "";
   input.style.height = "38px";
 
+  // Nạp CSS cho hiệu ứng đang nhập (độc lập với các nút chọn nhanh)
+  if (!document.getElementById("vkl-support-typing-style")) {
+    const style = document.createElement("style");
+    style.id = "vkl-support-typing-style";
+    style.textContent = `
+      #vkl-chat-messages .vkl-typing {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 7px !important;
+        width: fit-content !important;
+        min-width: 76px !important;
+        min-height: 42px !important;
+        padding: 12px 17px !important;
+        background: #263149 !important;
+        border: 1px solid #3a496b !important;
+        border-radius: 22px !important;
+      }
+      #vkl-chat-messages .vkl-typing span {
+        display: block !important;
+        flex: 0 0 8px !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        background: #ffffff !important;
+        animation: vklSupportWave .8s infinite ease-in-out !important;
+      }
+      #vkl-chat-messages .vkl-typing span:nth-child(2) { animation-delay: .15s !important; }
+      #vkl-chat-messages .vkl-typing span:nth-child(3) { animation-delay: .3s !important; }
+      @keyframes vklSupportWave {
+        0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+        30% { transform: translateY(-7px); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   // Hiển thị dấu ba chấm nhảy như sóng trong 2 giây
   const typing = document.createElement("div");
   typing.className = "vkl-chat-bot vkl-typing";
