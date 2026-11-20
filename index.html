@@ -7521,6 +7521,7 @@ window.vklSupportSend = function() {
     const isTopupProblem = normalizedValue.includes("chưa được cộng xu");
     const isWrongTransferNote = normalizedValue.includes("chuyển khoản sai nội dung") || normalizedValue.includes("chuyển khoản sai");
     const isSlowOrder = normalizedValue.includes("đơn của mình đã đặt lâu") || normalizedValue.includes("đơn chạy chậm");
+    const isOrderCodeError = normalizedValue.includes("đơn hàng của mình bị lỗi / sai mã") || normalizedValue.includes("đơn bị lỗi / sai mã");
     const currentUser = window.auth?.currentUser;
     const accountName = currentUser?.email ? currentUser.email.split("@")[0] : "bạn";
     if (isTopupProblem) {
@@ -7538,6 +7539,8 @@ window.vklSupportSend = function() {
       reply.textContent = "TIN NHẮN TỰ ĐỘNG\n\nChào " + accountName + ", nếu chuyển khoản sai nội dung thì hệ thống không tự cộng được.\n\nBạn gửi giúp ảnh biên lai qua phần liên hệ hoặc gửi mã giao dịch + số tiền ngay trong khung chat này, admin sẽ xét duyệt và cộng tiền thủ công cho bạn.";
     } else if (isSlowOrder) {
       reply.textContent = "TIN NHẮN TỰ ĐỘNG\n\nChào " + accountName + ", đơn thường xử lý trong khoảng 5–10 phút kể từ lúc đặt.\n\nNếu đã quá thời gian dự kiến, admin sẽ kiểm tra và phản hồi ngay trong hộp thư của bạn!";
+    } else if (isOrderCodeError) {
+      reply.textContent = "TIN NHẮN TỰ ĐỘNG\n\nChào " + accountName + ", sau khi xác nhận đơn hàng hãy kiểm tra đúng thông tin nhé. Sau khi đặt đơn, tiền sẽ trừ ngay và đơn xử lý khoảng 2–5 phút.\n\nNếu nhập sai mã, hãy gửi mã tại đây hoặc liên hệ nhanh để Admin hỗ trợ trước khi đơn chạy.";
     } else {
       reply.textContent = "Mình đã ghi nhận nội dung. Nếu cần xử lý tài khoản hoặc đơn hàng, bạn vui lòng để lại mã liên quan; admin sẽ phản hồi khi có mặt.";
     }
