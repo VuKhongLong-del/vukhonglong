@@ -7243,7 +7243,7 @@ window.closeRankProgress = function() {
       </div>
       <div class="vkl-support-composer">
         <textarea id="vkl-support-input" rows="1" placeholder="Nhập tin nhắn..." maxlength="1000" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();vklSupportSend()}"></textarea>
-        <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn"><span style="display:block;line-height:1;transform:translateY(-2px)">➤</span></button>
+        <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn"><span style="display:block;line-height:1;transform:translate(2px,-2px)">➤</span></button>
       </div>
       <div id="vkl-support-active" style="display:none;flex:none;margin:0;padding:7px 0 0;border:0;border-top:0;border-radius:0;background:transparent!important;box-shadow:none;text-align:center;">
         <button type="button" onclick="vklEndSupport()">Kết thúc hỗ trợ</button>
