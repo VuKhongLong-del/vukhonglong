@@ -7400,7 +7400,7 @@ window.vklChatChoose = function(topic) {
 
   messages.scrollTop = messages.scrollHeight;
 
-  setTimeout(() => {
+  setTimeout(async () => {
     typing.remove();
 
     const bot = document.createElement("div");
