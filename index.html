@@ -7447,6 +7447,7 @@ window.vklSupportSend = function() {
   const bubble = document.createElement("div");
   bubble.className = "vkl-chat-user";
   bubble.textContent = value;
+  bubble.style.whiteSpace = "pre-line";
   messages.appendChild(bubble);
 
   input.value = "";
