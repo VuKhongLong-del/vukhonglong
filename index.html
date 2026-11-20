@@ -1249,6 +1249,11 @@ body:not(.dark) #vkl-topup-note::placeholder {
   color: #626b7a !important;
   opacity: 1;
 }
+
+/* FIX iOS: tránh tự phóng to khi chạm ô nhập hỗ trợ */
+#vkl-support-input { font-size:16px !important; }
+#vkl-support-order { font-size:16px !important; }
+#vkl-support-input, #vkl-support-order { -webkit-text-size-adjust:100%; }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
