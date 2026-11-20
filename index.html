@@ -7233,7 +7233,7 @@ window.closeRankProgress = function() {
           <p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p>
         </div>
         <div class="vkl-support-topics">
-          <button onclick="vklChatChoose('Nạp tiền')">💳 Nạp tiền chưa cộng Xu</button>
+          <button onclick="vklChatChoose('Nạp tiền')">💳 Nạp tiền chưa được cộng</button>
           <button onclick="vklChatChoose('Nạp sai nội dung')">✍️ Nạp sai nội dung</button>
           <button onclick="vklChatChoose('Đơn chạy chậm')">🐢 Đơn chạy chậm</button>
           <button onclick="vklChatChoose('Đơn bị lỗi / sai mã')">⚠️ Đơn bị lỗi / sai mã</button>
@@ -7422,7 +7422,7 @@ window.vklEndSupport = function() {
   const messages = document.getElementById("vkl-chat-messages");
   if (messages) {
     // Dựng lại khung chat sạch hoàn toàn, không tái sử dụng bất kỳ nút/tin nhắn cũ nào.
-    messages.innerHTML = '<div class="vkl-support-welcome"><strong id="vkl-support-greeting">Xin Chào! 👋</strong><p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p></div><div class="vkl-support-topics"><button onclick="vklChatChoose(\'Nạp tiền\')">💳 Nạp tiền chưa cộng Xu</button><button onclick="vklChatChoose(\'Nạp sai nội dung\')">✍️ Nạp sai nội dung</button><button onclick="vklChatChoose(\'Đơn chạy chậm\')">🐢 Đơn chạy chậm</button><button onclick="vklChatChoose(\'Đơn bị lỗi / sai mã\')">⚠️ Đơn bị lỗi / sai mã</button><button onclick="vklChatChoose(\'Muốn huỷ đơn\')">🚫 Muốn huỷ đơn</button><button onclick="vklChatChoose(\'Acc clone lỗi\')">🎮 Acc clone lỗi</button></div>';
+    messages.innerHTML = '<div class="vkl-support-welcome"><strong id="vkl-support-greeting">Xin Chào! 👋</strong><p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p></div><div class="vkl-support-topics"><button onclick="vklChatChoose(\'Nạp tiền\')">💳 Nạp tiền chưa được cộng</button><button onclick="vklChatChoose(\'Nạp sai nội dung\')">✍️ Nạp sai nội dung</button><button onclick="vklChatChoose(\'Đơn chạy chậm\')">🐢 Đơn chạy chậm</button><button onclick="vklChatChoose(\'Đơn bị lỗi / sai mã\')">⚠️ Đơn bị lỗi / sai mã</button><button onclick="vklChatChoose(\'Muốn huỷ đơn\')">🚫 Muốn huỷ đơn</button><button onclick="vklChatChoose(\'Acc clone lỗi\')">🎮 Acc clone lỗi</button></div>';
     messages.scrollTop = 0;
   }
   window.vklApplySupportLock(null);
