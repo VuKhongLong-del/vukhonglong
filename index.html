@@ -1728,7 +1728,7 @@ function choose(type){
  document.getElementById("codeInputSection").style.display = cloneMode ? "none" : "block";
  document.getElementById("cloneQuantitySection").style.display = cloneMode ? "block" : "none";
  document.getElementById("selectedText").textContent =
-  "Đã chọn: " + pack.name + " - " + money(pack.price) + (cloneMode ? "/tài khoản" : "/gói");
+  "Đã chọn: " + pack.name + " - " + money(pack.price) + (cloneMode ? "/1" : "/gói");
  document.getElementById("quantityLabel").textContent = cloneMode ? "Số tài khoản" : pack.label;
  update();
 }
