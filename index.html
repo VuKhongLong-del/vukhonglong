@@ -7240,14 +7240,14 @@ window.closeRankProgress = function() {
           <button onclick="vklChatChoose('Muốn huỷ đơn')">🚫 Muốn huỷ đơn</button>
           <button onclick="vklChatChoose('Acc clone lỗi')">🎮 Acc clone lỗi</button>
         </div>
-        <div id="vkl-support-active" style="display:none;margin:0 0 12px;padding:12px 14px;border:1px solid #dce4fa;border-radius:14px;background:#f1f5ff;color:#344054;font-size:13px;">
-          <div id="vkl-support-active-label" style="font-weight:750;margin-bottom:9px;"></div>
-          <button type="button" onclick="vklEndSupport()" style="width:100%;padding:10px;border:0;border-radius:10px;background:#e55353;color:#fff;font-weight:800;">KẾT THÚC HỖ TRỢ</button>
-        </div>
       </div>
       <div class="vkl-support-composer">
         <textarea id="vkl-support-input" rows="1" placeholder="Nhập tin nhắn..." maxlength="1000" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();vklSupportSend()}"></textarea>
         <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn">➤</button>
+      </div>
+      <div id="vkl-support-active" style="display:none;margin:0;padding:8px 0 2px;border-top:1px solid rgba(128,128,128,.25);text-align:center;">
+        <div id="vkl-support-active-label" style="font-size:10px;opacity:.65;margin-bottom:3px;"></div>
+        <button type="button" onclick="vklEndSupport()" style="display:inline-block;width:auto;padding:2px 0;border:0;background:transparent;color:inherit;font-size:10px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;">Kết thúc hỗ trợ</button>
       </div>
     </section>
     <section id="vkl-support-contact" class="vkl-support-view">
