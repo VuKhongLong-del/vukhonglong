@@ -2046,6 +2046,10 @@ body.dark .vkl-account-tab.active {
   <button onclick="window.showAccountTab('intro')" class="vkl-account-tab">
     <span>🎁</span><br>Giới Thiệu
   </button>
+  ${isOwnerAccount ? `<button onclick="window.showAccountTab('topup')" class="vkl-account-tab">
+    <span>💰</span><br>Yêu Cầu Nạp
+  </button>` : ""}
+
 </div>
 <div id="vkl-tab-info">
 <p class="vkl-rainbow-name">
@@ -2329,6 +2333,12 @@ if (window.auth.currentUser.email.toLowerCase() === "haphamngu123@gmail.com") {
   style="margin-top:12px;padding:12px;background:#293650;border-radius:10px">
   Chưa tải danh sách tài khoản
 </div>
+</div>
+<div id="vkl-tab-topup" style="display:none;margin-top:18px">
+  <section id="vkl-topup-admin-panel" class="admin-dark-panel">
+    <h3 style="margin:0 0 8px">📥 YÊU CẦU NẠP TIỀN</h3>
+    <div id="vkl-topup-admin-list">Đang tải...</div>
+  </section>
 </div>
     `);
   applyTheme(localStorage.getItem("vkl_theme") || "light");
@@ -4780,7 +4790,7 @@ window.renderOrderAdmin = async function() {
 
     html += "</div>";
     area.innerHTML = html;
-    if (window.renderTopupAdminList) window.renderTopupAdminList();
+
 
   } catch(error) {
     console.error("Lỗi tải danh sách đơn:", error);
@@ -4946,7 +4956,7 @@ window.auth.onAuthStateChanged(user => {
     window.renderOrderAdmin();
   } else {
     currentManager = null;
-    const area = document.getElementById("vkl-order-admin");
+    const area = document.getElementById("vkl-topup-admin-panel");
     if (area) area.innerHTML = "";
   }
 });
@@ -5567,8 +5577,9 @@ window.customerLogin = async function() {
   }
 };
 window.showAccountTab = function(tab) {
-  const tabs = ["info", "security", "intro"];
+  const tabs = ["info", "security", "intro", "topup"];
 
+  if (tab === "topup" && window.renderTopupAdminList) window.renderTopupAdminList();
   tabs.forEach(name => {
     const panel = document.getElementById("vkl-tab-" + name);
     if (panel) {
