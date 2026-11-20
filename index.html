@@ -1200,6 +1200,20 @@ body:not(.dark) #vkl-coin-balance {
 0 0 10px rgba(0, 119, 204, 0.5),
 0 0 18px rgba(0, 119, 204, 0.3);
 }
+
+/* Hai ô nhập thông tin chuyển khoản: nền xám dịu khi dùng giao diện sáng */
+body:not(.dark) #vkl-topup-amount,
+body:not(.dark) #vkl-topup-note {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+  border-color: #cbd0d8 !important;
+  color-scheme: light !important;
+}
+body:not(.dark) #vkl-topup-amount::placeholder,
+body:not(.dark) #vkl-topup-note::placeholder {
+  color: #737b88 !important;
+  opacity: 1;
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
