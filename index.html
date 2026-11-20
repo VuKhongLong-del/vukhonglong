@@ -7241,7 +7241,7 @@ window.closeRankProgress = function() {
         </div>
       </div>
       <div class="vkl-support-composer">
-        <textarea id="vkl-support-input" rows="4" placeholder="Nhập tin nhắn..." maxlength="1000" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();vklSupportSend()}"></textarea>
+        <textarea id="vkl-support-input" rows="1" placeholder="Nhập tin nhắn..." maxlength="1000" oninput="this.style.height='38px';this.style.height=Math.min(this.scrollHeight,120)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();vklSupportSend()}"></textarea>
         <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn">➤</button>
       </div>
     </section>
@@ -7672,7 +7672,7 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
 .vkl-support-topics { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:25px; }
 .vkl-support-topics button { min-height:65px; padding:10px 12px; border:2px solid #dce4fa; border-radius:23px; background:#fff; color:#344054; font-size:16px; line-height:1.25; font-weight:800; text-align:left; }
 .vkl-support-composer { flex:none; display:flex; align-items:center; gap:12px; margin:0 -4px; padding:10px 8px; border:2px solid #e0e6f8; border-radius:35px; background:#f5f6fc; }
-#vkl-support-input { flex:1; min-width:0; min-height:38px; max-height:120px; resize:vertical; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font:inherit; font-size:14px; line-height:1.4; box-shadow:none!important; }
+#vkl-support-input { flex:1; min-width:0; height:38px; min-height:38px; max-height:120px; overflow-y:hidden; resize:none; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font:inherit; font-size:14px; line-height:1.4; box-shadow:none!important; }
 .vkl-support-composer button { width:54px; height:54px; flex:none; border:0; border-radius:50%; background:linear-gradient(135deg,#5688ef,#3864d9); color:#fff; font-size:24px; }
 #vkl-support-help h3,#vkl-support-contact h3 { margin:8px 0 18px; font-size:23px; color:#26366f; }
 #vkl-support-help button,#vkl-support-contact a { display:block; width:100%; box-sizing:border-box; margin:0 0 12px; padding:17px; border:2px solid #dce4fa; border-radius:18px; background:#fff; color:#344054; text-align:left; text-decoration:none; font-size:16px; font-weight:750; }
@@ -7726,7 +7726,7 @@ body.dark #vkl-support-input { color:#fff!important; }
 .vkl-support-topics { gap:8px; margin-bottom:15px; }
 .vkl-support-topics button { min-height:48px; padding:8px 9px; border-width:1.5px; border-radius:16px; font-size:12px; line-height:1.2; }
 .vkl-support-composer { display:grid; grid-template-columns:minmax(0,1fr) 42px; gap:7px; margin:8px 0 0; padding:6px 7px; border-width:1.5px; border-radius:25px; min-height:54px; box-sizing:border-box; }
-#vkl-support-input { display:block!important; width:100%!important; min-width:0!important; max-width:100%!important; min-height:58px!important; max-height:120px!important; box-sizing:border-box!important; margin:0!important; padding:5px!important; font-size:13px!important; }
+#vkl-support-input { display:block!important; width:100%!important; min-width:0!important; max-width:100%!important; height:38px!important; min-height:38px!important; max-height:120px!important; box-sizing:border-box!important; margin:0!important; padding:5px!important; font-size:13px!important; }
 .vkl-support-composer button { width:38px; height:38px; padding:0; font-size:18px; }
 #vkl-support-help h3,#vkl-support-contact h3 { margin:6px 0 12px; font-size:18px; }
 #vkl-support-help button,#vkl-support-contact a { margin-bottom:8px; padding:12px; border-width:1.5px; border-radius:14px; font-size:13px; }
