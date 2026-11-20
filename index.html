@@ -1454,6 +1454,26 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
     </div>
    </button>
 
+   <button class="service" id="cloneLv0" onclick="choose('cloneLv0')">
+    <div class="service-art"><span class="service-icon">👤</span></div>
+    <div class="service-info">
+     <b>ACC CLONE LV0</b>
+     <small>Tài khoản clone cấp 0</small>
+     <div class="price">50đ</div>
+     <span class="badge">❤️</span>
+    </div>
+   </button>
+
+   <button class="service" id="cloneLv12" onclick="choose('cloneLv12')">
+    <div class="service-art"><span class="service-icon">👤</span></div>
+    <div class="service-info">
+     <b>ACC CLONE LV12</b>
+     <small>Tài khoản clone cấp 12</small>
+     <div class="price">1.500đ</div>
+     <span class="badge">❤️</span>
+    </div>
+   </button>
+
   </div>
  </section>
 
@@ -1658,6 +1678,20 @@ const PACKAGES = {
   price: 10000,
   quantity: 20000,
   label: "Tổng số vé"
+ },
+
+ cloneLv0: {
+  name: "ACC CLONE LV0",
+  price: 50,
+  quantity: 1,
+  label: "Tổng số acc clone"
+ },
+
+ cloneLv12: {
+  name: "ACC CLONE LV12",
+  price: 1500,
+  quantity: 1,
+  label: "Tổng số acc clone"
  }
 };
 
