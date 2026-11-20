@@ -7348,7 +7348,7 @@ window.vklChatChoose = function(topic) {
   }
 
   const replies = {
-    "Nạp tiền": "💳 TRẢ LỜI TỰ ĐỘNG\n\nChào {username}, nạp Xu tự động thường được cộng sau khoảng 2–5 phút.\n\n1) Kiểm tra nội dung chuyển khoản đúng dạng:\nTên + chuyen tien + {id}\n\n2) Số tiền tối thiểu mỗi lần nạp là 2.000 Xu.\n\nNếu quá 30 phút vẫn chưa được cộng Xu, hãy gửi ảnh biên lai và mã giao dịch để Admin kiểm tra, duyệt thủ công.",
+    "Nạp tiền": "💳 TRẢ LỜI TỰ ĐỘNG\n\nChào {username}, nạp Xu tự động thường được cộng sau khoảng 2–5 phút.\n\n1) Kiểm tra nội dung chuyển khoản đúng dạng:\nTên chuyentien {id}\n\n2) Số tiền tối thiểu mỗi lần nạp là 2.000 Xu.\n\nNếu quá 30 phút vẫn chưa được cộng Xu, hãy gửi ảnh biên lai và mã giao dịch để Admin kiểm tra, duyệt thủ công.",
     "Nạp sai nội dung": "✍️ NẠP TIỀN SAI NỘI DUNG\n\nĐừng chuyển thêm tiền ngay nhé. Hãy gửi cho Admin các thông tin sau:\n• Số tiền đã chuyển.\n• Thời gian chuyển khoản.\n• Nội dung bạn đã nhập thực tế.\n• Mã giao dịch hoặc ảnh biên lai (che thông tin nhạy cảm).\n\nAdmin sẽ đối chiếu giao dịch và hỗ trợ kiểm tra thủ công. Không gửi mật khẩu hoặc OTP.",
     "Đơn chạy chậm": "🐢 ĐƠN HÀNG ĐANG XỬ LÝ CHẬM\n\nMột số đơn cần thời gian để hệ thống hoặc nhà cung cấp xử lý. Bạn hãy kiểm tra trạng thái trong mục Lịch sử đơn hàng.\n\nNếu đơn lâu hơn thời gian dự kiến, hãy gửi MÃ ĐƠN và thời điểm đặt hàng để Admin kiểm tra. Vui lòng không tạo đơn trùng khi đơn cũ vẫn đang xử lý.",
     "Đơn bị lỗi / sai mã": "⚠️ ĐƠN HÀNG BỊ LỖI / SAI MÃ\n\nĐể Admin kiểm tra chính xác, vui lòng cung cấp:\n• Mã đơn hàng.\n• Mã hoặc thông tin bạn đã nhập (không gửi mật khẩu).\n• Mô tả lỗi đang hiển thị.\n• Ảnh chụp màn hình nếu có.\n\nKhông gửi lại yêu cầu nhiều lần trước khi đơn hiện tại được kiểm tra.",
@@ -7529,7 +7529,7 @@ window.vklSupportSend = function() {
           console.error("Không tải được ID tài khoản hỗ trợ:", error);
         }
       }
-      reply.textContent = "TIN NHẮN TỰ ĐỘNG\n\nChào " + accountName + "! Nạp Xu tự động thường được cộng sau khoảng 2–5 phút.\n\n1) Kiểm tra nội dung chuyển khoản đúng dạng:\n" + accountName + " chuyen tien " + accountId + "\n\n2) Số tiền tối thiểu mỗi lần nạp là 2.000 Xu.\n\nNếu đã quá 30 phút mà vẫn chưa nhận được Xu, vui lòng gửi ảnh biên lai và mã giao dịch để Admin kiểm tra, duyệt thủ công.";
+      reply.textContent = "TIN NHẮN TỰ ĐỘNG\n\nChào " + accountName + "! Nạp Xu tự động thường được cộng sau khoảng 2–5 phút.\n\n1) Kiểm tra nội dung chuyển khoản đúng dạng:\nTên chuyentien " + accountId + "\n\n2) Số tiền tối thiểu mỗi lần nạp là 2.000 Xu.\n\nNếu đã quá 30 phút mà vẫn chưa nhận được Xu, vui lòng gửi ảnh biên lai và mã giao dịch để Admin kiểm tra, duyệt thủ công.";
     } else {
       reply.textContent = "Mình đã ghi nhận nội dung. Nếu cần xử lý tài khoản hoặc đơn hàng, bạn vui lòng để lại mã liên quan; admin sẽ phản hồi khi có mặt.";
     }
