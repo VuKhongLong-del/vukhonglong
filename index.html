@@ -7353,10 +7353,18 @@ window.vklSaveSupportMessages = function() {
 window.vklRestoreSupportMessages = function() {
   const messages = document.getElementById("vkl-chat-messages");
   if (!messages) return;
+  // Chỉ khôi phục lịch sử khi phiên hỗ trợ vẫn còn hoạt động.
+  if (!window.vklGetActiveSupport()?.topic) {
+    localStorage.removeItem(window.vklSupportMessagesKey());
+    localStorage.removeItem("vkl_support_messages_guest");
+    messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot,.vkl-typing").forEach(el => el.remove());
+    messages.scrollTop = 0;
+    return;
+  }
   let saved = [];
   try { saved = JSON.parse(localStorage.getItem(window.vklSupportMessagesKey()) || "[]"); } catch (_) {}
-  if (!Array.isArray(saved)) return;
-  messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot").forEach(el => el.remove());
+  if (!Array.isArray(saved)) saved = [];
+  messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot,.vkl-typing").forEach(el => el.remove());
   saved.forEach(item => {
     if (!item || (item.type !== "user" && item.type !== "bot") || typeof item.text !== "string") return;
     const bubble = document.createElement("div");
@@ -7391,6 +7399,8 @@ window.vklEndSupport = function() {
   window.vklSupportGeneration++;
   localStorage.removeItem(window.vklSupportStorageKey());
   localStorage.removeItem(window.vklSupportMessagesKey());
+  localStorage.removeItem("vkl_support_active_guest");
+  localStorage.removeItem("vkl_support_messages_guest");
   window.vklPendingSupportTopic = "";
   window.vklApplySupportLock(null);
   const messages = document.getElementById("vkl-chat-messages");
