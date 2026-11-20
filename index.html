@@ -7402,15 +7402,21 @@ window.vklEndSupport = function() {
   localStorage.removeItem("vkl_support_active_guest");
   localStorage.removeItem("vkl_support_messages_guest");
   window.vklPendingSupportTopic = "";
-  window.vklApplySupportLock(null);
+  // Xoá lịch sử của phiên hiện tại và phiên khách; vô hiệu hoá các phản hồi đang chờ.
+  try {
+    localStorage.removeItem(window.vklSupportStorageKey());
+    localStorage.removeItem(window.vklSupportMessagesKey());
+    localStorage.removeItem("vkl_support_active_guest");
+    localStorage.removeItem("vkl_support_messages_guest");
+  } catch (_) {}
   const messages = document.getElementById("vkl-chat-messages");
   if (messages) {
-    // Giữ lại duy nhất phần chào và danh sách chủ đề; xoá toàn bộ nội dung chat cũ.
-    const welcome = messages.querySelector(".vkl-support-welcome");
-    const topics = messages.querySelector(".vkl-support-topics");
-    messages.replaceChildren(...[welcome, topics].filter(Boolean));
+    // Dựng lại khung chat sạch hoàn toàn, không tái sử dụng bất kỳ nút/tin nhắn cũ nào.
+    messages.innerHTML = '<div class="vkl-support-welcome"><strong id="vkl-support-greeting">Xin Chào! 👋</strong><p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p></div><div class="vkl-support-topics"><button onclick="vklChatChoose(\'Nạp tiền\')">💳 Nạp tiền chưa cộng Xu</button><button onclick="vklChatChoose(\'Nạp sai nội dung\')">✍️ Nạp sai nội dung</button><button onclick="vklChatChoose(\'Đơn chạy chậm\')">🐢 Đơn chạy chậm</button><button onclick="vklChatChoose(\'Đơn bị lỗi / sai mã\')">⚠️ Đơn bị lỗi / sai mã</button><button onclick="vklChatChoose(\'Muốn huỷ đơn\')">🚫 Muốn huỷ đơn</button><button onclick="vklChatChoose(\'Acc clone lỗi\')">🎮 Acc clone lỗi</button></div>';
     messages.scrollTop = 0;
   }
+  window.vklApplySupportLock(null);
+  window.vklUpdateSupportGreeting?.(window.auth?.currentUser);
   const input = document.getElementById("vkl-support-input");
   if (input) { input.value = ""; input.style.height = "38px"; }
 };
