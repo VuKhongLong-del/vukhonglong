@@ -8123,6 +8123,7 @@ body.dark #serviceStatusGear { background:#35415d!important; color:#d9ddff!impor
   function currentServiceStatus(){
     const key = selected;
     if(!key) return "--";
+    if(isCloneService()) return serviceStatuses[key] === "ended" ? "Hết" : "Còn Acc";
     return serviceStatuses[key] === "ended" ? "Hết" : "Hoạt động";
   }
 
