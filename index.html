@@ -7386,7 +7386,9 @@ window.vklApplySupportLock = function(session) {
   if (welcome) {
     welcome.classList.toggle("vkl-support-pending", locked);
     if (locked) {
-      welcome.innerHTML = '<strong class="vkl-support-pending-text">Đang chờ giải quyết...</strong>';
+      const currentUser = window.auth?.currentUser;
+      const accountName = currentUser?.email ? currentUser.email.split("@")[0] : "";
+      welcome.innerHTML = '<strong class="vkl-support-pending-text">ID:' + (accountName || "—") + ' Đang chờ giải quyết...</strong>';
     } else {
       welcome.innerHTML = '<strong id="vkl-support-greeting">Xin Chào! 👋</strong><p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p>';
       window.vklUpdateSupportGreeting?.(window.auth?.currentUser);
