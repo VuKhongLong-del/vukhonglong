@@ -7321,7 +7321,7 @@ window.vklChatChoose = function(topic) {
         const sectionTitle=document.createElement("h3");
         sectionTitle.textContent=title+" ("+items.length+")";
         sectionTitle.style.cssText="margin:18px 0 8px";
-        list.appendChild(sectionTitle);
+        if(!title.includes("LỊCH SỬ ĐÃ DUYỆT")) list.appendChild(sectionTitle);
         if(title.includes("LỊCH SỬ ĐÃ DUYỆT")){
           const hideHistoryButton=document.createElement("button");
           hideHistoryButton.type="button";
