@@ -7394,7 +7394,7 @@ window.vklApplySupportLock = function(session) {
           if (window.auth?.currentUser?.uid !== accountUid || !welcome.isConnected || !welcome.classList.contains("vkl-support-pending")) return;
           const accountId = walletSnap.exists ? String(walletSnap.data().userId || "—") : "—";
           const pendingText = welcome.querySelector(".vkl-support-pending-text");
-          if (pendingText) pendingText.textContent = "ID:" + accountId + " Đang chờ giải quyết...";
+          if (pendingText) pendingText.textContent = "ID:" + accountId + " | Đang chờ giải quyết...";
         }).catch(error => console.error("Không tải được ID tài khoản hỗ trợ:", error));
       }
     } else {
