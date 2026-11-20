@@ -1766,6 +1766,9 @@ function update(){
  document.getElementById("lines").previousElementSibling.textContent = cloneMode ? "Số Lượng " : "Số dòng mã";
  document.getElementById("quantityLabel").textContent = "Trạng Thái";
  document.getElementById("quantity").textContent = selected ? (cloneMode ? "Còn Acc" : "hoạt động") : "--";
+ const statusValue = document.getElementById("quantity");
+ statusValue.style.color = selected ? "#39ff75" : "";
+ statusValue.style.textShadow = selected ? "0 0 5px rgba(57,255,117,.75), 0 0 12px rgba(57,255,117,.45)" : "none";
  document.getElementById("total").textContent = money(total);
 }
 
