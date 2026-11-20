@@ -1874,7 +1874,7 @@ async function submitConfirmedOrder(){
   alert("TẠO ĐƠN THÀNH CÔNG!\n\n" +
    "Mã đơn: " + order.id + "\n" +
    "Dịch vụ: " + order.service + "\n" +
-   "Số dòng mã: " + order.count + "\n" +
+   (order.codes ? "Số dòng mã: " : "Số lượng tài khoản: ") + order.count + "\n" +
    order.label + ": " + numberFormat(order.quantity) + "\n" +
    "Tổng tiền: " + money(order.total) +
    "\n\nĐã lưu đơn lên hệ thống và gửi email thông báo!");
