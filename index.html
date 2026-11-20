@@ -7242,7 +7242,7 @@ window.closeRankProgress = function() {
       <div class="vkl-support-composer">
         <label class="vkl-support-attach" for="vkl-support-file" aria-label="Đính kèm">📎</label>
         <input id="vkl-support-file" type="file" accept="image/*" hidden>
-        <input id="vkl-support-input" type="text" placeholder="Nhập tin nhắn..." maxlength="1000" onkeydown="if(event.key==='Enter')vklSupportSend()">
+        <textarea id="vkl-support-input" rows="4" placeholder="Nhập tin nhắn..." maxlength="1000" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();vklSupportSend()}"></textarea>
         <button onclick="vklSupportSend()" aria-label="Gửi tin nhắn">➤</button>
       </div>
     </section>
@@ -7330,28 +7330,12 @@ window.vklChatChoose = function(topic) {
   if (!messages) return;
 
   if (topic === "Nạp tiền") {
-    const user = firebase.auth().currentUser;
-    const userBubble = document.createElement("div");
-    userBubble.className = "vkl-chat-user";
-    userBubble.textContent = "💰 Nạp tiền";
-    messages.appendChild(userBubble);
-
-    const form = document.createElement("div");
-    form.className = "vkl-chat-bot";
-    form.style.maxWidth = "100%";
-    form.innerHTML = `
-      <b>💸 GỬI THÔNG TIN CHUYỂN KHOẢN</b>
-      <p style="margin:7px 0;font-size:12px">Vui lòng đăng nhập, nhập số tiền đã chuyển và nội dung chuyển khoản.</p>
-      <input id="vkl-topup-amount" type="number" min="1000" step="1000" placeholder="Số tiền đã chuyển (VNĐ)" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #3b4a6b;border-radius:9px;margin:5px 0;background:#151e32;color:#f5f7ff;color-scheme:dark">
-      <input id="vkl-topup-note" type="text" maxlength="120" placeholder="Nội dung / mã giao dịch" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #3b4a6b;border-radius:9px;margin:5px 0;background:#151e32;color:#f5f7ff">
-      <button type="button" onclick="window.submitTopupProof()" style="width:100%;padding:11px;border:0;border-radius:9px;background:linear-gradient(100deg,#08a879,#087fbd);color:white;font-weight:800">Gửi</button>
-      <div id="vkl-topup-status" style="font-size:12px;margin-top:8px"></div>
-    `;
-    messages.appendChild(form);
-    if (!user) {
-      form.querySelector("#vkl-topup-status").textContent = "Bạn cần đăng nhập tài khoản website trước khi gửi yêu cầu nạp tiền.";
+    const input = document.getElementById("vkl-support-input");
+    if (input) {
+      input.value = "Mình đã chuyển khoản nhưng chưa được cộng Xu.\\n- Số tiền: \\n- Ngân hàng / thời gian chuyển: \\n- Nội dung chuyển khoản: \\n- Mã giao dịch (nếu có):";
+      input.focus();
+      input.dispatchEvent(new Event("input", { bubbles: true }));
     }
-    messages.scrollTop = messages.scrollHeight;
     return;
   }
 
@@ -7691,7 +7675,7 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
 #vkl-support-order { width:100%; min-height:62px; padding:12px 18px; border:2px solid #dce4fa; border-radius:22px; background:#fff; color:#172033; font-size:18px; font-weight:700; }
 .vkl-support-composer { flex:none; display:flex; align-items:center; gap:12px; margin:0 -4px; padding:10px 8px; border:2px solid #e0e6f8; border-radius:35px; background:#f5f6fc; }
 .vkl-support-attach { padding:0 10px; color:#66738d; font-size:26px; cursor:pointer; }
-#vkl-support-input { flex:1; min-width:0; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font-size:17px; box-shadow:none!important; }
+#vkl-support-input { flex:1; min-width:0; min-height:38px; max-height:120px; resize:vertical; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font:inherit; font-size:14px; line-height:1.4; box-shadow:none!important; }
 .vkl-support-composer button { width:54px; height:54px; flex:none; border:0; border-radius:50%; background:linear-gradient(135deg,#5688ef,#3864d9); color:#fff; font-size:24px; }
 #vkl-support-help h3,#vkl-support-contact h3 { margin:8px 0 18px; font-size:23px; color:#26366f; }
 #vkl-support-help button,#vkl-support-contact a { display:block; width:100%; box-sizing:border-box; margin:0 0 12px; padding:17px; border:2px solid #dce4fa; border-radius:18px; background:#fff; color:#344054; text-align:left; text-decoration:none; font-size:16px; font-weight:750; }
@@ -7747,7 +7731,7 @@ body.dark #vkl-support-input { color:#fff!important; }
 #vkl-support-order { min-height:46px; padding:8px 12px; border-width:1.5px; border-radius:15px; font-size:14px; }
 .vkl-support-composer { display:grid; grid-template-columns:32px minmax(0,1fr) 42px; gap:7px; margin:8px 0 0; padding:6px 7px; border-width:1.5px; border-radius:25px; min-height:54px; box-sizing:border-box; }
 .vkl-support-attach { display:flex; justify-content:center; padding:0; font-size:20px; }
-#vkl-support-input { display:block!important; width:100%!important; min-width:0!important; max-width:100%!important; height:38px!important; box-sizing:border-box!important; margin:0!important; padding:0 5px!important; font-size:13px!important; }
+#vkl-support-input { display:block!important; width:100%!important; min-width:0!important; max-width:100%!important; min-height:58px!important; max-height:120px!important; box-sizing:border-box!important; margin:0!important; padding:5px!important; font-size:13px!important; }
 .vkl-support-composer button { width:38px; height:38px; padding:0; font-size:18px; }
 #vkl-support-help h3,#vkl-support-contact h3 { margin:6px 0 12px; font-size:18px; }
 #vkl-support-help button,#vkl-support-contact a { margin-bottom:8px; padding:12px; border-width:1.5px; border-radius:14px; font-size:13px; }
