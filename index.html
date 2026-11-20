@@ -7046,22 +7046,15 @@ window.vklChatChoose = function(topic) {
     form.style.maxWidth = "100%";
     form.innerHTML = `
       <b>📸 GỬI ẢNH XÁC NHẬN CHUYỂN KHOẢN</b>
-      <p style="margin:7px 0;font-size:12px">Vui lòng đăng nhập và nhập số tiền đã chuyển. Bạn có thể gửi kèm ảnh giao dịch nếu muốn (không bắt buộc).</p>
+      <p style="margin:7px 0;font-size:12px">Vui lòng đăng nhập, nhập số tiền đã chuyển và nội dung chuyển khoản.</p>
       <input id="vkl-topup-amount" type="number" min="1000" step="1000" placeholder="Số tiền đã chuyển (VNĐ)" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #3b4a6b;border-radius:9px;margin:5px 0;background:#151e32;color:#f5f7ff;color-scheme:dark">
       <input id="vkl-topup-note" type="text" maxlength="120" placeholder="Nội dung chuyển khoản / mã giao dịch" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #3b4a6b;border-radius:9px;margin:5px 0;background:#151e32;color:#f5f7ff">
-      <input id="vkl-topup-image" type="file" accept="image/jpeg,image/png,image/webp" style="width:100%;font-size:12px;margin:8px 0">\n      <small style="display:block;color:#aebbd5;margin:0 0 6px">Ảnh chuyển khoản không bắt buộc.</small>
-      <div id="vkl-topup-preview" style="font-size:12px;color:#64748b;margin:4px 0"></div>
       <button type="button" onclick="window.submitTopupProof()" style="width:100%;padding:11px;border:0;border-radius:9px;background:linear-gradient(100deg,#08a879,#087fbd);color:white;font-weight:800">GỬI YÊU CẦU CHO ADMIN</button>
       <div id="vkl-topup-status" style="font-size:12px;margin-top:8px"></div>
     `;
     messages.appendChild(form);
-    const preview = form.querySelector("#vkl-topup-image");
-    preview.addEventListener("change", () => {
-      const file = preview.files && preview.files[0];
-      form.querySelector("#vkl-topup-preview").textContent = file ? "Đã chọn: " + file.name : "";
-    });
     if (!user) {
-      form.querySelector("#vkl-topup-status").textContent = "Bạn cần đăng nhập tài khoản website trước khi gửi ảnh.";
+      form.querySelector("#vkl-topup-status").textContent = "Bạn cần đăng nhập tài khoản website trước khi gửi yêu cầu nạp tiền.";
     }
     messages.scrollTop = messages.scrollHeight;
     return;
@@ -7150,10 +7143,9 @@ window.vklChatChoose = function(topic) {
     const status = document.getElementById("vkl-topup-status");
     const amountInput = document.getElementById("vkl-topup-amount");
     const noteInput = document.getElementById("vkl-topup-note");
-    const fileInput = document.getElementById("vkl-topup-image");
     const user = auth.currentUser;
 
-    if (!status || !amountInput || !fileInput) return;
+    if (!status || !amountInput) return;
     if (!user) {
       status.textContent = "Bạn cần đăng nhập trước khi gửi yêu cầu.";
       return;
@@ -7161,30 +7153,24 @@ window.vklChatChoose = function(topic) {
 
     const amount = Number(amountInput.value);
     const note = (noteInput?.value || "").trim();
-    const file = fileInput.files?.[0];
 
     if (!Number.isSafeInteger(amount) || amount < 1000) {
       status.textContent = "Vui lòng nhập số tiền hợp lệ (từ 1.000 VNĐ).";
       return;
     }
-    if (file && !allowedTypes.includes(file.type)) {
-      status.textContent = "Ảnh phải có định dạng JPG, PNG hoặc WEBP.";
-      return;
-    }
-    if (file && file.size > maxImageBytes) {
-      status.textContent = "Ảnh vượt quá 5MB. Vui lòng chọn ảnh nhỏ hơn.";
+    if (!note) {
+      status.textContent = "Vui lòng nhập nội dung chuyển khoản hoặc mã giao dịch.";
       return;
     }
 
     const button = status.parentElement.querySelector("button");
     if (button) button.disabled = true;
-    status.textContent = "Đang tải ảnh và gửi yêu cầu...";
+    status.textContent = "Đang gửi yêu cầu nạp tiền...";
 
     try {
       const walletSnap = await db.collection("wallets").doc(user.uid).get();
       const wallet = walletSnap.exists ? walletSnap.data() : {};
-      const requestRef = db.collection("topupRequests").doc();
-      const requestData = {
+      await db.collection("topupRequests").add({
         uid: user.uid,
         username: String(wallet.username || (user.email || "").split("@")[0] || "Khách hàng").slice(0, 60),
         userId: String(wallet.userId || ""),
@@ -7193,34 +7179,14 @@ window.vklChatChoose = function(topic) {
         transferNote: note.slice(0, 120),
         status: "pending",
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
+      });
 
-      if (file) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80) || "proof";
-        const storagePath = "topup-proofs/" + user.uid + "/" + requestRef.id + "_" + safeName;
-        await firebase.storage().ref().child(storagePath).put(file, {
-          contentType: file.type,
-          customMetadata: { ownerUid: user.uid, requestId: requestRef.id }
-        });
-        requestData.imagePath = storagePath;
-        requestData.imageName = safeName;
-        requestData.imageType = file.type;
-        requestData.imageSize = file.size;
-      }
-
-      await requestRef.set(requestData);
-
-      status.textContent = file
-        ? "✅ Đã gửi yêu cầu kèm ảnh thành công! Admin sẽ kiểm tra và phản hồi."
-        : "✅ Đã gửi yêu cầu nạp tiền thành công! Admin sẽ kiểm tra và phản hồi.";
+      status.textContent = "✅ Đã gửi yêu cầu nạp tiền thành công! Admin sẽ kiểm tra và phản hồi.";
       amountInput.value = "";
       if (noteInput) noteInput.value = "";
-      fileInput.value = "";
-      const preview = document.getElementById("vkl-topup-preview");
-      if (preview) preview.textContent = "";
     } catch (error) {
-      console.error("Lỗi gửi ảnh nạp tiền:", error);
-      status.textContent = "Không gửi được ảnh: " + (error.code || error.message || "Lỗi không xác định") + ". Kiểm tra Firebase Storage và quyền truy cập.";
+      console.error("Lỗi gửi yêu cầu nạp tiền:", error);
+      status.textContent = "Không gửi được yêu cầu: " + (error.code || error.message || "Lỗi không xác định") + ". Kiểm tra quyền Firestore.";
     } finally {
       if (button) button.disabled = false;
     }
@@ -7236,7 +7202,7 @@ window.vklChatChoose = function(topic) {
       panel = document.createElement("section");
       panel.id = "vkl-topup-admin-panel";
       panel.style.cssText = "margin-top:18px;padding:14px;border:1px solid #16a36a;border-radius:13px;background:#293650;color:white";
-      panel.innerHTML = '<h3 style="margin:0 0 8px">📥 ẢNH XÁC NHẬN NẠP TIỀN</h3><div id="vkl-topup-admin-list">Đang tải...</div>';
+      panel.innerHTML = '<h3 style="margin:0 0 8px">📥 YÊU CẦU NẠP TIỀN</h3><div id="vkl-topup-admin-list">Đang tải...</div>';
       area.appendChild(panel);
     }
 
@@ -7249,7 +7215,7 @@ window.vklChatChoose = function(topic) {
         .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
 
       if (!requests.length) {
-        list.textContent = "Chưa có ảnh xác nhận nạp tiền nào.";
+        list.textContent = "Chưa có yêu cầu nạp tiền nào.";
         return;
       }
 
@@ -7263,30 +7229,7 @@ window.vklChatChoose = function(topic) {
         const details = document.createElement("p");
         details.style.cssText = "font-size:12px;line-height:1.6;overflow-wrap:anywhere";
         details.textContent = "ID: " + (request.userId || "—") + " | UID: " + request.uid + "\nNội dung: " + (request.transferNote || "Không ghi") + "\nThời gian: " + date + "\nTrạng thái: " + (request.status || "pending");
-        const image = document.createElement("div");
-        image.style.margin = "8px 0";
-        image.textContent = "Đang tải ảnh...";
-        card.append(heading, details, image);
-
-        try {
-          const url = await firebase.storage().ref().child(request.imagePath).getDownloadURL();
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = "Ảnh xác nhận chuyển khoản";
-          img.loading = "lazy";
-          img.style.cssText = "display:block;width:100%;max-width:320px;max-height:420px;object-fit:contain;border-radius:9px;background:#fff";
-          image.textContent = "";
-          image.appendChild(img);
-          const open = document.createElement("a");
-          open.href = url;
-          open.target = "_blank";
-          open.rel = "noopener";
-          open.textContent = "Mở ảnh kích thước đầy đủ";
-          open.style.cssText = "display:block;color:#9fd8ff;margin-top:7px;font-size:12px";
-          image.appendChild(open);
-        } catch (imageError) {
-          image.textContent = "Không tải được ảnh. Kiểm tra quyền Firebase Storage.";
-        }
+        card.append(heading, details);
 
         if (request.status === "pending") {
           const actions = document.createElement("div");
@@ -7305,7 +7248,7 @@ window.vklChatChoose = function(topic) {
         list.appendChild(card);
       }
     } catch (error) {
-      console.error("Lỗi tải ảnh nạp tiền:", error);
+      console.error("Lỗi tải yêu cầu nạp tiền:", error);
       list.textContent = "Không tải được danh sách: " + (error.code || error.message);
     }
   };
