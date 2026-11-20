@@ -7531,5 +7531,25 @@ window.vklChatChoose = function(topic) {
 
 })();
 </script>
+
+<style>
+/* KHÓA MÀU NỀN RIÊNG CHO TOÀN BỘ KHU QUẢN LÝ ĐƠN HÀNG - ĐẶT CUỐI FILE ĐỂ ƯU TIÊN CSS CŨ */
+body.dark #vkl-order-admin-section,
+body.dark #vkl-order-admin-section #vkl-order-admin,
+body.dark #vkl-order-admin-section #vkl-order-admin > .admin-dark-panel,
+body.dark #vkl-order-admin-section #vkl-order-admin > .admin-dark-panel > div,
+body.dark #vkl-order-admin-section #vkl-order-admin > div {
+  background-color: #252b38 !important;
+  color: #ffffff !important;
+}
+body:not(.dark) #vkl-order-admin-section,
+body:not(.dark) #vkl-order-admin-section #vkl-order-admin,
+body:not(.dark) #vkl-order-admin-section #vkl-order-admin > .admin-dark-panel,
+body:not(.dark) #vkl-order-admin-section #vkl-order-admin > .admin-dark-panel > div,
+body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
+  background-color: #cfd3dc !important;
+  color: #222936 !important;
+}
+</style>
 </body>
 </html>
