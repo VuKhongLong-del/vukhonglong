@@ -1806,6 +1806,9 @@ if(type === "mailbox"){
       <div id="vkl-mailbox-list">
   Đang tải thư...
 </div>
+<div id="vkl-mailbox-tools" style="display:none;margin:12px 0">
+  <button onclick="window.deleteAllMailboxMessages()" style="width:100%;padding:11px;border:0;border-radius:10px;background:#dc4661;color:white;font-weight:bold">🗑️ XÓA TẤT CẢ THƯ CŨ</button>
+</div>
 
 <div id="vkl-mailbox-admin" style="display:none;text-align:left;margin-top:25px">
   <hr>
@@ -3138,14 +3141,11 @@ window.loadMailboxMessages = async function(){
     return;
   }
 
-  const adminBox = document.getElementById("vkl-mailbox-admin");
-
-if(adminBox){
-  adminBox.style.display =
-    user.email?.toLowerCase() === "haphamngu123@gmail.com"
-      ? "block"
-      : "none";
-}
+  const isAdmin = user.email?.toLowerCase() === "haphamngu123@gmail.com";
+const adminBox = document.getElementById("vkl-mailbox-admin");
+const mailboxTools = document.getElementById("vkl-mailbox-tools");
+if(adminBox) adminBox.style.display = isAdmin ? "block" : "none";
+if(mailboxTools) mailboxTools.style.display = isAdmin ? "block" : "none";
 const recipientSelect = document.getElementById("vkl-mail-recipient");
 const userIdInput = document.getElementById("vkl-mail-userid");
 
@@ -3264,6 +3264,23 @@ list.textContent = "Đang tải thư...";
     console.error("Lỗi tải hộp thư:", error);
     list.textContent = "Không tải được hộp thư. Vui lòng thử lại.";
   }
+};
+
+// XÓA TOÀN BỘ THƯ TRONG HỘP THƯ ADMIN
+window.deleteAllMailboxMessages = async function(){
+  const user = window.auth.currentUser;
+  if(!user || user.email?.toLowerCase() !== "haphamngu123@gmail.com"){ alert("Bạn không có quyền thực hiện thao tác này!"); return; }
+  if(!confirm("Bạn có chắc muốn xóa toàn bộ thư cũ trong hộp thư Admin? Thao tác này không thể hoàn tác.")) return;
+  try{
+    const snapshot = await db.collection("mailboxMessages").where("recipientUid", "==", user.uid).get();
+    for(let i=0;i<snapshot.docs.length;i+=450){
+      const batch=db.batch();
+      snapshot.docs.slice(i,i+450).forEach(doc=>batch.delete(doc.ref));
+      await batch.commit();
+    }
+    await window.loadMailboxMessages();
+    alert("Đã xóa toàn bộ thư cũ trong hộp thư Admin!");
+  }catch(error){ console.error("Lỗi xóa thư:",error); alert("Không xóa được thư: "+error.message); }
 };
 
 // THEO DÕI YÊU CẦU NẠP TIỀN MỚI CHO ADMIN
@@ -7245,61 +7262,44 @@ window.vklChatChoose = function(topic) {
     if (!auth.currentUser || auth.currentUser.email?.toLowerCase() !== managerEmail) return;
     const list = document.getElementById("vkl-topup-admin-list");
     if (!list) return;
-    if (!list) return;
     list.textContent = "Đang tải yêu cầu...";
     try {
-      const snap = await db.collection("topupRequests").limit(100).get();
+      const snap = await db.collection("topupRequests").limit(300).get();
       const requests = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-
-      if (!requests.length) {
-        list.textContent = "Chưa có yêu cầu nạp tiền nào.";
-        return;
-      }
-
+        .sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
       list.innerHTML = "";
-      for (const request of requests) {
-        const card = document.createElement("div");
-        card.style.cssText = "padding:12px;margin:10px 0;border:1px solid #52617f;border-radius:10px;background:#202b40";
-        const date = request.createdAt?.toDate ? request.createdAt.toDate().toLocaleString("vi-VN") : "Vừa gửi";
-        let accountId = request.userId || "";
-        if(request.uid){
-          try {
-            const walletSnap = await db.collection("wallets").doc(request.uid).get();
-            if(walletSnap.exists && walletSnap.data().userId){
-              accountId = String(walletSnap.data().userId);
-            }
-          } catch(idError) {
-            console.error("Lỗi lấy ID tài khoản nạp tiền:", idError);
+      const pending = requests.filter(r => (r.status || "pending") === "pending");
+      const completed = requests.filter(r => ["reviewed","rejected"].includes(r.status));
+      async function addSection(title, items, emptyText) {
+        const sectionTitle=document.createElement("h3");
+        sectionTitle.textContent=title+" ("+items.length+")";
+        sectionTitle.style.cssText="margin:18px 0 8px";
+        list.appendChild(sectionTitle);
+        if(!items.length){const empty=document.createElement("p");empty.textContent=emptyText;list.appendChild(empty);return;}
+        for(const request of items){
+          const card=document.createElement("div");
+          card.style.cssText="padding:12px;margin:10px 0;border:1px solid #52617f;border-radius:10px;background:#202b40;color:white";
+          const date=request.createdAt?.toDate?request.createdAt.toDate().toLocaleString("vi-VN"):"Vừa gửi";
+          let accountId=request.userId||"";
+          if(request.uid){try{const walletSnap=await db.collection("wallets").doc(request.uid).get();if(walletSnap.exists&&walletSnap.data().userId)accountId=String(walletSnap.data().userId);}catch(idError){console.error("Lỗi lấy ID tài khoản:",idError);}}
+          const heading=document.createElement("b");
+          heading.textContent=(request.username||"Khách")+" • "+Number(request.amount||0).toLocaleString("vi-VN")+" VNĐ";
+          const details=document.createElement("p");
+          details.style.cssText="font-size:12px;line-height:1.6;overflow-wrap:anywhere";
+          details.textContent="ID tài khoản: "+(accountId||"Chưa tìm thấy ID")+" | Nội dung: "+(request.transferNote||"Không ghi")+" | Thời gian: "+date+" | Trạng thái: "+(request.status||"pending");
+          card.append(heading,details);
+          if((request.status||"pending")==="pending"){
+            const actions=document.createElement("div");actions.style.cssText="display:flex;gap:8px;margin-top:8px";
+            const reviewed=document.createElement("button");reviewed.textContent="ĐÃ KIỂM TRA";reviewed.style.cssText="flex:1;padding:10px;border:0;border-radius:8px;background:#08a879;color:white;font-weight:bold";reviewed.onclick=()=>window.reviewTopupRequest(request.id,"reviewed");
+            const reject=document.createElement("button");reject.textContent="TỪ CHỐI";reject.style.cssText="flex:1;padding:10px;border:0;border-radius:8px;background:#dc4661;color:white;font-weight:bold";reject.onclick=()=>window.reviewTopupRequest(request.id,"rejected");
+            actions.append(reviewed,reject);card.appendChild(actions);
           }
+          list.appendChild(card);
         }
-        const heading = document.createElement("b");
-        heading.textContent = (request.username || "Khách") + " • " + Number(request.amount || 0).toLocaleString("vi-VN") + " VNĐ";
-        const details = document.createElement("p");
-        details.style.cssText = "font-size:12px;line-height:1.6;overflow-wrap:anywhere";
-        details.textContent = "ID tài khoản: " + (accountId || "Chưa tìm thấy ID") + "\nNội dung: " + (request.transferNote || "Không ghi") + "\nThời gian: " + date + "\nTrạng thái: " + (request.status || "pending");
-        card.append(heading, details);
-
-        if (request.status === "pending") {
-          const actions = document.createElement("div");
-          actions.style.cssText = "display:flex;gap:8px;margin-top:8px";
-          const reviewed = document.createElement("button");
-          reviewed.textContent = "ĐÃ KIỂM TRA";
-          reviewed.style.cssText = "flex:1;padding:10px;border:0;border-radius:8px;background:#08a879;color:white;font-weight:bold";
-          reviewed.onclick = () => window.reviewTopupRequest(request.id, "reviewed");
-          const reject = document.createElement("button");
-          reject.textContent = "TỪ CHỐI";
-          reject.style.cssText = "flex:1;padding:10px;border:0;border-radius:8px;background:#dc4661;color:white;font-weight:bold";
-          reject.onclick = () => window.reviewTopupRequest(request.id, "rejected");
-          actions.append(reviewed, reject);
-          card.appendChild(actions);
-        }
-        list.appendChild(card);
       }
-    } catch (error) {
-      console.error("Lỗi tải yêu cầu nạp tiền:", error);
-      list.textContent = "Không tải được danh sách: " + (error.code || error.message);
-    }
+      await addSection("🟠 YÊU CẦU ĐANG CHỜ",pending,"Không có yêu cầu nào đang chờ.");
+      await addSection("📁 LỊCH SỬ ĐÃ DUYỆT / TỪ CHỐI",completed,"Chưa có yêu cầu nào đã được xử lý.");
+    } catch(error){console.error("Lỗi tải yêu cầu nạp tiền:",error);list.textContent="Không tải được danh sách: "+(error.code||error.message);}
   };
 
   window.reviewTopupRequest = async function (id, status) {
