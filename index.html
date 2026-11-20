@@ -7240,6 +7240,10 @@ window.closeRankProgress = function() {
           <button onclick="vklChatChoose('Muốn huỷ đơn')">🚫 Muốn huỷ đơn</button>
           <button onclick="vklChatChoose('Acc clone lỗi')">🎮 Acc clone lỗi</button>
         </div>
+        <div id="vkl-support-active" style="display:none;margin:0 0 12px;padding:12px 14px;border:1px solid #dce4fa;border-radius:14px;background:#f1f5ff;color:#344054;font-size:13px;">
+          <div id="vkl-support-active-label" style="font-weight:750;margin-bottom:9px;"></div>
+          <button type="button" onclick="vklEndSupport()" style="width:100%;padding:10px;border:0;border-radius:10px;background:#e55353;color:#fff;font-weight:800;">KẾT THÚC HỖ TRỢ</button>
+        </div>
       </div>
       <div class="vkl-support-composer">
         <textarea id="vkl-support-input" rows="1" placeholder="Nhập tin nhắn..." maxlength="1000" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();vklSupportSend()}"></textarea>
@@ -7325,7 +7329,42 @@ window.vklToggleChat = function() {
   if (panel) panel.classList.toggle("show");
 };
 
+// Lưu trạng thái phiên hỗ trợ theo tài khoản để vẫn được giữ sau khi tải lại trang.
+window.vklSupportStorageKey = function() {
+  const uid = window.auth?.currentUser?.uid || "guest";
+  return "vkl_support_active_" + uid;
+};
+window.vklGetActiveSupport = function() {
+  try { return JSON.parse(localStorage.getItem(window.vklSupportStorageKey()) || "null"); }
+  catch (_) { return null; }
+};
+window.vklApplySupportLock = function(session) {
+  const topics = document.querySelector(".vkl-support-topics");
+  const activeBox = document.getElementById("vkl-support-active");
+  const activeLabel = document.getElementById("vkl-support-active-label");
+  if (!topics || !activeBox || !activeLabel) return;
+  const locked = !!(session && session.topic);
+  topics.style.display = locked ? "none" : "";
+  activeBox.style.display = locked ? "block" : "none";
+  if (locked) activeLabel.textContent = "Đang hỗ trợ: " + session.topic;
+};
+window.vklEndSupport = function() {
+  localStorage.removeItem(window.vklSupportStorageKey());
+  window.vklPendingSupportTopic = "";
+  window.vklApplySupportLock(null);
+  const messages = document.getElementById("vkl-chat-messages");
+  if (messages) {
+    messages.querySelectorAll(".vkl-chat-user,.vkl-chat-bot").forEach(el => el.remove());
+  }
+  const input = document.getElementById("vkl-support-input");
+  if (input) input.value = "";
+};
+window.vklPendingSupportTopic = "";
+window.vklApplySupportLock(window.vklGetActiveSupport());
+
 window.vklChatChoose = function(topic) {
+  if (window.vklGetActiveSupport()?.topic) return;
+  window.vklPendingSupportTopic = topic;
   const messages = document.getElementById("vkl-chat-messages");
   if (!messages) return;
 
@@ -7441,6 +7480,7 @@ window.vklSupportTab = function(tab) {
 
 // Hiển thị tên tài khoản đang đăng nhập trong lời chào hỗ trợ
 window.vklUpdateSupportGreeting = function(user) {
+  window.vklApplySupportLock?.(window.vklGetActiveSupport?.());
   const greeting = document.getElementById("vkl-support-greeting");
   if (!greeting) return;
   const email = user && user.email ? user.email : "";
@@ -7458,6 +7498,16 @@ window.vklSupportSend = function() {
   if (!input || !messages) return;
   const value = input.value.trim();
   if (!value) return;
+
+  // Chỉ khóa chủ đề sau khi khách thực sự gửi tin nhắn đầu tiên.
+  let activeSession = window.vklGetActiveSupport();
+  if (!activeSession?.topic) {
+    const topic = window.vklPendingSupportTopic || "Hỗ trợ khác";
+    activeSession = { topic, startedAt: Date.now() };
+    try { localStorage.setItem(window.vklSupportStorageKey(), JSON.stringify(activeSession)); } catch (_) {}
+    window.vklPendingSupportTopic = "";
+    window.vklApplySupportLock(activeSession);
+  }
 
   const bubble = document.createElement("div");
   bubble.className = "vkl-chat-user";
@@ -7790,6 +7840,8 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
 .vkl-support-welcome strong { display:block; font-size:21px; font-weight:850; }
 .vkl-support-welcome p { margin:10px 0 0; color:#4d5870; font-size:17px; line-height:1.45; }
 .vkl-support-topics { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:25px; }
+#vkl-support-active button { cursor:pointer; }
+body.dark #vkl-support-active { background:#202a40!important; border-color:#3a496b!important; color:#f4f6ff!important; }
 .vkl-support-topics button { min-height:65px; padding:10px 12px; border:2px solid #dce4fa; border-radius:23px; background:#fff; color:#344054; font-size:16px; line-height:1.25; font-weight:800; text-align:left; }
 .vkl-support-composer { flex:none; display:flex; align-items:center; gap:12px; margin:0 -4px; padding:10px 8px; border:2px solid #e0e6f8; border-radius:35px; background:#f5f6fc; }
 #vkl-support-input { flex:1; min-width:0; height:38px; min-height:38px; max-height:120px; overflow-y:hidden; resize:none; border:0!important; outline:none!important; background:transparent!important; color:#20283b!important; font:inherit; font-size:14px; line-height:1.4; box-shadow:none!important; }
