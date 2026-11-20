@@ -7329,7 +7329,7 @@ window.vklChatChoose = function(topic) {
           hideHistoryButton.style.cssText="width:100%;padding:10px;margin:4px 0 10px;border:0;border-radius:8px;background:#596579;color:white;font-weight:bold";
           hideHistoryButton.onclick=()=>{
             if(!allCompleted.length){alert("Không có yêu cầu cũ để ẩn.");return;}
-            if(!confirm("Ẩn toàn bộ yêu cầu đã duyệt/đã kiểm tra và đã từ chối khỏi danh sách này? Dữ liệu vẫn được giữ nguyên.")) return;
+            if(!confirm("Ẩn toàn bộ yêu cầu?")) return;
             const ids=getHiddenIds();
             allCompleted.forEach(r=>ids.add(r.id));
             localStorage.setItem(hiddenKey,JSON.stringify([...ids]));
