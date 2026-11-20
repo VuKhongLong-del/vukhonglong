@@ -7233,7 +7233,7 @@ window.closeRankProgress = function() {
           <p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p>
         </div>
         <div class="vkl-support-topics">
-          <button onclick="vklChatChoose('Nạp tiền')">💳 Nạp tiền chưa được cộng</button>
+          <button onclick="vklChatChoose('Nạp tiền')" class="vkl-topic-deposit">💳 Nạp tiền chưa được cộng</button>
           <button onclick="vklChatChoose('Nạp sai nội dung')">✍️ Nạp sai nội dung</button>
           <button onclick="vklChatChoose('Đơn chạy chậm')">🐢 Đơn chạy chậm</button>
           <button onclick="vklChatChoose('Đơn bị lỗi / sai mã')">⚠️ Đơn bị lỗi / sai mã</button>
@@ -7422,7 +7422,7 @@ window.vklEndSupport = function() {
   const messages = document.getElementById("vkl-chat-messages");
   if (messages) {
     // Dựng lại khung chat sạch hoàn toàn, không tái sử dụng bất kỳ nút/tin nhắn cũ nào.
-    messages.innerHTML = '<div class="vkl-support-welcome"><strong id="vkl-support-greeting">Xin Chào! 👋</strong><p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p></div><div class="vkl-support-topics"><button onclick="vklChatChoose(\'Nạp tiền\')">💳 Nạp tiền chưa được cộng</button><button onclick="vklChatChoose(\'Nạp sai nội dung\')">✍️ Nạp sai nội dung</button><button onclick="vklChatChoose(\'Đơn chạy chậm\')">🐢 Đơn chạy chậm</button><button onclick="vklChatChoose(\'Đơn bị lỗi / sai mã\')">⚠️ Đơn bị lỗi / sai mã</button><button onclick="vklChatChoose(\'Muốn huỷ đơn\')">🚫 Muốn huỷ đơn</button><button onclick="vklChatChoose(\'Acc clone lỗi\')">🎮 Acc clone lỗi</button></div>';
+    messages.innerHTML = '<div class="vkl-support-welcome"><strong id="vkl-support-greeting">Xin Chào! 👋</strong><p>Chọn nhanh vấn đề hoặc gõ trực tiếp. Mô tả càng rõ, admin xử lý càng nhanh.</p></div><div class="vkl-support-topics"><button onclick="vklChatChoose(\'Nạp tiền\')" class="vkl-topic-deposit">💳 Nạp tiền chưa được cộng</button><button onclick="vklChatChoose(\'Nạp sai nội dung\')">✍️ Nạp sai nội dung</button><button onclick="vklChatChoose(\'Đơn chạy chậm\')">🐢 Đơn chạy chậm</button><button onclick="vklChatChoose(\'Đơn bị lỗi / sai mã\')">⚠️ Đơn bị lỗi / sai mã</button><button onclick="vklChatChoose(\'Muốn huỷ đơn\')">🚫 Muốn huỷ đơn</button><button onclick="vklChatChoose(\'Acc clone lỗi\')">🎮 Acc clone lỗi</button></div>';
     messages.scrollTop = 0;
   }
   window.vklApplySupportLock(null);
@@ -8007,6 +8007,7 @@ body.dark #vkl-support-input { color:#fff!important; }
 .vkl-support-welcome p { margin-top:6px; font-size:13px; line-height:1.4; }
 .vkl-support-topics { gap:8px; margin-bottom:15px; }
 .vkl-support-topics button { min-height:48px; padding:8px 9px; border-width:1.5px; border-radius:16px; font-size:12px; line-height:1.2; }
+#vkl-support-help .vkl-support-topics button.vkl-topic-deposit { grid-column:1 / -1; display:flex; align-items:center; white-space:nowrap; }
 .vkl-support-composer { display:grid; grid-template-columns:minmax(0,1fr) 42px; gap:7px; margin:8px 0 0; padding:6px 7px; border-width:1.5px; border-radius:25px; min-height:54px; box-sizing:border-box; }
 #vkl-support-input { display:block!important; width:100%!important; min-width:0!important; max-width:100%!important; height:38px; min-height:38px!important; max-height:120px!important; box-sizing:border-box!important; margin:0!important; padding:5px!important; font-size:16px!important; line-height:1.4!important; overflow-y:hidden!important; }
 .vkl-support-composer button { width:38px; height:38px; padding:0; font-size:18px; }
