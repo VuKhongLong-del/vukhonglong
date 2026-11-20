@@ -3241,7 +3241,7 @@ list.textContent = "Đang tải thư...";
 };
 
 // THEO DÕI YÊU CẦU NẠP TIỀN MỚI CHO ADMIN
-window.auth.onAuthStateChanged(user => {
+firebase.auth().onAuthStateChanged(user => {
   window.vklIsAdmin = !!(user && user.email?.toLowerCase() === "haphamngu123@gmail.com");
   if(!window.vklIsAdmin){
     window.vklPendingTopupCount = 0;
