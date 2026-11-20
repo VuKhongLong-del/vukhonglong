@@ -7249,9 +7249,9 @@ window.closeRankProgress = function() {
     </section>
     <section id="vkl-support-help" class="vkl-support-view">
       <h3>Câu hỏi thường gặp</h3>
-      <button onclick="vklChatChoose('Nạp tiền')">💳 Tôi đã chuyển khoản nhưng chưa nhận Xu</button>
-      <button onclick="vklChatChoose('Đơn hàng')">📦 Kiểm tra trạng thái đơn hàng</button>
-      <button onclick="vklChatChoose('Tài khoản')">👤 Tôi gặp vấn đề với tài khoản</button>
+      <button onclick="vklSupportTab('chat');vklChatChoose('Nạp tiền')">💳 Tôi đã chuyển khoản nhưng chưa nhận Xu</button>
+      <button onclick="vklSupportTab('chat');vklChatChoose('Đơn hàng')">📦 Kiểm tra trạng thái đơn hàng</button>
+      <button onclick="vklSupportTab('chat');vklChatChoose('Tài khoản')">👤 Tôi gặp vấn đề với tài khoản</button>
       <p>Chọn câu hỏi để xem hướng dẫn nhanh hoặc chuyển sang Chat để nhắn trực tiếp.</p>
     </section>
     <section id="vkl-support-contact" class="vkl-support-view">
@@ -7367,7 +7367,13 @@ window.vklChatChoose = function(topic) {
     "Nạp tiền": "💰 Để nạp tiền, bạn hãy vào mục Chuyển Khoản, nhập đúng số tiền và làm theo hướng dẫn QR/tài khoản ngân hàng. Nếu đã chuyển mà số dư chưa cập nhật, hãy liên hệ Admin kèm mã giao dịch nhé.",
     "Đơn hàng": "📦 Bạn hãy mở mục Lịch sử để kiểm tra đơn hàng và trạng thái xử lý. Nếu đơn bị lỗi hoặc chưa cập nhật, hãy gửi mã đơn cho Admin để được kiểm tra.",
     "Tài khoản": "👤 Bạn hãy kiểm tra lại thông tin đăng nhập và ID tài khoản. Nếu không đăng nhập được hoặc thông tin bị sai, hãy liên hệ Admin để được hỗ trợ.",
-    "Gặp Admin": "☎️ Mình sẽ mở các kênh liên hệ để bạn chọn Zalo, Facebook, Discord hoặc TikTok nhé."
+    "Gặp Admin": "☎️ Bạn có thể chuyển sang tab Liên hệ để chọn Zalo, Facebook, Discord hoặc TikTok.",
+    "Nạp sai nội dung": "✍️ Nếu bạn nhập sai nội dung chuyển khoản, hãy gửi số tiền, thời gian chuyển và nội dung đã nhập để admin kiểm tra thủ công.",
+    "Đơn chạy chậm": "🐢 Bạn hãy gửi mã đơn và thời điểm đặt đơn để admin kiểm tra tiến độ xử lý.",
+    "Đơn bị lỗi / sai mã": "⚠️ Vui lòng gửi mã đơn cùng mô tả lỗi hoặc mã đã nhập để admin kiểm tra.",
+    "Muốn huỷ đơn": "🚫 Hãy gửi mã đơn và lý do muốn huỷ. Admin sẽ kiểm tra trạng thái đơn trước khi xác nhận.",
+    "Acc clone lỗi": "🎮 Hãy gửi mã đơn hoặc thông tin gói acc và mô tả lỗi gặp phải để admin hỗ trợ.",
+    "Đơn hàng": "📦 Bạn hãy mở mục Lịch sử để kiểm tra đơn hàng và trạng thái xử lý. Nếu đơn bị lỗi hoặc chưa cập nhật, hãy gửi mã đơn cho Admin để được kiểm tra."
   };
 
   if (!document.getElementById("vkl-typing-style")) {
