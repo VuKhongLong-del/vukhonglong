@@ -8121,7 +8121,7 @@ body.dark #serviceStatusGear { background:#35415d!important; color:#d9ddff!impor
   let statusReady = false;
 
   function currentServiceStatus(){
-    const key = window.selected;
+    const key = selected;
     if(!key) return "--";
     return serviceStatuses[key] === "ended" ? "Hết" : "Hoạt động";
   }
@@ -8130,7 +8130,7 @@ body.dark #serviceStatusGear { background:#35415d!important; color:#d9ddff!impor
     const value = document.getElementById("quantity");
     const gear = document.getElementById("serviceStatusGear");
     if(!value || !gear) return;
-    const key = window.selected;
+    const key = selected;
     const status = currentServiceStatus();
     value.textContent = status;
     value.classList.toggle("status-ended", status === "Hết");
@@ -8155,7 +8155,7 @@ body.dark #serviceStatusGear { background:#35415d!important; color:#d9ddff!impor
       alert("Bạn không có quyền chỉnh sửa trạng thái.");
       return;
     }
-    const key = window.selected;
+    const key = selected;
     if(!key) return;
     const current = serviceStatuses[key] === "ended" ? "Hết" : "Hoạt động";
     const choice = prompt("Trạng thái hiện tại: " + current + "\nNhập 1 để đặt Hoạt động hoặc 2 để đặt Hết:", serviceStatuses[key] === "ended" ? "2" : "1");
