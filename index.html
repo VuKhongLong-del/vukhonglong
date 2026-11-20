@@ -8069,5 +8069,32 @@ body.dark #vkl-support-input { color:#fff!important; }
   .vkl-support-topics button { min-height:48px; font-size:12px; border-radius:16px; }
 }
 </style>
+
+<style>
+/* Ô NHẬP LIỆU TỰ ĐỔI MÀU THEO GIAO DIỆN SÁNG / TỐI */
+body:not(.dark) input:not(#vkl-support-input):not(.admin-dark-panel input),
+body:not(.dark) textarea:not(#vkl-support-input):not(.admin-dark-panel textarea),
+body:not(.dark) select:not(.admin-dark-panel select) {
+  background-color: #cfd3dc !important;
+  color: #222936 !important;
+  border-color: #aeb5c1 !important;
+}
+body:not(.dark) input::placeholder,
+body:not(.dark) textarea::placeholder {
+  color: #626b7a !important;
+}
+body.dark input:not(#vkl-support-input):not(.admin-dark-panel input),
+body.dark textarea:not(#vkl-support-input):not(.admin-dark-panel textarea),
+body.dark select:not(.admin-dark-panel select) {
+  background-color: #151c2e !important;
+  color: #f5f7ff !important;
+  border-color: #3a4560 !important;
+}
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #aab5cc !important;
+}
+</style>
+
 </body>
 </html>
