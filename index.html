@@ -2444,6 +2444,7 @@ if (isOwnerAccount) {
         <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('wallet')"><span>🪙</span><b>QUẢN LÝ VÍ TIỀN</b><span class="vkl-admin-menu-arrow">›</span></button>
         <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('orders')"><span>📦</span><b>QUẢN LÝ ĐƠN HÀNG</b><span class="vkl-admin-menu-arrow">›</span></button>
         <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('accounts')"><span>👥</span><b>QUẢN LÝ TÀI KHOẢN</b><span class="vkl-admin-menu-arrow">›</span></button>
+        <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('acc-inventory')"><span>🗄️</span><b>KHO QUẢN LÝ ACC</b><span class="vkl-admin-menu-arrow">›</span></button>
       </div>
 
       <section id="vkl-admin-panel-topup-requests" class="admin-dark-panel vkl-admin-subpanel" style="display:none">
@@ -2472,6 +2473,37 @@ if (isOwnerAccount) {
         <button type="button" class="vkl-admin-back" onclick="window.showAdminSection('')">← QUAY LẠI DANH MỤC</button>
         <h3>📦 QUẢN LÝ TIẾN ĐỘ ĐƠN HÀNG</h3>
         <div id="vkl-order-admin" style="margin-top:12px"></div>
+      </section>
+
+      <section id="vkl-admin-panel-acc-inventory" class="admin-dark-panel vkl-admin-subpanel" style="display:none;margin-top:0">
+        <button type="button" class="vkl-admin-back" onclick="window.showAdminSection('')">← QUAY LẠI DANH MỤC</button>
+        <h3>🗄️ KHO QUẢN LÝ ACC</h3>
+        <p style="font-size:13px;line-height:1.5">Tải file TXT riêng cho từng cấp. Mỗi dòng theo định dạng <b>tài khoản|mật khẩu</b>.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0">
+          <label style="margin:0;padding:12px;border-radius:12px;background:#6650ed;color:#fff;text-align:center;cursor:pointer">
+            📥 NHẬP FILE LV0
+            <input id="vkl-acc-file-lv0" type="file" accept=".txt,text/plain" style="display:none" onchange="window.importAccInventory('LV0',this.files&&this.files[0]);this.value=''">
+          </label>
+          <label style="margin:0;padding:12px;border-radius:12px;background:#16a36a;color:#fff;text-align:center;cursor:pointer">
+            📥 NHẬP FILE LV12
+            <input id="vkl-acc-file-lv12" type="file" accept=".txt,text/plain" style="display:none" onchange="window.importAccInventory('LV12',this.files&&this.files[0]);this.value=''">
+          </label>
+        </div>
+        <div id="vkl-acc-import-status" style="font-size:13px;line-height:1.5;margin:8px 0"></div>
+        <div id="vkl-acc-inventory-counts" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
+          <div style="padding:12px;border-radius:10px;background:#293650"><small>LV0</small><div id="vkl-acc-count-lv0" style="font-size:22px;font-weight:900">--</div></div>
+          <div style="padding:12px;border-radius:10px;background:#293650"><small>LV12</small><div id="vkl-acc-count-lv12" style="font-size:22px;font-weight:900">--</div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin:12px 0">
+          <button type="button" id="vkl-acc-tab-lv0" onclick="window.loadAccInventory('LV0')" style="flex:1;padding:11px;border:0;border-radius:9px;background:#6650ed;color:#fff;font-weight:bold">DANH SÁCH LV0</button>
+          <button type="button" id="vkl-acc-tab-lv12" onclick="window.loadAccInventory('LV12')" style="flex:1;padding:11px;border:0;border-radius:9px;background:#536078;color:#fff;font-weight:bold">DANH SÁCH LV12</button>
+        </div>
+        <input id="vkl-acc-search" type="search" placeholder="Tìm tài khoản trong danh sách..." style="width:100%;box-sizing:border-box;padding:12px;border-radius:9px;margin:5px 0 10px">
+        <div id="vkl-acc-inventory-list" style="padding:10px;border-radius:10px;background:#293650;min-height:70px">Chọn LV0 hoặc LV12 để xem kho.</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button type="button" onclick="window.changeAccInventoryPage(-1)" style="flex:1;padding:10px;border:0;border-radius:9px;background:#536078;color:#fff;font-weight:bold">← TRƯỚC</button>
+          <button type="button" onclick="window.changeAccInventoryPage(1)" style="flex:1;padding:10px;border:0;border-radius:9px;background:#6650ed;color:#fff;font-weight:bold">TIẾP →</button>
+        </div>
       </section>
 
       <section id="vkl-admin-panel-accounts" class="admin-dark-panel vkl-admin-subpanel" style="display:none;margin-top:0">
@@ -5877,7 +5909,8 @@ window.showAdminSection = function(section) {
     "topup-requests": "vkl-admin-panel-topup-requests",
     "wallet": "vkl-admin-panel-wallet",
     "orders": "vkl-order-admin-section",
-    "accounts": "vkl-admin-panel-accounts"
+    "accounts": "vkl-admin-panel-accounts",
+    "acc-inventory": "vkl-admin-panel-acc-inventory"
   };
   const menu = document.getElementById("vkl-admin-menu");
   Object.entries(panels).forEach(([key, id]) => {
@@ -5888,6 +5921,7 @@ window.showAdminSection = function(section) {
   if (section === "topup-requests" && window.renderTopupAdminList) window.renderTopupAdminList();
   if (section === "orders" && window.renderOrderAdmin) window.renderOrderAdmin();
   if (section === "accounts" && window.loadAccountAdminList) window.loadAccountAdminList();
+  if (section === "acc-inventory" && window.loadAccInventory) window.loadAccInventory("LV0");
 };
 window.showAccountTab = function(tab) {
   const tabs = ["info", "security", "intro", "topup"];
@@ -8219,6 +8253,183 @@ body.dark #serviceStatusGear {
 
   document.addEventListener("DOMContentLoaded", renderServiceStatus);
   renderServiceStatus();
+})();
+</script>
+
+
+<script>
+/* KHO ACC LV0 / LV12 - ADMIN ONLY */
+(function(){
+  const ADMIN_EMAIL = "haphamngu123@gmail.com";
+  const db = firebase.firestore();
+  let activeLevel = "LV0";
+  let inventoryRows = [];
+  let inventoryPage = 0;
+  const PAGE_SIZE = 50;
+
+  function isAdmin(){
+    return !!(firebase.auth().currentUser &&
+      String(firebase.auth().currentUser.email || "").toLowerCase() === ADMIN_EMAIL);
+  }
+  function el(id){ return document.getElementById(id); }
+  function escapeText(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[ch]);
+  }
+  async function accountDocId(level, account){
+    if(!window.crypto || !crypto.subtle) throw new Error("Trình duyệt không hỗ trợ mã hóa an toàn để tạo mã tài khoản.");
+    const bytes = new TextEncoder().encode(String(account).trim().toLowerCase());
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    const hash = Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");
+    return level.toLowerCase() + "_" + hash;
+  }
+  async function refreshCounts(){
+    const [lv0,lv12] = await Promise.all([
+      db.collection("accInventory").where("level","==","LV0").get(),
+      db.collection("accInventory").where("level","==","LV12").get()
+    ]);
+    if(el("vkl-acc-count-lv0")) el("vkl-acc-count-lv0").textContent = lv0.size.toLocaleString("vi-VN");
+    if(el("vkl-acc-count-lv12")) el("vkl-acc-count-lv12").textContent = lv12.size.toLocaleString("vi-VN");
+  }
+  window.importAccInventory = async function(level,file){
+    const status = el("vkl-acc-import-status");
+    if(!isAdmin()){ alert("Bạn không có quyền truy cập kho ACC."); return; }
+    if(!file) return;
+    if(!/\.txt$/i.test(file.name) && file.type !== "text/plain"){
+      alert("Vui lòng chọn file TXT."); return;
+    }
+    if(file.size > 15 * 1024 * 1024){
+      alert("File TXT vượt quá 15 MB."); return;
+    }
+    if(status) status.textContent = "Đang đọc file " + level + "...";
+    try{
+      const raw = (await file.text()).replace(/^\uFEFF/,"");
+      const map = new Map();
+      const lines = raw.split(/\r?\n/);
+      let invalid = 0;
+      for(const line of lines){
+        const trimmed = line.trim();
+        if(!trimmed) continue;
+        const splitAt = trimmed.indexOf("|");
+        if(splitAt < 1 || splitAt === trimmed.length - 1){ invalid++; continue; }
+        const account = trimmed.slice(0,splitAt).trim();
+        const password = trimmed.slice(splitAt+1).trim();
+        if(!account || !password){ invalid++; continue; }
+        if(/^(tài khoản|tai khoan|account)$/i.test(account)) continue;
+        map.set(account.toLowerCase(), {account,password});
+      }
+      const rows = Array.from(map.values());
+      if(!rows.length){
+        if(status) status.textContent = "Không tìm thấy dòng hợp lệ. Định dạng cần có: tài khoản|mật khẩu";
+        return;
+      }
+      let written = 0;
+      for(let offset=0; offset<rows.length; offset+=400){
+        const chunk = rows.slice(offset,offset+400);
+        const refs = await Promise.all(chunk.map(async row =>
+          db.collection("accInventory").doc(await accountDocId(level,row.account))
+        ));
+        const batch = db.batch();
+        refs.forEach((ref,i)=>{
+          const row = chunk[i];
+          batch.set(ref,{
+            account:row.account,
+            password:row.password,
+            level:level,
+            updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+          });
+        });
+        await batch.commit();
+        written += chunk.length;
+        if(status) status.textContent = "Đang lưu " + written.toLocaleString("vi-VN") + "/" + rows.length.toLocaleString("vi-VN") + " tài khoản " + level + "...";
+      }
+      if(status) status.textContent = "Đã nhập " + written.toLocaleString("vi-VN") + " tài khoản vào " + level + ". Dòng lỗi: " + invalid + ". Tài khoản trùng trong file đã được gộp.";
+      await refreshCounts();
+      await window.loadAccInventory(level);
+    }catch(error){
+      console.error("Lỗi nhập kho ACC:",error);
+      if(status) status.textContent = "Không nhập được file: " + (error.message || error);
+    }
+  };
+  window.loadAccInventory = async function(level){
+    if(!isAdmin()){ const list=el("vkl-acc-inventory-list"); if(list) list.textContent="Bạn không có quyền truy cập kho ACC."; return; }
+    activeLevel = level === "LV12" ? "LV12" : "LV0";
+    inventoryPage = 0;
+    const list = el("vkl-acc-inventory-list");
+    if(list) list.textContent = "Đang tải kho " + activeLevel + "...";
+    ["LV0","LV12"].forEach(l=>{
+      const b=el("vkl-acc-tab-"+l.toLowerCase());
+      if(b){ b.style.background=l===activeLevel?"#6650ed":"#536078"; }
+    });
+    try{
+      const snap = await db.collection("accInventory").where("level","==",activeLevel).get();
+      inventoryRows = snap.docs.map(doc=>({id:doc.id,...doc.data()}))
+        .sort((a,b)=>String(a.account||"").localeCompare(String(b.account||"")));
+      await refreshCounts();
+      renderList();
+    }catch(error){
+      console.error(error);
+      if(list) list.textContent = "Không tải được kho: " + (error.message || error);
+    }
+  };
+  function renderList(){
+    const list=el("vkl-acc-inventory-list");
+    if(!list) return;
+    const keyword=String(el("vkl-acc-search")?.value||"").trim().toLowerCase();
+    const filtered=inventoryRows.filter(row=>
+      String(row.account||"").toLowerCase().includes(keyword)
+    );
+    const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
+    inventoryPage=Math.min(inventoryPage,totalPages-1);
+    const shown=filtered.slice(inventoryPage*PAGE_SIZE,(inventoryPage+1)*PAGE_SIZE);
+    if(!filtered.length){ list.textContent="Chưa có tài khoản nào trong mục "+activeLevel+"."; return; }
+    list.innerHTML = '<div style="font-size:12px;margin-bottom:9px">Tổng: <b>'+filtered.length.toLocaleString("vi-VN")+'</b> tài khoản · Trang '+(inventoryPage+1)+'/'+totalPages+'</div>';
+    shown.forEach(row=>{
+      const card=document.createElement("div");
+      card.style.cssText="padding:10px;margin:8px 0;border:1px solid #64708a;border-radius:9px;overflow-wrap:anywhere";
+      const account=document.createElement("div");
+      account.style.cssText="font-weight:800;font-size:13px";
+      account.textContent="TK: "+(row.account||"");
+      const password=document.createElement("div");
+      password.style.cssText="font-size:13px;margin-top:5px";
+      password.textContent="MK: "+(row.password||"");
+      const actions=document.createElement("div");
+      actions.style.cssText="display:flex;gap:7px;margin-top:9px";
+      const copy=document.createElement("button");
+      copy.type="button"; copy.textContent="📋 SAO CHÉP";
+      copy.style.cssText="flex:1;padding:8px;border:0;border-radius:7px;background:#6650ed;color:white;font-weight:bold";
+      copy.onclick=async()=>{
+        try{ await navigator.clipboard.writeText((row.account||"")+"|"+(row.password||"")); copy.textContent="ĐÃ SAO CHÉP"; }
+        catch(e){ alert("Không sao chép được. Hãy kiểm tra quyền clipboard của trình duyệt."); }
+      };
+      const del=document.createElement("button");
+      del.type="button"; del.textContent="🗑 XÓA";
+      del.style.cssText="padding:8px 12px;border:0;border-radius:7px;background:#dc4661;color:white;font-weight:bold";
+      del.onclick=async()=>{
+        if(!isAdmin()) return alert("Bạn không có quyền.");
+        if(!confirm("Xóa tài khoản "+(row.account||"")+" khỏi kho "+activeLevel+"?")) return;
+        try{
+          await db.collection("accInventory").doc(row.id).delete();
+          inventoryRows=inventoryRows.filter(item=>item.id!==row.id);
+          await refreshCounts(); renderList();
+        }catch(error){ alert("Không xóa được: "+error.message); }
+      };
+      actions.append(copy,del);
+      card.append(account,password,actions);
+      list.appendChild(card);
+    });
+  }
+  window.changeAccInventoryPage=function(delta){
+    const keyword=String(el("vkl-acc-search")?.value||"").trim().toLowerCase();
+    const count=inventoryRows.filter(row=>String(row.account||"").toLowerCase().includes(keyword)).length;
+    const pages=Math.max(1,Math.ceil(count/PAGE_SIZE));
+    inventoryPage=Math.max(0,Math.min(pages-1,inventoryPage+delta));
+    renderList();
+  };
+  document.addEventListener("input",event=>{
+    if(event.target && event.target.id==="vkl-acc-search"){ inventoryPage=0; renderList(); }
+  });
 })();
 </script>
 
