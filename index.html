@@ -7387,6 +7387,7 @@ window.vklApplySupportLock = function(session) {
 };
 window.vklSupportGeneration = window.vklSupportGeneration || 0;
 window.vklEndSupport = function() {
+  if (!window.confirm("Bạn chắc chắn muốn huỷ hỗ trợ? Toàn bộ tin nhắn trong phiên này sẽ bị xoá.")) return;
   window.vklSupportGeneration++;
   localStorage.removeItem(window.vklSupportStorageKey());
   localStorage.removeItem(window.vklSupportMessagesKey());
