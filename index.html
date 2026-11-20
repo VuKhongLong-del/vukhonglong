@@ -2066,6 +2066,24 @@ body.dark .admin-dark-panel textarea {
 }
 </style>
 <style>
+.vkl-admin-menu-button {
+  width:100%; min-height:58px; display:flex; align-items:center; gap:12px;
+  padding:11px 15px; border:1px solid #aeb5c1; border-radius:13px;
+  background:#cfd3dc; color:#222936; text-align:left; font-size:14px;
+  box-shadow:0 3px 9px #263d8010;
+}
+.vkl-admin-menu-button > span:first-child {font-size:23px; width:30px; text-align:center}
+.vkl-admin-menu-button b {flex:1}
+.vkl-admin-menu-arrow {font-size:25px; line-height:1; opacity:.7}
+body.dark .vkl-admin-menu-button {background:#202b3d; color:#fff; border-color:#40516b}
+.vkl-admin-back {
+  width:100%; padding:10px 12px; margin-bottom:12px; border:1px solid #aeb5c1;
+  border-radius:10px; background:#cfd3dc; color:#222936; font-weight:800; text-align:left;
+}
+body.dark .vkl-admin-back {background:#293650; color:#fff; border-color:#52617f}
+.vkl-admin-subpanel {margin-top:0 !important}
+</style>
+<style>
 .vkl-account-tab {
   flex: 1;
   padding: 12px 4px;
@@ -2361,12 +2379,21 @@ body.dark #vkl-tab-security input {
 if (isOwnerAccount) {
   body.insertAdjacentHTML("beforeend", `
     <div id="vkl-tab-topup" style="display:none;margin-top:18px;text-align:left">
-      <section class="admin-dark-panel">
+      <div id="vkl-admin-menu" style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px">
+        <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('topup-requests')"><span>📥</span><b>YÊU CẦU NẠP TIỀN</b><span class="vkl-admin-menu-arrow">›</span></button>
+        <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('wallet')"><span>🪙</span><b>QUẢN LÝ VÍ TIỀN</b><span class="vkl-admin-menu-arrow">›</span></button>
+        <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('orders')"><span>📦</span><b>QUẢN LÝ ĐƠN HÀNG</b><span class="vkl-admin-menu-arrow">›</span></button>
+        <button type="button" class="vkl-admin-menu-button" onclick="window.showAdminSection('accounts')"><span>👥</span><b>QUẢN LÝ TÀI KHOẢN</b><span class="vkl-admin-menu-arrow">›</span></button>
+      </div>
+
+      <section id="vkl-admin-panel-topup-requests" class="admin-dark-panel vkl-admin-subpanel" style="display:none">
+        <button type="button" class="vkl-admin-back" onclick="window.showAdminSection('')">← QUAY LẠI DANH MỤC</button>
         <h3>📥 YÊU CẦU NẠP TIỀN</h3>
         <div id="vkl-topup-admin-list">Đang tải...</div>
       </section>
 
-      <section class="admin-dark-panel" style="margin-top:16px">
+      <section id="vkl-admin-panel-wallet" class="admin-dark-panel vkl-admin-subpanel" style="display:none;margin-top:0">
+        <button type="button" class="vkl-admin-back" onclick="window.showAdminSection('')">← QUAY LẠI DANH MỤC</button>
         <h3>🪙 QUẢN LÝ VÍ TIỀN</h3>
         <label>ID tài khoản khách hàng</label>
         <input id="vkl-wallet-admin-id" type="text" inputmode="numeric" maxlength="6"
@@ -2381,12 +2408,14 @@ if (isOwnerAccount) {
         </div>
       </section>
 
-      <section id="vkl-order-admin-section" class="admin-dark-panel" style="margin-top:16px">
+      <section id="vkl-order-admin-section" class="admin-dark-panel vkl-admin-subpanel" style="display:none;margin-top:0">
+        <button type="button" class="vkl-admin-back" onclick="window.showAdminSection('')">← QUAY LẠI DANH MỤC</button>
         <h3>📦 QUẢN LÝ TIẾN ĐỘ ĐƠN HÀNG</h3>
         <div id="vkl-order-admin" style="margin-top:12px"></div>
       </section>
 
-      <section class="admin-dark-panel" style="margin-top:16px">
+      <section id="vkl-admin-panel-accounts" class="admin-dark-panel vkl-admin-subpanel" style="display:none;margin-top:0">
+        <button type="button" class="vkl-admin-back" onclick="window.showAdminSection('')">← QUAY LẠI DANH MỤC</button>
         <h3>👥 QUẢN LÝ TÀI KHOẢN</h3>
         <input id="vkl-account-search" type="text"
           placeholder="Tìm theo ID, tên, số điện thoại hoặc email"
@@ -5790,6 +5819,23 @@ window.customerLogin = async function() {
 
     message.textContent = errors[error.code] || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!";
   }
+};
+window.showAdminSection = function(section) {
+  const panels = {
+    "topup-requests": "vkl-admin-panel-topup-requests",
+    "wallet": "vkl-admin-panel-wallet",
+    "orders": "vkl-order-admin-section",
+    "accounts": "vkl-admin-panel-accounts"
+  };
+  const menu = document.getElementById("vkl-admin-menu");
+  Object.entries(panels).forEach(([key, id]) => {
+    const panel = document.getElementById(id);
+    if (panel) panel.style.display = section === key ? "block" : "none";
+  });
+  if (menu) menu.style.display = section ? "none" : "flex";
+  if (section === "topup-requests" && window.renderTopupAdminList) window.renderTopupAdminList();
+  if (section === "orders" && window.renderOrderAdmin) window.renderOrderAdmin();
+  if (section === "accounts" && window.loadAccountAdminList) window.loadAccountAdminList();
 };
 window.showAccountTab = function(tab) {
   const tabs = ["info", "security", "intro", "topup"];
