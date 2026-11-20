@@ -1516,7 +1516,7 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
     <small id="quantityLabel">Trạng Thái</small>
     <span style="display:flex;align-items:center;gap:7px;margin-top:6px;">
      <strong id="quantity" style="margin-top:0;">0</strong>
-     <button id="serviceStatusGear" type="button" onclick="openServiceStatusSettings()" aria-label="Chỉnh sửa trạng thái" title="Chỉnh sửa trạng thái" style="display:none;width:22px;height:22px;min-width:22px;padding:0;border:0;border-radius:6px;background:#e8eaff;color:#4e49d9;font-size:12px;line-height:22px;">⚙</button>
+     <button id="serviceStatusGear" type="button" onclick="openServiceStatusSettings()" aria-label="Chỉnh sửa trạng thái" title="Chỉnh sửa trạng thái" style="display:none;width:22px;height:22px;min-width:22px;padding:0;border:0;border-radius:0;background:transparent;color:#4e49d9;font-size:12px;line-height:22px;box-shadow:none;">⚙</button>
     </span>
    </div>
   </div>
@@ -8106,9 +8106,25 @@ body.dark textarea::placeholder {
 
 <style>
 /* NÚT BÁNH RĂNG CHỈNH TRẠNG THÁI DỊCH VỤ */
-#serviceStatusGear { flex:none; cursor:pointer; -webkit-tap-highlight-color:transparent; }
-#serviceStatusGear:active { transform:scale(.92); }
-body.dark #serviceStatusGear { background:#35415d!important; color:#d9ddff!important; }
+#serviceStatusGear {
+  flex:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  appearance:none;
+  background:transparent!important;
+  border:0!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+#serviceStatusGear:active {
+  transform:scale(.92);
+  background:transparent!important;
+  box-shadow:none!important;
+}
+body.dark #serviceStatusGear {
+  background:transparent!important;
+  color:#d9ddff!important;
+}
 #quantity.status-ended { color:#ff465d!important; text-shadow:0 0 5px #ff465d88!important; }
 </style>
 <script>
