@@ -7761,7 +7761,14 @@ body:not(.dark) #vkl-order-admin-section #vkl-order-admin > div {
   background:#fff; color:#263247; box-shadow:none; overflow:hidden;
   flex-direction:column; padding-bottom:env(safe-area-inset-bottom);
 }
-#vkl-chat-panel.show { display:flex; }
+#vkl-chat-panel.show { display:flex; animation:vklSupportSlideUp .38s cubic-bezier(.22,.75,.25,1) both; }
+@keyframes vklSupportSlideUp {
+  from { transform:translateY(100%); opacity:.75; }
+  to { transform:translateY(0); opacity:1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #vkl-chat-panel.show { animation:none; }
+}
 #vkl-chat-header {
   position:relative; display:block; flex:none; min-height:150px; box-sizing:border-box;
   padding:38px 28px 24px; background:linear-gradient(115deg,#5688ef,#514bd5);
