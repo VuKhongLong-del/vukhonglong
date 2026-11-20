@@ -859,6 +859,22 @@ body:not(.dark) #vkl-wallet-admin-result *,
 body:not(.dark) #vkl-account-admin-list * {
   color: #222936 !important;
 }
+/* PHẦN BÊN TRONG KHUNG QUẢN LÝ ĐƠN HÀNG: BỎ VIỀN PHỤ, GIỮ VIỀN HỒNG KHUNG NGOÀI */
+#vkl-order-admin > .admin-dark-panel {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+#vkl-order-admin > .admin-dark-panel::after {
+  display: none !important;
+  content: none !important;
+}
+#vkl-order-admin > .admin-dark-panel > div {
+  border-color: transparent !important;
+}
+
 /* KHUNG TRA CỨU TIẾN ĐỘ ĐƠN HÀNG */
 .progress-lookup-box {
   background: #ffffff;
