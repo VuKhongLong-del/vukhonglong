@@ -4837,24 +4837,53 @@ window.renderOrderAdmin = async function() {
 
   area.innerHTML = "Đang tải danh sách đơn hàng...";
 
+  const hiddenKey = "vkl_hidden_order_ids";
+  const getHiddenOrderIds = () => {
+    try {
+      return new Set(JSON.parse(localStorage.getItem(hiddenKey) || "[]"));
+    } catch (error) {
+      return new Set();
+    }
+  };
+
   try {
     const snapshot = await db.collection("orders")
       .orderBy("createdAt", "desc")
       .limit(50)
       .get();
 
+    const allOrders = [];
+    snapshot.forEach(doc => {
+      if (!/^VKL-[A-F0-9]{32}$/.test(doc.id)) return;
+      allOrders.push({ id: doc.id, order: doc.data() });
+    });
+
+    const hiddenIds = getHiddenOrderIds();
+    const visibleOrders = allOrders.filter(item => !hiddenIds.has(item.id));
+
     let html = `
       <div class="admin-dark-panel">
         <h3 style="text-align:center;">🔐 QUẢN LÝ TIẾN ĐỘ ĐƠN HÀNG</h3>
 
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <button type="button" onclick="window.hideAllOrderAdmin()"
+            style="flex:1;min-width:145px;padding:10px;border:0;border-radius:8px;background:#596579;color:white;font-weight:bold;">
+            🙈 ẨN TOÀN BỘ ĐƠN HÀNG
+          </button>
+          <button type="button" onclick="window.restoreHiddenOrderAdmin()"
+            style="flex:1;min-width:145px;padding:10px;border:0;border-radius:8px;background:#287a58;color:white;font-weight:bold;">
+            ↩️ HIỆN LẠI ĐƠN ĐÃ ẨN
+          </button>
+        </div>
+
         <div style="background:#293650;padding:14px;border-radius:12px;margin-top:12px;">
           <b>NHẬP MÃ ĐƠN KHÁCH HÀNG</b>
           <input
-  id="vkl-admin-order-code"
-  type="text"
-  placeholder="Nhập mã đơn VKL-XXXXXX"
-  style="width:100%;box-sizing:border-box;padding:12px;margin-top:10px;border:1px solid #52617f;border-radius:8px;background:#293650;color:white;"
->
+            id="vkl-admin-order-code"
+            type="text"
+            placeholder="Nhập mã đơn VKL-XXXXXX"
+            style="width:100%;box-sizing:border-box;padding:12px;margin-top:10px;border:1px solid #52617f;border-radius:8px;background:#293650;color:white;"
+          >
           <button
             onclick="window.updateOrderProgressByCode()"
             style="width:100%;padding:12px;margin-top:10px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold;"
@@ -4870,14 +4899,11 @@ window.renderOrderAdmin = async function() {
 
     if (snapshot.empty) {
       html += "<p>Chưa có đơn hàng nào.</p>";
+    } else if (!visibleOrders.length) {
+      html += "<p style='text-align:center;'>Không còn đơn hàng đang hiển thị.</p>";
     }
 
-    snapshot.forEach(doc => {
-      const order = doc.data();
-      const id = doc.id;
-
-      if (!/^VKL-[A-F0-9]{32}$/.test(id)) return;
-
+    visibleOrders.forEach(({id, order}) => {
       html += `
         <div style="background:#293650;padding:13px;border-radius:12px;margin-top:12px;">
           <b>${escapeOrderText(id)}</b>
@@ -4889,20 +4915,69 @@ window.renderOrderAdmin = async function() {
             style="width:100%;padding:11px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold;">
             CẬP NHẬT TIẾN ĐỘ
           </button>
+          <button type="button" onclick="window.hideOrderAdmin('${id}')"
+            style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:9px;background:#596579;color:white;font-weight:bold;">
+            🙈 ẨN ĐƠN HÀNG NÀY
+          </button>
         </div>
       `;
     });
 
     html += "</div>";
     area.innerHTML = html;
-
-
   } catch(error) {
     console.error("Lỗi tải danh sách đơn:", error);
     area.textContent = "Không tải được danh sách đơn hàng.";
   }
 };
 
+window.hideOrderAdmin = function(id) {
+  if (!currentManager || currentManager.email !== managerEmail) {
+    alert("Bạn không có quyền thực hiện.");
+    return;
+  }
+  const key = "vkl_hidden_order_ids";
+  let ids = [];
+  try { ids = JSON.parse(localStorage.getItem(key) || "[]"); } catch (error) {}
+  if (!ids.includes(id)) ids.push(id);
+  localStorage.setItem(key, JSON.stringify(ids));
+  window.renderOrderAdmin();
+};
+
+window.hideAllOrderAdmin = async function() {
+  if (!currentManager || currentManager.email !== managerEmail) {
+    alert("Bạn không có quyền thực hiện.");
+    return;
+  }
+  if (!confirm("Ẩn toàn bộ đơn hàng đang hiển thị? Dữ liệu đơn hàng vẫn được giữ nguyên.")) return;
+  try {
+    const snapshot = await db.collection("orders")
+      .orderBy("createdAt", "desc")
+      .limit(50)
+      .get();
+    const key = "vkl_hidden_order_ids";
+    let ids = [];
+    try { ids = JSON.parse(localStorage.getItem(key) || "[]"); } catch (error) {}
+    const hidden = new Set(ids);
+    snapshot.forEach(doc => {
+      if (/^VKL-[A-F0-9]{32}$/.test(doc.id)) hidden.add(doc.id);
+    });
+    localStorage.setItem(key, JSON.stringify([...hidden]));
+    window.renderOrderAdmin();
+  } catch (error) {
+    console.error("Lỗi ẩn đơn hàng:", error);
+    alert("Không thể ẩn danh sách đơn hàng.");
+  }
+};
+
+window.restoreHiddenOrderAdmin = function() {
+  if (!currentManager || currentManager.email !== managerEmail) {
+    alert("Bạn không có quyền thực hiện.");
+    return;
+  }
+  localStorage.removeItem("vkl_hidden_order_ids");
+  window.renderOrderAdmin();
+};
 
 window.updateOrderProgressByCode = async function() {
   if (!currentManager || currentManager.email !== managerEmail) {
