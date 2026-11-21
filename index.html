@@ -4484,62 +4484,41 @@ window.loadCustomerOrderHistory = async function(){
   if(!user){ area.textContent = "Vui lòng đăng nhập để xem lịch sử đơn hàng."; return; }
   area.textContent = "Đang tải lịch sử đơn hàng...";
   try{
-    // Đọc lịch sử trực tiếp từ Firestore theo UID đang đăng nhập.
-    // Không phụ thuộc Cloudflare Worker đã bị xóa.
-    const snapshot = await db.collection("orders")
-      .where("userId", "==", user.uid)
-      .limit(100)
-      .get();
-    const rows = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      .sort((a, b) => {
-        const timeOf = value => value && typeof value.toMillis === "function"
-          ? value.toMillis()
-          : (value ? new Date(value).getTime() : 0);
-        return timeOf(b.createdAt || b.date) - timeOf(a.createdAt || a.date);
-      });
-    area.innerHTML = "";
-    if(!rows.length){ area.textContent = "Bạn chưa có đơn hàng nào."; return; }
-    rows.forEach(order => {
-      const item = document.createElement("div");
-      item.className = "history-item";
-      const title = document.createElement("b");
-      title.textContent = (order.service || "Đơn hàng") + " - " + order.id;
-      const detail = document.createElement("p");
-      detail.className = "muted";
-      detail.textContent = "Số lượng: " + (order.count || 1) + " · " + money(Number(order.total || 0)) + " · " + (order.date || "");
-      const status = document.createElement("p");
-      status.className = "muted";
-      const isAccountOrder = order.service === "ACC CLONE LV0" || order.service === "ACC CLONE LV12";
-      const accounts = Array.isArray(order.deliveredAccounts) ? order.deliveredAccounts : [];
-      status.textContent = isAccountOrder ? ("Trạng thái: " + (order.deliveryStatus || (accounts.length ? "Đã giao tài khoản" : "Chờ giao tài khoản"))) : (order.deliveryStatus || "Đã tiếp nhận");
-      item.append(title, detail, status);
-      if(isAccountOrder && accounts.length){
-        const view = document.createElement("button");
-        view.type = "button";
-        view.textContent = "👁️ XEM TÀI KHOẢN";
-        view.style.cssText = "width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold";
-        const credentials = document.createElement("pre");
-        credentials.className = "vkl-delivered-credentials";
-        credentials.style.cssText = "display:none;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;margin-top:8px;border-radius:9px;font:14px/1.6 inherit;box-sizing:border-box;width:100%;";
-        credentials.textContent = accounts.map((account,index) => (index+1) + ". TK: " + String(account.account || "") + "\nMK: " + String(account.password || "")).join("\n\n");
-        view.onclick = () => {
-          const opening = credentials.style.display === "none";
-          credentials.style.display = opening ? "block" : "none";
-          view.textContent = opening ? "ẨN TÀI KHOẢN" : "👁️ XEM TÀI KHOẢN";
-        };
-        item.append(view, credentials);
-      } else if(isAccountOrder){
-        const pending = document.createElement("p");
-        pending.className = "muted";
-        pending.textContent = "Tài khoản sẽ hiển thị tại đây sau khi admin gửi.";
-        item.appendChild(pending);
+    const snapshot = await db.collection("orders").where("userId","==",user.uid).limit(100).get();
+    const rows = snapshot.docs.map(doc=>({id:doc.id,...doc.data()})).sort((a,b)=>{
+      const timeOf=v=>v&&typeof v.toMillis==="function"?v.toMillis():(v?new Date(v).getTime():0);
+      return timeOf(b.createdAt||b.date)-timeOf(a.createdAt||a.date);
+    });
+    area.innerHTML="";
+    if(!rows.length){area.textContent="Bạn chưa có đơn hàng nào.";return;}
+    for(const order of rows){
+      const item=document.createElement("div"); item.className="history-item";
+      const title=document.createElement("b"); title.textContent=(order.service||"Đơn hàng")+" - "+order.id;
+      const detail=document.createElement("p"); detail.className="muted";
+      detail.textContent="Số lượng: "+(order.count||1)+" · "+money(Number(order.total||0))+" · "+(order.date||"");
+      const status=document.createElement("p"); status.className="muted";
+      const isAccountOrder=order.service==="ACC CLONE LV0"||order.service==="ACC CLONE LV12";
+      let accounts=Array.isArray(order.deliveredAccounts)?order.deliveredAccounts:[];
+      if(isAccountOrder&&Number(order.deliveredAccountCount||0)>0){
+        const parts=await db.collection("orders").doc(order.id).collection("deliveredAccounts").orderBy("index","asc").get();
+        accounts=[]; parts.forEach(part=>{const a=part.data().accounts;if(Array.isArray(a))accounts.push(...a);});
+      }
+      status.textContent=isAccountOrder?("Trạng thái: "+(order.deliveryStatus||(accounts.length?"Đã giao tài khoản":"Chờ giao tài khoản"))):(order.deliveryStatus||"Đã tiếp nhận");
+      item.append(title,detail,status);
+      if(isAccountOrder&&accounts.length){
+        const view=document.createElement("button"); view.type="button"; view.textContent="👁️ XEM TÀI KHOẢN";
+        view.style.cssText="width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold";
+        const credentials=document.createElement("pre"); credentials.className="vkl-delivered-credentials";
+        credentials.style.cssText="display:none;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;margin-top:8px;border-radius:8px;font:14px/1.6 inherit;box-sizing:border-box;width:100%;";
+        credentials.textContent=accounts.map((a,i)=>(i+1)+". TK: "+String(a.account||"")+"\nMK: "+String(a.password||"")).join("\n\n");
+        view.onclick=()=>{const opening=credentials.style.display==="none";credentials.style.display=opening?"block":"none";view.textContent=opening?"ẨN TÀI KHOẢN":"👁️ XEM TÀI KHOẢN";};
+        item.append(view,credentials);
+      }else if(isAccountOrder){
+        const pending=document.createElement("p"); pending.className="muted"; pending.textContent="Tài khoản sẽ hiển thị tại đây sau khi admin gửi."; item.appendChild(pending);
       }
       area.appendChild(item);
-    });
-  }catch(error){
-    console.error("Lỗi tải lịch sử đơn hàng:",error);
-    area.textContent = "Không tải được lịch sử đơn hàng: " + (error.message || error);
-  }
+    }
+  }catch(error){console.error("Lỗi tải lịch sử đơn hàng:",error);area.textContent="Không tải được lịch sử đơn hàng: "+(error.message||error);}
 };
 
 window.lookupOrderProgress = async function() {
@@ -5225,7 +5204,7 @@ window.renderOrderAdmin = async function() {
             <label style="display:block;margin:9px 0 5px;color:#fff">Nhập TK và MK (mỗi dòng một tài khoản, cách nhau bằng dấu cách)</label>
             <textarea id="vkl-delivery-${id}" placeholder="taikhoan1 matkhau1&#10;taikhoan2 matkhau2" style="width:100%;min-height:90px;box-sizing:border-box;padding:10px;border-radius:8px;background:#fff;color:#172033"></textarea>
             <button type="button" onclick="window.deliverOrderAccounts('${id}')" style="width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold">
-              ${Array.isArray(order.deliveredAccounts) && order.deliveredAccounts.length ? "CẬP NHẬT TÀI KHOẢN" : "GỬI TÀI KHOẢN CHO KHÁCH"}
+              ${(Number(order.deliveredAccountCount || 0) > 0 || (Array.isArray(order.deliveredAccounts) && order.deliveredAccounts.length)) ? "CẬP NHẬT TÀI KHOẢN" : "GỬI TÀI KHOẢN CHO KHÁCH"}
             </button>
           ` : ""}
           <button onclick="window.updateOrderProgress('${id}')"
@@ -5250,121 +5229,64 @@ window.renderOrderAdmin = async function() {
 
 
 window.deliverOrderAccounts = async function(orderId){
-  if(!currentManager || currentManager.email !== managerEmail || !currentManager.emailVerified){
-    alert("Bạn không có quyền gửi tài khoản."); return;
-  }
-
-  const input = document.getElementById("vkl-delivery-" + orderId);
-  const lines = String(input && input.value || "")
-    .split(/\r?\n/)
-    .map(line => line.trim())
-    .filter(Boolean);
-
-  const accounts = [];
-  const seenAccounts = new Set();
-
+  if(!currentManager||currentManager.email!==managerEmail||!currentManager.emailVerified){alert("Bạn không có quyền gửi tài khoản.");return;}
+  const input=document.getElementById("vkl-delivery-"+orderId);
+  const lines=String(input&&input.value||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const accounts=[],seen=new Set();
   for(const line of lines){
-    const match = line.match(/^(\S+)\s+(.+)$/);
-    if(!match){
-      alert("Dòng không hợp lệ: " + line + "\nĐịnh dạng: tài khoản mật khẩu");
-      return;
-    }
-
-    const account = match[1].trim();
-    const password = match[2].trim();
-    const key = account.toLowerCase();
-
-    if(seenAccounts.has(key)){
-      alert("Tài khoản bị lặp: " + account);
-      return;
-    }
-
-    seenAccounts.add(key);
-    accounts.push({account, password});
+    const match=line.match(/^(\S+)\s+(.+)$/);
+    if(!match){alert("Dòng không hợp lệ: "+line+"\nĐịnh dạng: tài khoản mật khẩu");return;}
+    const account=match[1].trim(),password=match[2].trim(),key=account.toLowerCase();
+    if(seen.has(key)){alert("Tài khoản bị lặp: "+account);return;}
+    seen.add(key);accounts.push({account,password});
   }
-
-  if(!accounts.length){
-    alert("Vui lòng nhập ít nhất một tài khoản.");
-    return;
-  }
-
-  if(!confirm("Gửi " + accounts.length + " tài khoản cho đơn " + orderId + "?")) return;
-
+  if(!accounts.length){alert("Vui lòng nhập ít nhất một tài khoản.");return;}
+  if(accounts.length>100){alert("Mỗi đơn chỉ được giao tối đa 100 tài khoản.");return;}
+  if(!confirm("Gửi "+accounts.length+" tài khoản cho đơn "+orderId+"?"))return;
   try{
-    const orderRef = db.collection("orders").doc(orderId);
-    const trackingRef = db.collection("orderTracking").doc(orderId);
-
-    const beforeSnap = await orderRef.get();
-    if(!beforeSnap.exists) throw new Error("Không tìm thấy đơn hàng.");
-
-    const beforeOrder = beforeSnap.data();
-    const alreadyDelivered =
-      Array.isArray(beforeOrder.deliveredAccounts) &&
-      beforeOrder.deliveredAccounts.length > 0;
-
-    let replaceConfirmed = false;
-    if(alreadyDelivered){
-      replaceConfirmed = confirm("Đơn này đã có tài khoản được giao. Bạn có chắc muốn thay thế toàn bộ tài khoản đã gửi?");
-      if(!replaceConfirmed) return;
+    const orderRef=db.collection("orders").doc(orderId),trackingRef=db.collection("orderTracking").doc(orderId);
+    const orderSnap=await orderRef.get();
+    if(!orderSnap.exists)throw new Error("Không tìm thấy đơn hàng.");
+    const order=orderSnap.data();
+    if(order.service!=="ACC CLONE LV0"&&order.service!=="ACC CLONE LV12")throw new Error("Đơn hàng này không phải đơn ACC CLONE.");
+    const already=Number(order.deliveredAccountCount||0)>0||(Array.isArray(order.deliveredAccounts)&&order.deliveredAccounts.length>0);
+    if(already&&!confirm("Đơn này đã có tài khoản được giao. Bạn có chắc muốn thay thế toàn bộ tài khoản đã gửi?"))return;
+    if(accounts.length!==Number(order.count||0))throw new Error("Đơn này yêu cầu "+Number(order.count||0)+" tài khoản nhưng bạn đang nhập "+accounts.length+" tài khoản.");
+    const trackingSnap=await trackingRef.get();
+    if(!trackingSnap.exists)throw new Error("Không tìm thấy dữ liệu tiến độ đơn hàng.");
+    const chunksRef=orderRef.collection("deliveredAccounts");
+    const oldChunks=await chunksRef.get();
+    const batch=db.batch();
+    oldChunks.forEach(doc=>batch.delete(doc.ref));
+    // 20 acc moi tai lieu, giam nguy co vuot gioi han 1 MiB/tai lieu.
+    for(let i=0;i<accounts.length;i+=20){
+      const index=Math.floor(i/20);
+      batch.set(chunksRef.doc("part_"+String(index).padStart(3,"0")),{
+        index:index,accounts:accounts.slice(i,i+20),createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
-
-    await db.runTransaction(async transaction => {
-      const orderSnap = await transaction.get(orderRef);
-      const trackingSnap = await transaction.get(trackingRef);
-
-      if(!orderSnap.exists) throw new Error("Không tìm thấy đơn hàng.");
-      if(!trackingSnap.exists) throw new Error("Không tìm thấy dữ liệu tiến độ đơn hàng.");
-
-      const order = orderSnap.data();
-      const isAccountOrder =
-        order.service === "ACC CLONE LV0" ||
-        order.service === "ACC CLONE LV12";
-
-      if(!isAccountOrder) throw new Error("Đơn hàng này không phải đơn ACC CLONE.");
-
-      const requiredCount = Number(order.count || 0);
-      if(accounts.length !== requiredCount){
-        throw new Error(
-          "Đơn này yêu cầu " + requiredCount +
-          " tài khoản nhưng bạn đang nhập " + accounts.length +
-          " tài khoản. Vui lòng nhập đúng số lượng."
-        );
-      }
-
-      const currentlyDelivered =
-        Array.isArray(order.deliveredAccounts) &&
-        order.deliveredAccounts.length > 0;
-
-      if(currentlyDelivered && !replaceConfirmed){
-        throw new Error("Đơn đã được giao tài khoản trước đó. Hãy tải lại danh sách đơn hàng.");
-      }
-
-      transaction.update(orderRef, {
-        deliveredAccounts: accounts,
-        deliveryStatus: "Đã giao tài khoản",
-        deliveredAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      transaction.update(trackingRef, {
-        status: "Đã giao tài khoản",
-        progress: 100,
-        eta: "Đã hoàn tất",
-        note: "Admin đã giao đủ " + accounts.length + " tài khoản cho khách.",
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
+    batch.update(orderRef,{
+      deliveredAccountCount:accounts.length,
+      deliveredAccounts:firebase.firestore.FieldValue.delete(),
+      deliveryStatus:"Đã giao tài khoản",
+      deliveredAt:firebase.firestore.FieldValue.serverTimestamp()
     });
-
-    alert(
-      "ĐÃ GỬI TÀI KHOẢN THÀNH CÔNG!\n\n" +
-      "Mã đơn: " + orderId +
-      "\nSố tài khoản: " + accounts.length +
-      "\nKhách có thể vào Lịch sử đơn hàng để xem tài khoản."
-    );
-
+    batch.update(trackingRef,{
+      status:"Đã giao tài khoản",progress:100,eta:"Đã hoàn tất",
+      note:"Admin đã giao đủ "+accounts.length+" tài khoản cho khách.",
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await batch.commit();
+    alert("ĐÃ GỬI TÀI KHOẢN THÀNH CÔNG!\n\nMã đơn: "+orderId+"\nSố tài khoản: "+accounts.length+"\nKhách có thể vào Lịch sử đơn hàng để xem tài khoản.");
     await window.renderOrderAdmin();
   }catch(error){
-    console.error("Lỗi gửi tài khoản:", error);
-    alert("Không gửi được tài khoản: " + (error.message || error));
+    console.error("Lỗi gửi tài khoản:",error);
+    const message=error&&error.message?error.message:String(error);
+    if(/quota|resource.?exhausted/i.test(message)){
+      alert("Firestore đang hết hạn mức đọc/ghi hoặc dung lượng. Chia nhỏ dữ liệu không thể vượt hạn mức Firebase. Vui lòng kiểm tra Usage trong Firebase Console.\n\nChi tiết: "+message);
+    }else if(/permission|insufficient/i.test(message)){
+      alert("Firestore chưa có quy tắc cho nơi lưu tài khoản mới. Hãy thêm quy tắc orders/{orderId}/deliveredAccounts/{chunkId} rồi Publish.\n\nChi tiết: "+message);
+    }else alert("Không gửi được tài khoản: "+message);
   }
 };
 
