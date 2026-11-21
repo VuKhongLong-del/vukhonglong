@@ -143,6 +143,7 @@ function field(value) {
   if (value.integerValue !== undefined) return Number(value.integerValue);
   if (value.doubleValue !== undefined) return Number(value.doubleValue);
   if (value.booleanValue !== undefined) return value.booleanValue;
+  if (value.timestampValue !== undefined) return value.timestampValue;
   if (value.mapValue) return decodeFields(value.mapValue.fields || {});
   if (value.arrayValue) return (value.arrayValue.values || []).map(field);
   return null;
@@ -359,7 +360,6 @@ async function listCustomerOrders(env, uid) {
           value: str(uid)
         }
       },
-      orderBy: [{ field: { fieldPath: "createdAt" }, direction: "DESCENDING" }],
       limit: 100
     }
   });
@@ -369,7 +369,8 @@ async function listCustomerOrders(env, uid) {
       const doc = row.document;
       return { id: doc.name.split("/").pop(), ...(getDocumentFields(doc) || {}) };
     })
-    .filter(order => /^VKL-[A-F0-9]{32}$/.test(order.id));
+    .filter(order => /^VKL-[A-F0-9]{32}$/.test(order.id))
+    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
   return { orders };
 }
 
