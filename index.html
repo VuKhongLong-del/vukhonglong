@@ -3926,9 +3926,7 @@ window.auth.onAuthStateChanged(user => {
 
   const username = user.email ? user.email.split("@")[0] : "Chưa có tên";
 
-  if (typeof window.loadCustomerWallet === "function") {
-    window.loadCustomerWallet(user.uid, username);
-  }
+  // Ví được tải bởi listener chính ở phần dưới; tránh đọc ví hai lần khi đăng nhập.
 });
 window.loadCustomerContact = async function() {
   const user = window.auth?.currentUser;
@@ -5635,7 +5633,8 @@ rankImage.style.setProperty("--rank-glow", glowColors[index]);
       try {
         const historySnap = await db.collection("coinTransactions")
           .where("uid", "==", uid)
-          .limit(50)
+          .orderBy("createdAt", "desc")
+          .limit(20)
           .get();
 
         if (historySnap.empty) {
@@ -5708,7 +5707,8 @@ window.loadTransferHistory = async function() {
 
     const snapshot = await db.collection("coinTransactions")
       .where("uid", "==", user.uid)
-      .limit(100)
+      .orderBy("createdAt", "desc")
+      .limit(30)
       .get();
 
     const items = snapshot.docs
