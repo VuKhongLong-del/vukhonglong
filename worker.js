@@ -274,6 +274,8 @@ async function buyLv0(env, uid, claims, input) {
       if (oldOrder.userId !== uid || !oldOrder.deliveredAccounts) {
         throw new Error("Mã đơn này đã được sử dụng.");
       }
+      // Close the read-only transaction before returning an idempotent result.
+      await firestoreRequest(":rollback", token, { transaction: tx });
       return {
         orderId,
         deliveredAccounts: oldOrder.deliveredAccounts,
@@ -507,21 +509,26 @@ export default {
       );
     }
 
+    let stage = "request";
     try {
+      stage = "authorization";
       const authorization = request.headers.get("Authorization") || "";
       if (!authorization.startsWith("Bearer ")) {
         throw new Error("Vui lòng đăng nhập lại.");
       }
 
+      stage = "firebase-token";
       const claims = await verifyFirebaseToken(
         authorization.slice(7)
       );
+      stage = "request-body";
       const input = await request.json();
 
       if (input.service !== "cloneLv0") {
         throw new Error("Worker chỉ xử lý đơn ACC CLONE LV0.");
       }
 
+      stage = "firestore-purchase";
       const result = await buyLv0(env, claims.sub, claims, input);
 
       return response({
@@ -530,10 +537,17 @@ export default {
       }, 200, origin);
 
     } catch (error) {
+      // Return readable CORS-enabled diagnostics instead of a browser-level
+      // "Load failed"; never include tokens, private keys, or account data.
+      const message = error && error.message
+        ? error.message
+        : "Đã xảy ra lỗi không xác định.";
+      const clientError = /Token|đăng nhập|Phiên|Mã đơn|Số lượng|Số dư|Kho ACC|Worker chỉ|Origin/i.test(message);
       return response({
         success: false,
-        error: error.message || "Đã xảy ra lỗi."
-      }, 400, origin);
+        stage,
+        error: message
+      }, clientError ? 400 : 500, origin);
     }
   }
 };
