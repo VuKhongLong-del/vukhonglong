@@ -4498,20 +4498,37 @@ window.loadCustomerOrderHistory = async function(){
       detail.textContent="Số lượng: "+(order.count||1)+" · "+money(Number(order.total||0))+" · "+(order.date||"");
       const status=document.createElement("p"); status.className="muted";
       const isAccountOrder=order.service==="ACC CLONE LV0"||order.service==="ACC CLONE LV12";
-      let accounts=Array.isArray(order.deliveredAccounts)?order.deliveredAccounts:[];
-      if(isAccountOrder&&Number(order.deliveredAccountCount||0)>0){
-        const parts=await db.collection("orders").doc(order.id).collection("deliveredAccounts").orderBy("index","asc").get();
-        accounts=[]; parts.forEach(part=>{const a=part.data().accounts;if(Array.isArray(a))accounts.push(...a);});
-      }
-      status.textContent=isAccountOrder?("Trạng thái: "+(order.deliveryStatus||(accounts.length?"Đã giao tài khoản":"Chờ giao tài khoản"))):(order.deliveryStatus||"Đã tiếp nhận");
+      const legacyAccounts=Array.isArray(order.deliveredAccounts)?order.deliveredAccounts:[];
+      const hasChunkedAccounts=isAccountOrder&&Number(order.deliveredAccountCount||0)>0;
+      status.textContent=isAccountOrder?("Trạng thái: "+(order.deliveryStatus||(legacyAccounts.length||hasChunkedAccounts?"Đã giao tài khoản":"Chờ giao tài khoản"))):(order.deliveryStatus||"Đã tiếp nhận");
       item.append(title,detail,status);
-      if(isAccountOrder&&accounts.length){
+      if(isAccountOrder&&(legacyAccounts.length||hasChunkedAccounts)){
         const view=document.createElement("button"); view.type="button"; view.textContent="👁️ XEM TÀI KHOẢN";
         view.style.cssText="width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold";
         const credentials=document.createElement("pre"); credentials.className="vkl-delivered-credentials";
         credentials.style.cssText="display:none;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;margin-top:8px;border-radius:8px;font:14px/1.6 inherit;box-sizing:border-box;width:100%;";
-        credentials.textContent=accounts.map((a,i)=>(i+1)+". TK: "+String(a.account||"")+"\nMK: "+String(a.password||"")).join("\n\n");
-        view.onclick=()=>{const opening=credentials.style.display==="none";credentials.style.display=opening?"block":"none";view.textContent=opening?"ẨN TÀI KHOẢN":"👁️ XEM TÀI KHOẢN";};
+        let accounts=legacyAccounts.slice();
+        let loaded=legacyAccounts.length>0||!hasChunkedAccounts;
+        view.onclick=async()=>{
+          const opening=credentials.style.display==="none";
+          if(!opening){credentials.style.display="none";view.textContent="👁️ XEM TÀI KHOẢN";return;}
+          if(!loaded){
+            view.disabled=true; view.textContent="ĐANG TẢI...";
+            try{
+              const parts=await db.collection("orders").doc(order.id).collection("deliveredAccounts").orderBy("index","asc").get();
+              accounts=[]; parts.forEach(part=>{const a=part.data().accounts;if(Array.isArray(a))accounts.push(...a);});
+              loaded=true;
+            }catch(error){
+              console.error("Lỗi tải tài khoản đã giao:",error);
+              view.disabled=false; view.textContent="THỬ TẢI LẠI";
+              alert("Không tải được tài khoản: "+(error.message||error));
+              return;
+            }
+            view.disabled=false;
+          }
+          credentials.textContent=accounts.map((a,i)=>(i+1)+". TK: "+String(a.account||"")+"\nMK: "+String(a.password||"")).join("\n\n");
+          credentials.style.display="block"; view.textContent="ẨN TÀI KHOẢN";
+        };
         item.append(view,credentials);
       }else if(isAccountOrder){
         const pending=document.createElement("p"); pending.className="muted"; pending.textContent="Tài khoản sẽ hiển thị tại đây sau khi admin gửi."; item.appendChild(pending);
