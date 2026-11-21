@@ -1834,6 +1834,7 @@ async function submitConfirmedOrder(){
 
  const order = pendingOrder;
 
+ try {
  // ACC CLONE LV0: chỉ trừ Xu và tạo đơn chờ admin giao thủ công.
  if(order.service === "ACC CLONE LV0"){
   const user = window.auth && window.auth.currentUser;
