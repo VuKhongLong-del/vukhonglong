@@ -1513,7 +1513,7 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
    <label for="cloneQuantity">Số lượng tài khoản</label>
    <div style="display:flex;align-items:center;gap:10px;max-width:360px;">
     <button type="button" onclick="changeCloneQuantity(-1)" aria-label="Giảm số lượng" style="width:46px;height:46px;border:0;border-radius:10px;background:#6445e9;color:#fff;font-size:26px;font-weight:800;">−</button>
-    <input id="cloneQuantity" type="number" min="1" max="9999" step="1" value="1" inputmode="numeric" oninput="update()" style="flex:1;min-width:0;height:46px;text-align:center;font-size:18px;font-weight:800;border-radius:10px;border:1px solid #aeb5c1;background:var(--input-bg,#cfd3dc);color:var(--text-color,#222936);">
+    <input id="cloneQuantity" type="number" min="1" max="100" step="1" value="1" inputmode="numeric" oninput="update()" style="flex:1;min-width:0;height:46px;text-align:center;font-size:18px;font-weight:800;border-radius:10px;border:1px solid #aeb5c1;background:var(--input-bg,#cfd3dc);color:var(--text-color,#222936);">
     <button type="button" onclick="changeCloneQuantity(1)" aria-label="Tăng số lượng" style="width:46px;height:46px;border:0;border-radius:10px;background:#6445e9;color:#fff;font-size:26px;font-weight:800;">+</button>
    </div>
    <div class="muted" style="margin-top:8px;"></div>
@@ -1751,14 +1751,15 @@ function isCloneService(){
 function getCloneQuantity(){
  const input = document.getElementById("cloneQuantity");
  const value = Math.floor(Number(input.value));
- const max = selected === "cloneLv0" ? 5000 : 9999;
- return Number.isFinite(value) ? Math.min(max, Math.max(1, value || 1)) : 1;
+ const max = 100;
+ const quantity = Number.isFinite(value) ? Math.min(max, Math.max(1, value || 1)) : 1;
+ input.value = quantity;
+ return quantity;
 }
 
 function changeCloneQuantity(amount){
  const input = document.getElementById("cloneQuantity");
- const max = selected === "cloneLv0" ? 5000 : 9999;
- input.value = Math.min(max, Math.max(1, getCloneQuantity() + amount));
+ input.value = Math.min(100, Math.max(1, getCloneQuantity() + amount));
  update();
 }
 
