@@ -5117,30 +5117,106 @@ window.deliverOrderAccounts = async function(orderId){
   if(!currentManager || currentManager.email !== managerEmail || !currentManager.emailVerified){
     alert("Bạn không có quyền gửi tài khoản."); return;
   }
+
   const input = document.getElementById("vkl-delivery-" + orderId);
-  const lines = String(input && input.value || "").split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  const lines = String(input && input.value || "")
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+
   const accounts = [];
+  const seenAccounts = new Set();
+
   for(const line of lines){
     const match = line.match(/^(\S+)\s+(.+)$/);
-    if(!match){ alert("Dòng không hợp lệ: " + line + "\nĐịnh dạng: tài khoản mật khẩu"); return; }
-    accounts.push({account:match[1].trim(),password:match[2].trim()});
+    if(!match){
+      alert("Dòng không hợp lệ: " + line + "\nĐịnh dạng: tài khoản mật khẩu");
+      return;
+    }
+
+    const account = match[1].trim();
+    const password = match[2].trim();
+    const key = account.toLowerCase();
+
+    if(seenAccounts.has(key)){
+      alert("Tài khoản bị lặp: " + account);
+      return;
+    }
+
+    seenAccounts.add(key);
+    accounts.push({account, password});
   }
-  if(!accounts.length){ alert("Vui lòng nhập ít nhất một tài khoản."); return; }
+
+  if(!accounts.length){
+    alert("Vui lòng nhập ít nhất một tài khoản.");
+    return;
+  }
+
   if(!confirm("Gửi " + accounts.length + " tài khoản cho đơn " + orderId + "?")) return;
+
   try{
-    const token = await currentManager.getIdToken(true);
-    const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/api/orders/deliver",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","Authorization":"Bearer " + token},
-      body:JSON.stringify({action:"deliverOrder",orderId,accounts})
+    const orderRef = db.collection("orders").doc(orderId);
+    const trackingRef = db.collection("orderTracking").doc(orderId);
+
+    await db.runTransaction(async transaction => {
+      const orderSnap = await transaction.get(orderRef);
+      const trackingSnap = await transaction.get(trackingRef);
+
+      if(!orderSnap.exists) throw new Error("Không tìm thấy đơn hàng.");
+      if(!trackingSnap.exists) throw new Error("Không tìm thấy dữ liệu tiến độ đơn hàng.");
+
+      const order = orderSnap.data();
+      const isAccountOrder =
+        order.service === "ACC CLONE LV0" ||
+        order.service === "ACC CLONE LV12";
+
+      if(!isAccountOrder) throw new Error("Đơn hàng này không phải đơn ACC CLONE.");
+
+      const requiredCount = Number(order.count || 0);
+      if(accounts.length !== requiredCount){
+        throw new Error(
+          "Đơn này yêu cầu " + requiredCount +
+          " tài khoản nhưng bạn đang nhập " + accounts.length +
+          " tài khoản. Vui lòng nhập đúng số lượng."
+        );
+      }
+
+      const alreadyDelivered =
+        Array.isArray(order.deliveredAccounts) &&
+        order.deliveredAccounts.length > 0;
+
+      if(alreadyDelivered && !confirm("Đơn này đã có tài khoản được giao. Bạn có chắc muốn thay thế toàn bộ tài khoản đã gửi?")){
+        throw new Error("Đã hủy cập nhật tài khoản.");
+      }
+
+      transaction.update(orderRef, {
+        deliveredAccounts: accounts,
+        deliveryStatus: "Đã giao tài khoản",
+        deliveredAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      transaction.update(trackingRef, {
+        status: "Đã giao tài khoản",
+        progress: 100,
+        eta: "Đã hoàn tất",
+        note: "Admin đã giao đủ " + accounts.length + " tài khoản cho khách.",
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
     });
-    const result = await response.json();
-    if(!response.ok || !result.success) throw new Error(result.error || "Không gửi được tài khoản.");
-    alert("Đã lưu tài khoản cho đơn " + orderId + ". Khách có thể bấm XEM TÀI KHOẢN trong Lịch sử đơn hàng.");
+
+    alert(
+      "ĐÃ GỬI TÀI KHOẢN THÀNH CÔNG!\n\n" +
+      "Mã đơn: " + orderId +
+      "\nSố tài khoản: " + accounts.length +
+      "\nKhách có thể vào Lịch sử đơn hàng để xem tài khoản."
+    );
+
     await window.renderOrderAdmin();
   }catch(error){
-    console.error("Lỗi gửi tài khoản:",error);
-    alert("Không gửi được tài khoản: " + (error.message || error));
+    console.error("Lỗi gửi tài khoản:", error);
+    if(error.message !== "Đã hủy cập nhật tài khoản."){
+      alert("Không gửi được tài khoản: " + (error.message || error));
+    }
   }
 };
 
