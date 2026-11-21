@@ -2559,7 +2559,8 @@ body.insertAdjacentHTML("beforeend", `
     if (typeof window.loadCustomerWallet === "function") {
   window.loadCustomerWallet(
     window.auth.currentUser.uid,
-    username
+    username,
+    { includeHistory: true }
   );
 } else {
   document.getElementById("vkl-coin-balance").textContent =
@@ -3564,6 +3565,10 @@ firebase.auth().onAuthStateChanged(user => {
     window.vklSupportInboxUnsubscribe();
     window.vklSupportInboxUnsubscribe = null;
   }
+  if (window.vklPendingTopupUnsubscribe) {
+    window.vklPendingTopupUnsubscribe();
+    window.vklPendingTopupUnsubscribe = null;
+  }
   if(!window.vklIsAdmin){
     window.vklPendingTopupCount = 0;
     window.vklSupportInboxUnreadCount = 0;
@@ -3580,7 +3585,7 @@ firebase.auth().onAuthStateChanged(user => {
       }
     }, error => console.error("Lỗi theo dõi thư hỗ trợ:", error));
 
-  db.collection("topupRequests").where("status", "==", "pending").onSnapshot(snapshot => {
+  window.vklPendingTopupUnsubscribe = db.collection("topupRequests").where("status", "==", "pending").onSnapshot(snapshot => {
     window.vklPendingTopupCount = snapshot.size;
     const dot = document.getElementById("mail-unread-dot");
     if(dot){
@@ -5507,7 +5512,7 @@ window.openCustomerAuth = function() {
     alert("LỖI: " + error.message);
   }
 };
-window.loadCustomerWallet = async function(uid, username) {
+window.loadCustomerWallet = async function(uid, username, options) {
   const balanceEl = document.getElementById("vkl-coin-balance");
   const homeBalanceEl = document.getElementById("home-info-balance");
 if (!balanceEl && !homeBalanceEl) return;
@@ -5630,7 +5635,7 @@ rankImage.style.setProperty("--rank-glow", glowColors[index]);
     // TẢI LỊCH SỬ GIAO DỊCH XU
     const historyEl = document.getElementById("vkl-coin-history");
 
-    if (historyEl) {
+    if (historyEl && options && options.includeHistory === true) {
       historyEl.textContent = "Đang tải lịch sử...";
 
       try {
