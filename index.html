@@ -1897,14 +1897,23 @@ async function submitConfirmedOrder(){
    }
   );
 
-  alert("TẠO ĐƠN THÀNH CÔNG!\n\n" +
-   "Mã đơn: " + order.id + "\n" +
-   "Dịch vụ: " + order.service + "\n" +
-   (order.codes ? "Số dòng mã: " : "Số lượng tài khoản: ") + order.count + "\n" +
-   order.label + ": " + numberFormat(order.quantity) + "\n" +
-   "Tổng tiền: " + money(order.total) +
-   "\nTrạng thái: " + (isCloneOrder ? "Chờ giao tài khoản" : "Đã tiếp nhận") +
-   "\n\nĐơn đã được lưu và email thông báo đã gửi!");
+  alert(isCloneOrder
+   ? "TẠO ĐƠN THÀNH CÔNG!\n\n" +
+     "Mã đơn: " + order.id +
+     "\n================================\n" +
+     "Dịch vụ: " + order.service +
+     "\nSố lượng tài khoản: " + order.count +
+     "\nTrạng thái: Chờ giao tài khoản" +
+     "\n===================\n" +
+     "Tổng tiền: " + money(order.total)
+   : "TẠO ĐƠN THÀNH CÔNG!\n\n" +
+     "Mã đơn: " + order.id + "\n" +
+     "Dịch vụ: " + order.service + "\n" +
+     (order.codes ? "Số dòng mã: " : "Số lượng tài khoản: ") + order.count + "\n" +
+     order.label + ": " + numberFormat(order.quantity) + "\n" +
+     "Tổng tiền: " + money(order.total) +
+     "\nTrạng thái: Đã tiếp nhận" +
+     "\n\nĐơn đã được lưu và email thông báo đã gửi!");
  } catch(error) {
   console.error("Lỗi gửi email:", {
    status: error && error.status,
@@ -1918,10 +1927,20 @@ async function submitConfirmedOrder(){
    : "Không nhận được phản hồi chi tiết từ EmailJS";
   const emailStatus = error && error.status ? " (HTTP " + error.status + ")" : "";
 
-  alert("ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
-   "Mã đơn: " + order.id +
-   "\nEmail chưa gửi được" + emailStatus + ": " + emailError +
-   "\nĐơn và Xu vẫn được giữ nguyên.");
+  alert(isCloneOrder
+   ? "ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
+     "Mã đơn: " + order.id +
+     "\n================================\n" +
+     "Dịch vụ: " + order.service +
+     "\nSố lượng tài khoản: " + order.count +
+     "\nTrạng thái: Chờ giao tài khoản" +
+     "\n===================\n" +
+     "Tổng tiền: " + money(order.total) +
+     "\nEmail chưa gửi được" + emailStatus + ": " + emailError
+   : "ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
+     "Mã đơn: " + order.id +
+     "\nEmail chưa gửi được" + emailStatus + ": " + emailError +
+     "\nĐơn và Xu vẫn được giữ nguyên.");
  }
 
  document.getElementById("codes").value = "";
