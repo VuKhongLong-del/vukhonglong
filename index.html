@@ -8513,7 +8513,6 @@ body.dark #serviceStatusGear {
         if(status) status.textContent = "Đang lưu " + written.toLocaleString("vi-VN") + "/" + rows.length.toLocaleString("vi-VN") + " tài khoản " + level + "...";
       }
       if(status) status.textContent = "Đã nhập " + written.toLocaleString("vi-VN") + " tài khoản vào " + level + ". Dòng lỗi: " + invalid + ". Tài khoản trùng trong file đã được gộp.";
-      await refreshCounts();
       await window.loadAccInventory(level);
     }catch(error){
       console.error("Lỗi nhập kho ACC:",error);
@@ -8534,7 +8533,19 @@ body.dark #serviceStatusGear {
       const snap = await db.collection("accInventory").where("level","==",activeLevel).get();
       inventoryRows = snap.docs.map(doc=>({id:doc.id,...doc.data()}))
         .sort((a,b)=>String(a.account||"").localeCompare(String(b.account||"")));
-      await refreshCounts();
+      // Tận dụng kết quả tải danh sách làm số lượng của cấp đang mở;
+      // chỉ truy vấn cấp còn lại để cập nhật bộ đếm, không đọc lại cấp hiện tại.
+      const otherLevel = activeLevel === "LV0" ? "LV12" : "LV0";
+      const otherSnap = await db.collection("accInventory").where("level","==",otherLevel).get();
+      const count0 = el("vkl-acc-count-lv0");
+      const count12 = el("vkl-acc-count-lv12");
+      if (activeLevel === "LV0") {
+        if (count0) count0.textContent = snap.size.toLocaleString("vi-VN");
+        if (count12) count12.textContent = otherSnap.size.toLocaleString("vi-VN");
+      } else {
+        if (count12) count12.textContent = snap.size.toLocaleString("vi-VN");
+        if (count0) count0.textContent = otherSnap.size.toLocaleString("vi-VN");
+      }
       renderList();
     }catch(error){
       console.error(error);
@@ -8580,7 +8591,9 @@ body.dark #serviceStatusGear {
         try{
           await db.collection("accInventory").doc(row.id).delete();
           inventoryRows=inventoryRows.filter(item=>item.id!==row.id);
-          await refreshCounts(); renderList();
+          const activeCount = el(activeLevel === "LV0" ? "vkl-acc-count-lv0" : "vkl-acc-count-lv12");
+          if (activeCount) activeCount.textContent = inventoryRows.length.toLocaleString("vi-VN");
+          renderList();
         }catch(error){ alert("Không xóa được: "+error.message); }
       };
       actions.append(copy,del);
