@@ -1252,6 +1252,18 @@ body:not(.dark) #vkl-topup-note::placeholder {
 
 /* FIX iOS: tránh tự phóng to khi chạm ô nhập hỗ trợ */
 #vkl-support-input { font-size:16px !important; }
+
+/* Ô hiển thị tài khoản đã giao - tự đổi theo giao diện */
+.vkl-delivered-credentials {
+  background: #cfd3dc !important;
+  color: #222936 !important;
+  border: 1px solid #aeb5c1 !important;
+}
+body.dark .vkl-delivered-credentials {
+  background: #151c2e !important;
+  color: #f1f3fa !important;
+  border: 1px solid #3a4560 !important;
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 </head>
@@ -4384,7 +4396,8 @@ window.loadCustomerOrderHistory = async function(){
         view.textContent = "👁️ XEM TÀI KHOẢN";
         view.style.cssText = "width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold";
         const credentials = document.createElement("pre");
-        credentials.style.cssText = "display:none;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;margin-top:8px;border-radius:9px;background:#edf0ff;color:#172033;font:14px/1.6 inherit";
+        credentials.className = "vkl-delivered-credentials";
+        credentials.style.cssText = "display:none;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;margin-top:8px;border-radius:9px;font:14px/1.6 inherit;box-sizing:border-box;width:100%;";
         credentials.textContent = accounts.map((account,index) => (index+1) + ". TK: " + String(account.account || "") + "\nMK: " + String(account.password || "")).join("\n\n");
         view.onclick = () => {
           const opening = credentials.style.display === "none";
