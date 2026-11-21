@@ -1899,11 +1899,22 @@ async function submitConfirmedOrder(){
    "\nTrạng thái: " + (isCloneOrder ? "Chờ giao tài khoản" : "Đã tiếp nhận") +
    "\n\nĐơn đã được lưu và email thông báo đã gửi!");
  } catch(error) {
-  console.error("Lỗi gửi email:", error);
+  console.error("Lỗi gửi email:", {
+   status: error && error.status,
+   text: error && error.text,
+   message: error && error.message,
+   error: error
+  });
+
+  const emailError = error && (error.text || error.message)
+   ? (error.text || error.message)
+   : "Không nhận được phản hồi chi tiết từ EmailJS";
+  const emailStatus = error && error.status ? " (HTTP " + error.status + ")" : "";
 
   alert("ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
    "Mã đơn: " + order.id +
-   "\nEmail thông báo chưa gửi được. Đơn và Xu vẫn được giữ nguyên.");
+   "\nEmail chưa gửi được" + emailStatus + ": " + emailError +
+   "\nĐơn và Xu vẫn được giữ nguyên.");
  }
 
  document.getElementById("codes").value = "";
