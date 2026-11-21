@@ -5158,6 +5158,20 @@ window.deliverOrderAccounts = async function(orderId){
     const orderRef = db.collection("orders").doc(orderId);
     const trackingRef = db.collection("orderTracking").doc(orderId);
 
+    const beforeSnap = await orderRef.get();
+    if(!beforeSnap.exists) throw new Error("Không tìm thấy đơn hàng.");
+
+    const beforeOrder = beforeSnap.data();
+    const alreadyDelivered =
+      Array.isArray(beforeOrder.deliveredAccounts) &&
+      beforeOrder.deliveredAccounts.length > 0;
+
+    let replaceConfirmed = false;
+    if(alreadyDelivered){
+      replaceConfirmed = confirm("Đơn này đã có tài khoản được giao. Bạn có chắc muốn thay thế toàn bộ tài khoản đã gửi?");
+      if(!replaceConfirmed) return;
+    }
+
     await db.runTransaction(async transaction => {
       const orderSnap = await transaction.get(orderRef);
       const trackingSnap = await transaction.get(trackingRef);
@@ -5181,12 +5195,12 @@ window.deliverOrderAccounts = async function(orderId){
         );
       }
 
-      const alreadyDelivered =
+      const currentlyDelivered =
         Array.isArray(order.deliveredAccounts) &&
         order.deliveredAccounts.length > 0;
 
-      if(alreadyDelivered && !confirm("Đơn này đã có tài khoản được giao. Bạn có chắc muốn thay thế toàn bộ tài khoản đã gửi?")){
-        throw new Error("Đã hủy cập nhật tài khoản.");
+      if(currentlyDelivered && !replaceConfirmed){
+        throw new Error("Đơn đã được giao tài khoản trước đó. Hãy tải lại danh sách đơn hàng.");
       }
 
       transaction.update(orderRef, {
@@ -5214,9 +5228,7 @@ window.deliverOrderAccounts = async function(orderId){
     await window.renderOrderAdmin();
   }catch(error){
     console.error("Lỗi gửi tài khoản:", error);
-    if(error.message !== "Đã hủy cập nhật tài khoản."){
-      alert("Không gửi được tài khoản: " + (error.message || error));
-    }
+    alert("Không gửi được tài khoản: " + (error.message || error));
   }
 };
 
