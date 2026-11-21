@@ -3362,15 +3362,10 @@ list.textContent = "Đang tải thư...";
     }
     window.vklSupportInboxUnreadCount = supportInboxMessages.filter(m => m.isRead === false).length;
 
-    // YÊU CẦU NẠP TIỀN HIỂN THỊ NHƯ MỘT MỤC TRONG HỘP THƯ ADMIN
-    let pendingTopups = [];
-    if(user.email?.toLowerCase() === "haphamngu123@gmail.com"){
-      const topupSnapshot = await db.collection("topupRequests")
-        .where("status", "==", "pending")
-        .get();
-      pendingTopups = topupSnapshot.docs;
-      window.vklPendingTopupCount = pendingTopups.length;
-    }
+    // Dùng số lượng từ listener đang hoạt động, tránh truy vấn topupRequests lần thứ hai.
+    const pendingTopupCount = isAdmin
+      ? Number(window.vklPendingTopupCount || 0)
+      : 0;
 
     messages.sort((a,b) => {
       const timeA = a.createdAt?.toMillis?.() || 0;
@@ -3385,7 +3380,7 @@ list.textContent = "Đang tải thư...";
 
     list.innerHTML = "";
 
-    if(pendingTopups.length > 0){
+    if(pendingTopupCount > 0){
       const topupItem = document.createElement("div");
       topupItem.style.cssText =
         "text-align:left;padding:14px;margin:12px 0;" +
@@ -3395,13 +3390,13 @@ list.textContent = "Đang tải thư...";
       const topupTitle = document.createElement("b");
       topupTitle.textContent = "🔴 Yêu cầu nạp tiền";
       const topupStatus = document.createElement("p");
-      topupStatus.textContent = pendingTopups.length + " yêu cầu đang chờ kiểm tra";
+      topupStatus.textContent = pendingTopupCount + " yêu cầu đang chờ kiểm tra";
       topupStatus.style.cssText = "margin:8px 0 0";
       topupItem.append(topupTitle, topupStatus);
       list.appendChild(topupItem);
     }
 
-    if(messages.length === 0 && pendingTopups.length === 0 && supportInboxMessages.length === 0){
+    if(messages.length === 0 && pendingTopupCount === 0 && supportInboxMessages.length === 0){
       list.textContent = "Bạn chưa có thư nào.";
       return;
     }
