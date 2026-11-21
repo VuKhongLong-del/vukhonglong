@@ -4372,15 +4372,19 @@ window.loadCustomerOrderHistory = async function(){
   if(!user){ area.textContent = "Vui lòng đăng nhập để xem lịch sử đơn hàng."; return; }
   area.textContent = "Đang tải lịch sử đơn hàng...";
   try{
-    const token = await user.getIdToken(true);
-    const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/api/orders/list", {
-      method:"POST",
-      headers:{"Content-Type":"application/json","Authorization":"Bearer " + token},
-      body:JSON.stringify({action:"listOrders"})
-    });
-    const result = await response.json();
-    if(!response.ok || !result.success) throw new Error(result.error || "Không tải được lịch sử đơn hàng.");
-    const rows = Array.isArray(result.orders) ? result.orders : [];
+    // Đọc lịch sử trực tiếp từ Firestore theo UID đang đăng nhập.
+    // Không phụ thuộc Cloudflare Worker đã bị xóa.
+    const snapshot = await db.collection("orders")
+      .where("userId", "==", user.uid)
+      .limit(100)
+      .get();
+    const rows = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a, b) => {
+        const timeOf = value => value && typeof value.toMillis === "function"
+          ? value.toMillis()
+          : (value ? new Date(value).getTime() : 0);
+        return timeOf(b.createdAt || b.date) - timeOf(a.createdAt || a.date);
+      });
     area.innerHTML = "";
     if(!rows.length){ area.textContent = "Bạn chưa có đơn hàng nào."; return; }
     rows.forEach(order => {
