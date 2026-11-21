@@ -1860,8 +1860,15 @@ async function submitConfirmedOrder(){
 
  document.getElementById("confirmOrderModal").style.display = "none";
 
- // GỬI EMAIL THÔNG BÁO
+ // GỬI EMAIL THÔNG BÁO ĐƠN HÀNG
+ // Email được gửi sau khi Firestore đã lưu đơn và trừ Xu thành công.
+ // Không gửi mật khẩu/tài khoản được giao qua email.
  try {
+  const buyer = window.auth && window.auth.currentUser;
+  const isCloneOrder =
+   order.service === "ACC CLONE LV0" ||
+   order.service === "ACC CLONE LV12";
+
   await emailjs.send(
    "service_zta7ls2",
    "template_m9uu0an",
@@ -1871,8 +1878,12 @@ async function submitConfirmedOrder(){
     count: order.count,
     quantity: numberFormat(order.quantity),
     total: money(order.total),
-    codes: order.codes,
-    date: order.date
+    codes: order.codes || "",
+    date: order.date,
+    buyer_name: buyer && buyer.email ? buyer.email.split("@")[0] : "Không xác định",
+    buyer_email: buyer && buyer.email ? buyer.email : "Không xác định",
+    delivery_status: isCloneOrder ? "Chờ giao tài khoản" : "Đã tiếp nhận",
+    order_type: isCloneOrder ? "ĐƠN ACC CLONE" : "ĐƠN DỊCH VỤ"
    },
    {
     publicKey: "aWRDUtsq1sqapgcZJ"
@@ -1885,14 +1896,14 @@ async function submitConfirmedOrder(){
    (order.codes ? "Số dòng mã: " : "Số lượng tài khoản: ") + order.count + "\n" +
    order.label + ": " + numberFormat(order.quantity) + "\n" +
    "Tổng tiền: " + money(order.total) +
-   (order.deliveredAccounts ? "\nTrạng thái: " + order.deliveryStatus : "") +
-   "\n\nĐã lưu đơn lên hệ thống và gửi email thông báo!");
+   "\nTrạng thái: " + (isCloneOrder ? "Chờ giao tài khoản" : "Đã tiếp nhận") +
+   "\n\nĐơn đã được lưu và email thông báo đã gửi!");
  } catch(error) {
   console.error("Lỗi gửi email:", error);
 
   alert("ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
    "Mã đơn: " + order.id +
-   "\nTuy nhiên, email thông báo chưa gửi được.");
+   "\nEmail thông báo chưa gửi được. Đơn và Xu vẫn được giữ nguyên.");
  }
 
  document.getElementById("codes").value = "";
