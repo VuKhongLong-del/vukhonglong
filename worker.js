@@ -461,8 +461,9 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Kiểm tra Worker độc lập, không cần đăng nhập
-    if (request.method === "GET" && url.searchParams.get("test") === "1") {
+    // Health check: mở URL Worker trực tiếp (GET) luôn trả trạng thái,
+    // không cần thêm ?test=1 và không cần đăng nhập.
+    if (request.method === "GET") {
       return new Response(
         JSON.stringify({
           success: true,
@@ -472,7 +473,8 @@ export default {
         {
           status: 200,
           headers: {
-            "Content-Type": "application/json; charset=utf-8"
+            "Content-Type": "application/json; charset=utf-8",
+            "Cache-Control": "no-store"
           }
         }
       );
