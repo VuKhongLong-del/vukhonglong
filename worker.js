@@ -236,143 +236,65 @@ function getDocumentFields(doc) {
 async function buyLv0(env, uid, claims, input) {
   const quantity = Number(input.quantity);
   const orderId = String(input.orderId || "");
-
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > 30) {
     throw new Error("Số lượng mỗi đơn chỉ được từ 1 đến 30 ACC.");
   }
-
-  if (!/^VKL-[A-F0-9]{32}$/.test(orderId)) {
-    throw new Error("Mã đơn hàng không hợp lệ.");
-  }
+  if (!/^VKL-[A-F0-9]{32}$/.test(orderId)) throw new Error("Mã đơn hàng không hợp lệ.");
 
   const total = quantity * 50;
   const token = await getGoogleAccessToken(env);
-  const root = "projects/" + PROJECT_ID +
-    "/databases/(default)/documents";
-
-  const txResult = await firestoreRequest(":beginTransaction", token, {
-    options: { readWrite: {} }
-  });
+  const root = "projects/" + PROJECT_ID + "/databases/(default)/documents";
+  const txResult = await firestoreRequest(":beginTransaction", token, { options: { readWrite: {} } });
   const tx = txResult.transaction;
 
   try {
-    const names = [
-      root + "/wallets/" + uid,
-      root + "/orders/" + orderId
-    ];
-
+    const walletName = root + "/wallets/" + uid;
+    const orderName = root + "/orders/" + orderId;
     const docs = await firestoreRequest(":batchGet", token, {
-      documents: names,
+      documents: [walletName, orderName],
       transaction: tx
     });
-
-    const walletDoc = docs.find(d => d.found?.name === names[0])?.found;
-    const orderDoc = docs.find(d => d.found?.name === names[1])?.found;
+    const walletDoc = docs.find(d => d.found?.name === walletName)?.found;
+    const orderDoc = docs.find(d => d.found?.name === orderName)?.found;
 
     if (orderDoc) {
       const oldOrder = getDocumentFields(orderDoc);
-      if (oldOrder.userId !== uid || !oldOrder.deliveredAccounts) {
-        throw new Error("Mã đơn này đã được sử dụng.");
-      }
-      // Close the read-only transaction before returning an idempotent result.
+      if (oldOrder.userId !== uid) throw new Error("Mã đơn này đã được sử dụng.");
       await firestoreRequest(":rollback", token, { transaction: tx });
       return {
         orderId,
-        deliveredAccounts: oldOrder.deliveredAccounts,
         balance: null,
+        deliveryStatus: oldOrder.deliveryStatus || (oldOrder.deliveredAccounts ? "Đã giao tài khoản" : "Chờ giao tài khoản"),
         repeated: true
       };
     }
-
     if (!walletDoc) throw new Error("Không tìm thấy ví Xu.");
 
     const wallet = getDocumentFields(walletDoc);
     const oldBalance = Number(wallet.coins || 0);
-
     if (!Number.isSafeInteger(oldBalance) || oldBalance < total) {
       throw new Error("Số dư không đủ. Bạn cần " + total + " Xu.");
     }
 
-    const stock = await firestoreRequest(":runQuery", token, {
-      structuredQuery: {
-        from: [{ collectionId: "accInventory" }],
-        where: {
-          fieldFilter: {
-            field: { fieldPath: "level" },
-            op: "EQUAL",
-            value: str("LV0")
-          }
-        },
-        limit: 1000
-      },
-      transaction: tx
-    });
-
-    const available = stock
-      .filter(item => item.document)
-      .map(item => item.document)
-      .filter(doc => {
-        const data = getDocumentFields(doc);
-        return data &&
-          data.level === "LV0" &&
-          data.account &&
-          data.password &&
-          data.status !== "sold" &&
-          data.sold !== true;
-      });
-
-    if (available.length < quantity) {
-      throw new Error(
-        "Kho ACC LV0 không đủ số lượng. Hiện tìm thấy " +
-        available.length + " ACC có thể bán."
-      );
-    }
-
-    const selected = available.slice(0, quantity);
-    const deliveredAccounts = selected.map(doc => {
-      const data = getDocumentFields(doc);
-      return { account: data.account, password: data.password };
-    });
-
     const newBalance = oldBalance - total;
     const username = String(claims.email || "").split("@")[0];
-
-    const writes = [{
-      update: {
-        name: names[0],
-        fields: {
-          coins: integer(newBalance),
-          lastOrderId: str(orderId),
-          updatedAt: timestamp()
-        }
-      },
-      updateMask: {
-        fieldPaths: ["coins", "lastOrderId", "updatedAt"]
-      }
-    }];
-
-    for (let i = 0; i < selected.length; i++) {
-      writes.push({
-        update: {
-          name: selected[i].name,
-          fields: {
-            status: str("sold"),
-            sold: { booleanValue: true },
-            soldTo: str(uid),
-            orderId: str(orderId),
-            soldAt: timestamp()
-          }
-        },
-        updateMask: {
-          fieldPaths: ["status", "sold", "soldTo", "orderId", "soldAt"]
-        }
-      });
-    }
-
-    writes.push(
+    const now = new Date();
+    const dateText = now.toLocaleString("vi-VN");
+    const writes = [
       {
         update: {
-          name: root + "/orders/" + orderId,
+          name: walletName,
+          fields: {
+            coins: integer(newBalance),
+            lastOrderId: str(orderId),
+            updatedAt: timestamp(now)
+          }
+        },
+        updateMask: { fieldPaths: ["coins", "lastOrderId", "updatedAt"] }
+      },
+      {
+        update: {
+          name: orderName,
           fields: {
             userId: str(uid),
             username: str(username),
@@ -381,17 +303,10 @@ async function buyLv0(env, uid, claims, input) {
             quantity: integer(quantity),
             total: integer(total),
             codes: str(""),
-            date: str(new Date().toLocaleString("vi-VN")),
+            date: str(dateText),
             label: str("Tổng số acc clone"),
-            deliveredAccounts: {
-              arrayValue: {
-                values: deliveredAccounts.map(item => ({
-                  mapValue: mapValue(item)
-                }))
-              }
-            },
-            deliveryStatus: str("Đã giao tài khoản"),
-            createdAt: timestamp()
+            deliveryStatus: str("Chờ giao tài khoản"),
+            createdAt: timestamp(now)
           }
         }
       },
@@ -401,11 +316,11 @@ async function buyLv0(env, uid, claims, input) {
           fields: {
             userId: str(uid),
             service: str("ACC CLONE LV0"),
-            status: str("Đã giao tài khoản"),
-            progress: integer(100),
-            eta: str("Đã giao tự động"),
-            note: str("Tài khoản đã được giao trong đơn hàng."),
-            updatedAt: timestamp()
+            status: str("Chờ giao tài khoản"),
+            progress: integer(0),
+            eta: str("Chờ admin giao tài khoản"),
+            note: str("Đơn hàng đã thanh toán và đang chờ admin gửi tài khoản."),
+            updatedAt: timestamp(now)
           }
         }
       },
@@ -419,31 +334,110 @@ async function buyLv0(env, uid, claims, input) {
             amount: integer(total),
             balanceAfter: integer(newBalance),
             note: str("Thanh toán đơn hàng " + orderId),
-            createdAt: timestamp()
+            createdAt: timestamp(now)
           }
         }
       }
-    );
-
-    await firestoreRequest(":commit", token, {
-      writes,
-      transaction: tx
-    });
-
-    return {
-      orderId,
-      deliveredAccounts,
-      balance: newBalance,
-      repeated: false
-    };
+    ];
+    await firestoreRequest(":commit", token, { writes, transaction: tx });
+    return { orderId, balance: newBalance, deliveryStatus: "Chờ giao tài khoản", repeated: false };
   } catch (error) {
-    try {
-      await firestoreRequest(":rollback", token, {
-        transaction: tx
-      });
-    } catch (_) {}
+    try { await firestoreRequest(":rollback", token, { transaction: tx }); } catch (_) {}
     throw error;
   }
+}
+
+async function listCustomerOrders(env, uid) {
+  const token = await getGoogleAccessToken(env);
+  const rows = await firestoreRequest(":runQuery", token, {
+    structuredQuery: {
+      from: [{ collectionId: "orders" }],
+      where: {
+        fieldFilter: {
+          field: { fieldPath: "userId" },
+          op: "EQUAL",
+          value: str(uid)
+        }
+      },
+      orderBy: [{ field: { fieldPath: "createdAt" }, direction: "DESCENDING" }],
+      limit: 100
+    }
+  });
+  const orders = rows
+    .filter(row => row.document)
+    .map(row => {
+      const doc = row.document;
+      return { id: doc.name.split("/").pop(), ...(getDocumentFields(doc) || {}) };
+    })
+    .filter(order => /^VKL-[A-F0-9]{32}$/.test(order.id));
+  return { orders };
+}
+
+async function deliverOrderManually(env, claims, input) {
+  const adminEmail = String(claims.email || "").toLowerCase();
+  if (adminEmail !== "haphamngu123@gmail.com" || claims.email_verified !== true) {
+    throw new Error("Bạn không có quyền gửi tài khoản.");
+  }
+
+  const orderId = String(input.orderId || "");
+  if (!/^VKL-[A-F0-9]{32}$/.test(orderId)) throw new Error("Mã đơn hàng không hợp lệ.");
+  if (!Array.isArray(input.accounts) || input.accounts.length < 1 || input.accounts.length > 9999) {
+    throw new Error("Danh sách tài khoản không hợp lệ.");
+  }
+  const accounts = input.accounts.map(item => ({
+    account: String(item?.account || "").trim(),
+    password: String(item?.password || "").trim()
+  }));
+  if (accounts.some(item => !item.account || !item.password)) {
+    throw new Error("Mỗi tài khoản phải có đủ tên đăng nhập và mật khẩu.");
+  }
+
+  const token = await getGoogleAccessToken(env);
+  const root = "projects/" + PROJECT_ID + "/databases/(default)/documents";
+  const orderName = root + "/orders/" + orderId;
+  const docs = await firestoreRequest(":batchGet", token, { documents: [orderName] });
+  const orderDoc = docs.find(item => item.found?.name === orderName)?.found;
+  if (!orderDoc) throw new Error("Không tìm thấy đơn hàng.");
+  const order = getDocumentFields(orderDoc) || {};
+  if (order.service !== "ACC CLONE LV0" && order.service !== "ACC CLONE LV12") {
+    throw new Error("Chỉ có thể giao tài khoản cho đơn ACC CLONE.");
+  }
+  if (Number(order.count) !== accounts.length) {
+    throw new Error("Số tài khoản nhập vào phải đúng bằng số lượng khách đã đặt (" + Number(order.count) + ").");
+  }
+
+  const deliveredAt = new Date();
+  await firestoreRequest(":commit", token, {
+    writes: [
+      {
+        update: {
+          name: orderName,
+          fields: {
+            deliveredAccounts: {
+              arrayValue: { values: accounts.map(item => ({ mapValue: mapValue(item) })) }
+            },
+            deliveryStatus: str("Đã giao tài khoản"),
+            deliveredAt: timestamp(deliveredAt)
+          }
+        },
+        updateMask: { fieldPaths: ["deliveredAccounts", "deliveryStatus", "deliveredAt"] }
+      },
+      {
+        update: {
+          name: root + "/orderTracking/" + orderId,
+          fields: {
+            status: str("Đã giao tài khoản"),
+            progress: integer(100),
+            eta: str("Đã giao tài khoản"),
+            note: str("Admin đã gửi tài khoản trong Lịch sử đơn hàng."),
+            updatedAt: timestamp(deliveredAt)
+          }
+        },
+        updateMask: { fieldPaths: ["status", "progress", "eta", "note", "updatedAt"] }
+      }
+    ]
+  });
+  return { orderId, deliveryStatus: "Đã giao tài khoản", deliveredCount: accounts.length };
 }
 
 function response(data, status, origin) {
@@ -524,17 +518,20 @@ export default {
       stage = "request-body";
       const input = await request.json();
 
-      if (input.service !== "cloneLv0") {
-        throw new Error("Worker chỉ xử lý đơn ACC CLONE LV0.");
+      let result;
+      if (input.action === "listOrders") {
+        stage = "firestore-order-list";
+        result = await listCustomerOrders(env, claims.sub);
+      } else if (input.action === "deliverOrder") {
+        stage = "firestore-manual-delivery";
+        result = await deliverOrderManually(env, claims, input);
+      } else {
+        if (input.service !== "cloneLv0") throw new Error("Worker không hỗ trợ thao tác này.");
+        stage = "firestore-purchase";
+        result = await buyLv0(env, claims.sub, claims, input);
       }
 
-      stage = "firestore-purchase";
-      const result = await buyLv0(env, claims.sub, claims, input);
-
-      return response({
-        success: true,
-        ...result
-      }, 200, origin);
+      return response({ success: true, ...result }, 200, origin);
 
     } catch (error) {
       // Return readable CORS-enabled diagnostics instead of a browser-level
