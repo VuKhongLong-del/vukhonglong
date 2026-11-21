@@ -1541,7 +1541,7 @@ body:not(.dark) button[onclick="openModal('mailbox')"] {
    <strong id="total">0đ</strong>
   </div>
 
-  <button class="primary" style="margin-top:16px" onclick="createOrder()">
+  <button class="primary" id="createOrderButton" style="margin-top:16px" onclick="createOrder()">
    XÁC NHẬN ĐƠN HÀNG
   </button>
  </section>
@@ -1799,6 +1799,10 @@ function createOrder(){
  }           
  if(!selected){
   alert("Vui lòng chọn một dịch vụ!");
+  return;
+ }
+ if(typeof window.isSelectedServiceUnavailable === "function" && window.isSelectedServiceUnavailable()){
+  alert("Dịch vụ hiện đang Hết hoặc đang tải trạng thái. Vui lòng chọn dịch vụ đang Hoạt động.");
   return;
  }
 
@@ -8388,8 +8392,19 @@ body.dark #serviceStatusGear {
         ? "0 0 5px rgba(124,58,237,.55), 0 0 12px rgba(124,58,237,.3)"
         : "0 0 5px rgba(57,255,117,.75), 0 0 12px rgba(57,255,117,.45)"));
     gear.style.display = isStatusAdmin && !!key ? "inline-block" : "none";
+    const orderButton = document.getElementById("createOrderButton");
+    if(orderButton){
+      const unavailable = !!key && (!statusReady || serviceStatuses[key] === "ended");
+      orderButton.disabled = unavailable;
+      orderButton.style.opacity = unavailable ? "0.5" : "";
+      orderButton.style.cursor = unavailable ? "not-allowed" : "";
+      orderButton.title = unavailable ? "Dịch vụ đang Hết" : "";
+    }
   }
 
+  window.isSelectedServiceUnavailable = function(){
+    return !!selected && (!statusReady || serviceStatuses[selected] === "ended");
+  };
   window.renderServiceStatus = renderServiceStatus;
 
   const originalUpdate = window.update;
