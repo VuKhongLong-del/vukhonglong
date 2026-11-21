@@ -1835,32 +1835,9 @@ async function submitConfirmedOrder(){
  const order = pendingOrder;
 
  try {
- // ACC CLONE LV0: chỉ trừ Xu và tạo đơn chờ admin giao thủ công.
- if(order.service === "ACC CLONE LV0"){
-  const user = window.auth && window.auth.currentUser;
-  if(!user) throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-  const idToken = await user.getIdToken(true);
-  const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/api/buy", {
-   method: "POST",
-   headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + idToken
-   },
-   body: JSON.stringify({
-    service: "cloneLv0",
-    quantity: order.count,
-    orderId: order.id
-   })
-  });
-  let result = {};
-  try { result = await response.json(); } catch(e) {}
-  if(!response.ok || !result.success){
-   throw new Error(result.error || result.message || ("Máy chủ xử lý đơn báo lỗi (" + response.status + ")."));
-  }
-  order.deliveryStatus = result.deliveryStatus || "Chờ giao tài khoản";
- } else {
-  await window.saveOrderToFirebase(order);
- }
+ // LV0 và LV12 đều lưu đơn + trừ Xu trực tiếp qua Firestore.
+ // saveOrderToFirebase đã đặt trạng thái "Chờ giao tài khoản" cho cả hai loại.
+ await window.saveOrderToFirebase(order);
  } catch(error) {
   console.error("Lỗi xử lý đơn hàng:", error);
   alert(error.message || "Không thể xử lý đơn hàng. Vui lòng thử lại hoặc liên hệ hỗ trợ.");
