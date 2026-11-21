@@ -1751,13 +1751,14 @@ function isCloneService(){
 function getCloneQuantity(){
  const input = document.getElementById("cloneQuantity");
  const value = Math.floor(Number(input.value));
- const max = selected === "cloneLv0" ? 30 : 9999;
+ const max = selected === "cloneLv0" ? 5000 : 9999;
  return Number.isFinite(value) ? Math.min(max, Math.max(1, value || 1)) : 1;
 }
 
 function changeCloneQuantity(amount){
  const input = document.getElementById("cloneQuantity");
- input.value = Math.min(9999, Math.max(1, getCloneQuantity() + amount));
+ const max = selected === "cloneLv0" ? 5000 : 9999;
+ input.value = Math.min(max, Math.max(1, getCloneQuantity() + amount));
  update();
 }
 
