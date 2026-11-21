@@ -1849,19 +1849,30 @@ async function submitConfirmedOrder(){
    const user = window.auth && window.auth.currentUser;
    if(!user) throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
 
-   const idToken = await user.getIdToken();
-   const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/", {
-    method: "POST",
-    headers: {
-     "Content-Type": "application/json",
-     "Authorization": "Bearer " + idToken
-    },
-    body: JSON.stringify({
-     service: "cloneLv0",
-     quantity: order.count,
-     orderId: order.id
-    })
-   });
+   let idToken;
+try {
+ idToken = await user.getIdToken(true);
+} catch(e) {
+ throw new Error("BƯỚC 1 - Lỗi lấy token đăng nhập (Google/Firebase): " + (e.code || e.message));
+}
+
+let response;
+try {
+ response = await fetch("https://vukhonglong.haphamngu123.workers.dev/", {
+  method: "POST",
+  headers: {
+   "Content-Type": "application/json",
+   "Authorization": "Bearer " + idToken
+  },
+  body: JSON.stringify({
+   service: "cloneLv0",
+   quantity: order.count,
+   orderId: order.id
+  })
+ });
+} catch(e) {
+ throw new Error("BƯỚC 2 - Không kết nối được Worker (" + e.name + ": " + e.message + "). Hãy thử bật VPN/1.1.1.1 rồi đặt lại.");
+}
 
    let result = {};
    try { result = await response.json(); } catch(e) {}
