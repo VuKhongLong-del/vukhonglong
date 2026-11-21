@@ -2561,9 +2561,6 @@ body.insertAdjacentHTML("beforeend", `
     window.auth.currentUser.uid,
     username
   );
-  if (typeof window.loadCustomerContact === "function") {
-  window.loadCustomerContact();
-}
 } else {
   document.getElementById("vkl-coin-balance").textContent =
     "Hàm tải ví chưa khởi tạo";
@@ -5551,6 +5548,12 @@ if (isAdmin && walletSnap.exists && walletSnap.data().userId !== "777777") {
       walletSnap = await walletRef.get();
     }
 
+// Dùng chung dữ liệu ví vừa tải để điền thông tin liên hệ, tránh đọc Firestore lần nữa.
+const contactPhoneInput = document.getElementById("vkl-contact-phone");
+const contactEmailInput = document.getElementById("vkl-contact-email");
+if (contactPhoneInput) contactPhoneInput.value = walletSnap.data().contactPhone || "";
+if (contactEmailInput) contactEmailInput.value = walletSnap.data().contactEmail || "";
+
 // HIỂN THỊ ID MỚI TỪ FIRESTORE
 const accountIdEl = document.querySelector(".rainbow-id");
 
@@ -5633,7 +5636,6 @@ rankImage.style.setProperty("--rank-glow", glowColors[index]);
       try {
         const historySnap = await db.collection("coinTransactions")
           .where("uid", "==", uid)
-          .orderBy("createdAt", "desc")
           .limit(20)
           .get();
 
@@ -5707,7 +5709,6 @@ window.loadTransferHistory = async function() {
 
     const snapshot = await db.collection("coinTransactions")
       .where("uid", "==", user.uid)
-      .orderBy("createdAt", "desc")
       .limit(30)
       .get();
 
