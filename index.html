@@ -1708,15 +1708,6 @@ const PACKAGES = {
 
 let selected = "";
 
-let orders = [];
-
-try {
- orders = JSON.parse(localStorage.getItem("vkl_orders") || "[]");
- if (!Array.isArray(orders)) orders = [];
-} catch(e) {
- orders = [];
-}
-
 function money(n){
  return new Intl.NumberFormat("vi-VN").format(n) + "đ";
 }
@@ -1843,78 +1834,41 @@ async function submitConfirmedOrder(){
 
  const order = pendingOrder;
 
- // ACC CLONE LV0: Worker kiểm tra kho, trừ Xu và giao tài khoản.
- try {
-  if(order.service === "ACC CLONE LV0"){
-   const user = window.auth && window.auth.currentUser;
-   if(!user) throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-
-   let idToken;
-try {
- idToken = await user.getIdToken(true);
-} catch(e) {
- throw new Error("BƯỚC 1 - Lỗi lấy token đăng nhập (Google/Firebase): " + (e.code || e.message));
-}
-
-let response;
-try {
- response = await fetch("https://vukhonglong.haphamngu123.workers.dev/api/buy", {
-  method: "POST",
-  headers: {
-   "Content-Type": "application/json",
-   "Authorization": "Bearer " + idToken
-  },
-  body: JSON.stringify({
-   service: "cloneLv0",
-   quantity: order.count,
-   orderId: order.id
-  })
- });
-} catch(e) {
- throw new Error("BƯỚC 2 - Không kết nối được Worker (" + e.name + ": " + e.message + "). Hãy thử bật VPN/1.1.1.1 rồi đặt lại.");
-}
-
-   let result = {};
-   try { result = await response.json(); } catch(e) {}
-   if(!response.ok){
-    throw new Error(result.error || result.message || ("Máy chủ giao tài khoản báo lỗi (" + response.status + ")."));
-   }
-   if(!Array.isArray(result.deliveredAccounts) || result.deliveredAccounts.length !== order.count){
-    throw new Error("Máy chủ chưa trả đủ tài khoản. Hãy liên hệ hỗ trợ và cung cấp mã đơn " + order.id + ".");
-   }
-
-   order.deliveredAccounts = result.deliveredAccounts.map(item => ({
-    account: String(item.account || ""),
-    password: String(item.password || "")
-   }));
-   order.deliveryStatus = result.deliveryStatus || "Đã giao tài khoản";
-  } else {
-   await window.saveOrderToFirebase(order);
+ // ACC CLONE LV0: chỉ trừ Xu và tạo đơn chờ admin giao thủ công.
+ if(order.service === "ACC CLONE LV0"){
+  const user = window.auth && window.auth.currentUser;
+  if(!user) throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+  const idToken = await user.getIdToken(true);
+  const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/api/buy", {
+   method: "POST",
+   headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + idToken
+   },
+   body: JSON.stringify({
+    service: "cloneLv0",
+    quantity: order.count,
+    orderId: order.id
+   })
+  });
+  let result = {};
+  try { result = await response.json(); } catch(e) {}
+  if(!response.ok || !result.success){
+   throw new Error(result.error || result.message || ("Máy chủ xử lý đơn báo lỗi (" + response.status + ")."));
   }
+  order.deliveryStatus = result.deliveryStatus || "Chờ giao tài khoản";
+ } else {
+  await window.saveOrderToFirebase(order);
+ }
  } catch(error) {
   console.error("Lỗi xử lý đơn hàng:", error);
   alert(error.message || "Không thể xử lý đơn hàng. Vui lòng thử lại hoặc liên hệ hỗ trợ.");
   return;
  }
 
- const deliveryText = Array.isArray(order.deliveredAccounts) && order.deliveredAccounts.length
-  ? "\n\nTÀI KHOẢN ĐÃ GIAO:\n" + order.deliveredAccounts.map((item,i) =>
-     (i+1) + ". Tài khoản: " + item.account + " | Mật khẩu: " + item.password
-    ).join("\n")
-  : "";
-
  pendingOrder = null;
 
  document.getElementById("confirmOrderModal").style.display = "none";
-
- // LƯU LỊCH SỬ TRÊN THIẾT BỊ
- orders.unshift(order);
-
- try {
-  localStorage.setItem("vkl_orders", JSON.stringify(orders));
- } catch(e) {
-  console.warn("Không lưu được lịch sử trên thiết bị:", e);
- }
 
  // GỬI EMAIL THÔNG BÁO
  try {
@@ -1942,14 +1896,12 @@ try {
    order.label + ": " + numberFormat(order.quantity) + "\n" +
    "Tổng tiền: " + money(order.total) +
    (order.deliveredAccounts ? "\nTrạng thái: " + order.deliveryStatus : "") +
-   deliveryText +
    "\n\nĐã lưu đơn lên hệ thống và gửi email thông báo!");
  } catch(error) {
   console.error("Lỗi gửi email:", error);
 
   alert("ĐƠN HÀNG ĐÃ ĐƯỢC LƯU THÀNH CÔNG!\n\n" +
    "Mã đơn: " + order.id +
-   deliveryText +
    "\nTuy nhiên, email thông báo chưa gửi được.");
  }
 
@@ -2862,35 +2814,8 @@ if (transferUser) {
 }
 }
  if(type === "history"){
-  body.innerHTML = "<h2>Lịch sử đơn hàng</h2>";
-
-  if(!orders.length){
-   body.innerHTML +=
-    "<p class='muted'>Chưa có đơn hàng nào.</p>";
-  } else {
-   orders.forEach(o => {
-    const item = document.createElement("div");
-    item.className = "history-item";
-
-    const title = document.createElement("b");
-    title.textContent = o.service + " - " + o.id;
-
-    const detail = document.createElement("p");
-    detail.className = "muted";
-
-    detail.textContent =
-     o.count + " dòng · " +
-     numberFormat(o.quantity || o.turns || 0) +
-(o.service === "RƯƠNG SS" || o.service === "FULL SK"
- ? " acc/lượt · "
- : " vé/lượt · ") +
-     money(o.total) + " · " +
-     o.date;
-
-    item.append(title, detail);
-    body.append(item);
-   });
-  }
+  body.innerHTML = "<h2>Lịch sử đơn hàng</h2><div id='vkl-customer-order-history' class='muted'>Đang tải lịch sử đơn hàng...</div>";
+  if(window.loadCustomerOrderHistory) window.loadCustomerOrderHistory();
  }
 
  if(type === "more"){
@@ -4409,16 +4334,18 @@ window.saveOrderToFirebase = async function(order) {
       codes: order.codes,
       date: order.date,
       label: order.label,
+      deliveryStatus: (order.service === "ACC CLONE LV0" || order.service === "ACC CLONE LV12") ? "Chờ giao tài khoản" : "Đã tiếp nhận",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    const isManualAccountOrder = order.service === "ACC CLONE LV0" || order.service === "ACC CLONE LV12";
     transaction.set(trackingRef, {
       userId: uid,
       service: order.service,
-      status: "Đã tiếp nhận",
+      status: isManualAccountOrder ? "Chờ giao tài khoản" : "Đã tiếp nhận",
       progress: 0,
-      eta: "Chưa xác định",
-      note: "Đơn hàng đã được tiếp nhận.",
+      eta: isManualAccountOrder ? "Chờ admin giao tài khoản" : "Chưa xác định",
+      note: isManualAccountOrder ? "Đơn hàng đã thanh toán và đang chờ admin gửi tài khoản." : "Đơn hàng đã được tiếp nhận.",
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
@@ -4434,6 +4361,67 @@ window.saveOrderToFirebase = async function(order) {
   });
 
   return true;
+};
+
+
+window.loadCustomerOrderHistory = async function(){
+  const area = document.getElementById("vkl-customer-order-history");
+  if(!area) return;
+  const user = window.auth && window.auth.currentUser;
+  if(!user){ area.textContent = "Vui lòng đăng nhập để xem lịch sử đơn hàng."; return; }
+  area.textContent = "Đang tải lịch sử đơn hàng...";
+  try{
+    const token = await user.getIdToken(true);
+    const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/api/orders/list", {
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer " + token},
+      body:JSON.stringify({action:"listOrders"})
+    });
+    const result = await response.json();
+    if(!response.ok || !result.success) throw new Error(result.error || "Không tải được lịch sử đơn hàng.");
+    const rows = Array.isArray(result.orders) ? result.orders : [];
+    area.innerHTML = "";
+    if(!rows.length){ area.textContent = "Bạn chưa có đơn hàng nào."; return; }
+    rows.forEach(order => {
+      const item = document.createElement("div");
+      item.className = "history-item";
+      const title = document.createElement("b");
+      title.textContent = (order.service || "Đơn hàng") + " - " + order.id;
+      const detail = document.createElement("p");
+      detail.className = "muted";
+      detail.textContent = "Số lượng: " + (order.count || 1) + " · " + money(Number(order.total || 0)) + " · " + (order.date || "");
+      const status = document.createElement("p");
+      status.className = "muted";
+      const isAccountOrder = order.service === "ACC CLONE LV0" || order.service === "ACC CLONE LV12";
+      const accounts = Array.isArray(order.deliveredAccounts) ? order.deliveredAccounts : [];
+      status.textContent = isAccountOrder ? ("Trạng thái: " + (order.deliveryStatus || (accounts.length ? "Đã giao tài khoản" : "Chờ giao tài khoản"))) : (order.deliveryStatus || "Đã tiếp nhận");
+      item.append(title, detail, status);
+      if(isAccountOrder && accounts.length){
+        const view = document.createElement("button");
+        view.type = "button";
+        view.textContent = "👁️ XEM TÀI KHOẢN";
+        view.style.cssText = "width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold";
+        const credentials = document.createElement("pre");
+        credentials.style.cssText = "display:none;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;margin-top:8px;border-radius:9px;background:#edf0ff;color:#172033;font:14px/1.6 inherit";
+        credentials.textContent = accounts.map((account,index) => (index+1) + ". TK: " + String(account.account || "") + "\nMK: " + String(account.password || "")).join("\n\n");
+        view.onclick = () => {
+          const opening = credentials.style.display === "none";
+          credentials.style.display = opening ? "block" : "none";
+          view.textContent = opening ? "ẨN TÀI KHOẢN" : "👁️ XEM TÀI KHOẢN";
+        };
+        item.append(view, credentials);
+      } else if(isAccountOrder){
+        const pending = document.createElement("p");
+        pending.className = "muted";
+        pending.textContent = "Tài khoản sẽ hiển thị tại đây sau khi admin gửi.";
+        item.appendChild(pending);
+      }
+      area.appendChild(item);
+    });
+  }catch(error){
+    console.error("Lỗi tải lịch sử đơn hàng:",error);
+    area.textContent = "Không tải được lịch sử đơn hàng: " + (error.message || error);
+  }
 };
 
 window.lookupOrderProgress = async function() {
@@ -5114,8 +5102,16 @@ window.renderOrderAdmin = async function() {
           <p>${order.codes ? "Số dòng mã" : "Số lượng tài khoản"}: ${escapeOrderText(order.count)}</p>
           <p>Số lượng: ${escapeOrderText(order.quantity)}</p>
           <p>Tổng tiền: ${escapeOrderText(order.total)}</p>
+          ${(order.service === "ACC CLONE LV0" || order.service === "ACC CLONE LV12") ? `
+            <p>Trạng thái giao: ${escapeOrderText(order.deliveryStatus || "Chờ giao tài khoản")}</p>
+            <label style="display:block;margin:9px 0 5px;color:#fff">Nhập TK và MK (mỗi dòng một tài khoản, cách nhau bằng dấu cách)</label>
+            <textarea id="vkl-delivery-${id}" placeholder="taikhoan1 matkhau1&#10;taikhoan2 matkhau2" style="width:100%;min-height:90px;box-sizing:border-box;padding:10px;border-radius:8px;background:#fff;color:#172033"></textarea>
+            <button type="button" onclick="window.deliverOrderAccounts('${id}')" style="width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold">
+              ${Array.isArray(order.deliveredAccounts) && order.deliveredAccounts.length ? "CẬP NHẬT TÀI KHOẢN" : "GỬI TÀI KHOẢN CHO KHÁCH"}
+            </button>
+          ` : ""}
           <button onclick="window.updateOrderProgress('${id}')"
-            style="width:100%;padding:11px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold;">
+            style="width:100%;padding:11px;margin-top:8px;border:0;border-radius:9px;background:#16a36a;color:white;font-weight:bold;">
             CẬP NHẬT TIẾN ĐỘ
           </button>
           <button type="button" onclick="window.hideOrderAdmin('${id}')"
@@ -5131,6 +5127,38 @@ window.renderOrderAdmin = async function() {
   } catch(error) {
     console.error("Lỗi tải danh sách đơn:", error);
     area.textContent = "Không tải được danh sách đơn hàng.";
+  }
+};
+
+
+window.deliverOrderAccounts = async function(orderId){
+  if(!currentManager || currentManager.email !== managerEmail || !currentManager.emailVerified){
+    alert("Bạn không có quyền gửi tài khoản."); return;
+  }
+  const input = document.getElementById("vkl-delivery-" + orderId);
+  const lines = String(input && input.value || "").split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  const accounts = [];
+  for(const line of lines){
+    const match = line.match(/^(\S+)\s+(.+)$/);
+    if(!match){ alert("Dòng không hợp lệ: " + line + "\nĐịnh dạng: tài khoản mật khẩu"); return; }
+    accounts.push({account:match[1].trim(),password:match[2].trim()});
+  }
+  if(!accounts.length){ alert("Vui lòng nhập ít nhất một tài khoản."); return; }
+  if(!confirm("Gửi " + accounts.length + " tài khoản cho đơn " + orderId + "?")) return;
+  try{
+    const token = await currentManager.getIdToken(true);
+    const response = await fetch("https://vukhonglong.haphamngu123.workers.dev/api/orders/deliver",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer " + token},
+      body:JSON.stringify({action:"deliverOrder",orderId,accounts})
+    });
+    const result = await response.json();
+    if(!response.ok || !result.success) throw new Error(result.error || "Không gửi được tài khoản.");
+    alert("Đã lưu tài khoản cho đơn " + orderId + ". Khách có thể bấm XEM TÀI KHOẢN trong Lịch sử đơn hàng.");
+    await window.renderOrderAdmin();
+  }catch(error){
+    console.error("Lỗi gửi tài khoản:",error);
+    alert("Không gửi được tài khoản: " + (error.message || error));
   }
 };
 
